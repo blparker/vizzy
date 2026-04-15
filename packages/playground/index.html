@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>vimath playground</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                background: #f0f0f0;
+                height: 100vh;
+                display: grid;
+                grid-template-rows: auto 1fr;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            /* Top bar */
+            .toolbar {
+                grid-column: 1 / -1;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 16px;
+                background: #1e1e1e;
+                border-bottom: 1px solid #333;
+            }
+            .toolbar label {
+                color: #aaa;
+                font-size: 13px;
+            }
+            .toolbar select {
+                padding: 5px 10px;
+                border-radius: 4px;
+                border: 1px solid #555;
+                background: #2d2d2d;
+                color: #e0e0e0;
+                font-size: 13px;
+            }
+            .toolbar .spacer {
+                flex: 1;
+            }
+            .toolbar button {
+                padding: 5px 16px;
+                border-radius: 4px;
+                border: 1px solid #555;
+                background: #2d5a2d;
+                color: #c0e0c0;
+                font-size: 13px;
+                cursor: pointer;
+            }
+            .toolbar button:hover {
+                background: #3a7a3a;
+            }
+            .toolbar .theme-btn {
+                background: #3a3a3a;
+                color: #ccc;
+            }
+            .toolbar .theme-btn:hover {
+                background: #4a4a4a;
+            }
+
+            /* Editor panel */
+            .editor-panel {
+                background: #1e1e1e;
+                overflow: hidden;
+            }
+            #editor {
+                width: 100%;
+                height: 100%;
+            }
+
+            /* Canvas panel */
+            .canvas-panel {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: #f0f0f0;
+                padding: 16px;
+                gap: 8px;
+            }
+            #canvas {
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                max-width: 100%;
+                height: auto;
+            }
+            #error {
+                display: none;
+                color: #e05050;
+                background: #2a1515;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-family: monospace;
+                font-size: 12px;
+                max-width: 800px;
+                width: 100%;
+                white-space: pre-wrap;
+            }
+
+            /* Light theme overrides */
+            body[data-theme="light"] .canvas-panel {
+                background: #ffffff;
+            }
+            body[data-theme="light"] #canvas {
+                border-color: #ddd;
+            }
+            body[data-theme="light"] #error {
+                background: #ffeaea;
+                color: #cc3333;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="toolbar">
+            <label for="examples">Example:</label>
+            <select id="examples"></select>
+            <div class="spacer"></div>
+            <button id="theme-toggle" class="theme-btn">☀️ Light</button>
+            <button id="run">Run (⌘ Enter)</button>
+        </div>
+        <div class="editor-panel">
+            <div id="editor"></div>
+        </div>
+        <div class="canvas-panel">
+            <canvas id="canvas" width="800" height="457"></canvas>
+            <div id="error"></div>
+        </div>
+        <script type="module" src="./src/main.ts"></script>
+    </body>
+</html>

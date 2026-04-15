@@ -1,0 +1,19 @@
+{
+  "name": "@vimath/playground",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@vimath/core": "workspace:*",
+    "@vimath/renderer-canvas": "workspace:*",
+    "monaco-editor": "^0.55.1"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.16.8",
+    "katex": "^0.16.45"
+  }
+}

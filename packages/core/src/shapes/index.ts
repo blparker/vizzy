@@ -11,7 +11,12 @@ export { ArrowShape, type ArrowProps } from './arrow';
 export { TexShape, type TexProps } from './tex';
 export { grid, type GridProps } from './grid';
 export { NumberLine, type NumberLineProps } from './number-line';
+export { Axes, type AxesProps } from './axes';
+export { FunctionGraph, type FunctionGraphProps } from './function-graph';
+export { BraceShape, type BraceProps } from './brace';
 export {
     circle, rect, line, polygon, regularPolygon, triangle,
-    arc, text, arrow, tex, numberLine, group,
+    arc, text, arrow, tex, numberLine, axes, functionGraph,
+    brace, point, dashedLine, group,
+    type DotProps, type DashedLineProps,
 } from './factories';

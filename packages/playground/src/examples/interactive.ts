@@ -17,7 +17,7 @@ export const interactive: Example = {
     let g = grid();
 
     const c = circle({ radius: radius.value, style: { fill: fillColor.value, stroke: strokeColor.value } });
-    const p = regularPolygon({ sides: sides.value || 6, radius: 2, style: { stroke: emerald } }).shift(-3.5, 0);
+    const p = regularPolygon({ sides: sides.value || 6, radius: 2, style: { stroke: emerald } }).shift(3.5, 0);
     add(c, p);
     render();
 
@@ -28,7 +28,7 @@ export const interactive: Example = {
 
         // Update polygon sides
         const s = sides.value || 6;
-        p.points = regularPolygonPoints([-3.5, 0], 2, s);
+        p.points = regularPolygonPoints([0, 0], 2, s);
 
         // Toggle grid
         g.visible = showGrid.value;

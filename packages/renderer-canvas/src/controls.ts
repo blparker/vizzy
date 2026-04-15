@@ -25,6 +25,8 @@ export interface ColorOptions {
 
 export interface PanelOptions {
     position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+    title?: string;
+    collapsed?: boolean;
 }
 
 export interface ControlHandle<T> {
@@ -65,14 +67,12 @@ function injectStyles() {
             position: absolute;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            padding: 10px;
             border-radius: 6px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 12px;
             z-index: 10;
             max-height: calc(100% - 16px);
-            overflow-y: auto;
+            overflow: hidden;
         }
         .vimath-panel[data-theme="dark"] {
             background: rgba(23, 23, 23, 0.85);
@@ -85,6 +85,43 @@ function injectStyles() {
             color: #171717;
             backdrop-filter: blur(8px);
             border: 1px solid #d4d4d4;
+        }
+        .vimath-panel__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .vimath-panel__header:hover {
+            opacity: 0.8;
+        }
+        .vimath-panel__title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+        }
+        .vimath-panel__toggle {
+            font-size: 10px;
+            opacity: 0.5;
+            transition: transform 0.15s ease;
+            margin-left: 4px;
+        }
+        .vimath-panel--collapsed .vimath-panel__toggle {
+            transform: rotate(-90deg);
+        }
+        .vimath-panel__body {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 10px 10px;
+            overflow-y: auto;
+        }
+        .vimath-panel--collapsed .vimath-panel__body {
+            display: none;
         }
         .vimath-control {
             display: flex;
@@ -161,7 +198,7 @@ function injectStyles() {
 function createHandle<T>(
     el: HTMLElement,
     initialValue: T,
-    emitChange: () => void,
+    emitChange: () => void
 ): { handle: ControlHandle<T>; setValue: (v: T) => void } {
     let currentValue = initialValue;
     const listeners: ((value: T) => void)[] = [];
@@ -197,14 +234,11 @@ function createHandle<T>(
 
 // --- ControlsManager Implementation ---
 
-export function createControlsManager(
-    canvas: HTMLCanvasElement,
-    theme: string,
-    renderFn: () => void,
-): ControlsManager {
+export function createControlsManager(canvas: HTMLCanvasElement, theme: string, renderFn: () => void): ControlsManager {
     const globalListeners: (() => void)[] = [];
     const handles: ControlHandle<unknown>[] = [];
     let panelEl: HTMLElement | null = null;
+    let panelBodyEl: HTMLElement | null = null;
     let wrapperEl: HTMLElement | null = null;
 
     function emitChange() {
@@ -213,8 +247,8 @@ export function createControlsManager(
     }
 
     function maybeAppendToPanel(el: HTMLElement) {
-        if (panelEl) {
-            panelEl.appendChild(el);
+        if (panelBodyEl) {
+            panelBodyEl.appendChild(el);
         }
     }
 
@@ -427,6 +461,8 @@ export function createControlsManager(
             injectStyles();
 
             const position = opts.position ?? 'top-right';
+            const title = opts.title ?? 'Controls';
+            const collapsed = opts.collapsed ?? false;
 
             // Wrap canvas in a container
             wrapperEl = document.createElement('div');
@@ -436,7 +472,7 @@ export function createControlsManager(
 
             // Create panel
             panelEl = document.createElement('div');
-            panelEl.className = 'vimath-panel';
+            panelEl.className = 'vimath-panel' + (collapsed ? ' vimath-panel--collapsed' : '');
             panelEl.setAttribute('data-theme', theme);
 
             // Position
@@ -448,11 +484,33 @@ export function createControlsManager(
             };
             panelEl.style.cssText = positions[position]!;
 
+            // Header with collapse toggle
+            const header = document.createElement('div');
+            header.className = 'vimath-panel__header';
+
+            const titleEl = document.createElement('span');
+            titleEl.className = 'vimath-panel__title';
+            titleEl.textContent = title;
+
+            const toggleEl = document.createElement('span');
+            toggleEl.className = 'vimath-panel__toggle';
+            toggleEl.textContent = '\u25BC';
+
+            header.append(titleEl, toggleEl);
+            header.addEventListener('click', () => {
+                panelEl!.classList.toggle('vimath-panel--collapsed');
+            });
+
+            // Body for controls
+            panelBodyEl = document.createElement('div');
+            panelBodyEl.className = 'vimath-panel__body';
+
+            panelEl.append(header, panelBodyEl);
             wrapperEl.appendChild(panelEl);
 
-            // Move existing control elements into panel
+            // Move existing control elements into body
             for (const handle of handles) {
-                panelEl.appendChild(handle.element);
+                panelBodyEl.appendChild(handle.element);
             }
 
             return panelEl;

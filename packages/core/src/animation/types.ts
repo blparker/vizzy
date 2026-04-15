@@ -29,6 +29,15 @@ export interface Animation {
 export const DEFAULT_DURATION = 1;
 export const DEFAULT_EASING: EasingFn = smooth;
 
+/**
+ * Helper method for creating a new animation.
+ *
+ * @param targets - The shapes to animate.
+ * @param opts - The options for the animation.
+ * @param opts - The options for the animation.
+ * @param callbacks - The callbacks for the animation.
+ * @returns The animation.
+ */
 export function makeAnimation(
     targets: Shape[],
     opts: AnimationOptions | undefined,

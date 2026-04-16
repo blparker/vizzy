@@ -113,48 +113,63 @@ const constrainedDrag = `export default function({ add, interact, grid, render }
 
 # Interactivity
 
-Vizzy provides two systems for interactivity: **controls** (HTML widgets like sliders and checkboxes) and **interaction** (mouse events on shapes like drag, hover, and click).
+Vizzy provides two systems for making scenes interactive: **controls** (HTML widgets that overlay the canvas) and **interaction** (mouse events directly on shapes).
 
 ## Controls
 
-### Sliders
+Controls are HTML inputs — sliders, checkboxes, color pickers — that float over the canvas in a collapsible panel. When a control changes, the scene re-renders automatically.
 
-`controls.slider()` creates a range input. Call `controls.panel()` first to create the overlay panel, and `controls.onUpdate()` to react to changes:
+### The Pattern
+
+1. Call `controls.panel()` to create the overlay panel
+2. Create controls — each returns a handle with a `.value` property
+3. Call `render()` to draw the initial frame
+4. Use `controls.onUpdate()` to react when any control changes
 
 <ClientOnly>
   <VizzyExample :code="sliderExample" />
 </ClientOnly>
 
-### Multiple Controls
+### Combining Controls
 
-Combine sliders, checkboxes, color pickers, and selects. They all auto-render the scene when changed:
+Mix different control types in one panel. They all trigger the same `onUpdate` callback:
 
 <ClientOnly>
   <VizzyExample :code="multipleControls" />
 </ClientOnly>
 
-Available control types:
-- `controls.slider(label, { min, max, value, step })`
-- `controls.checkbox(label, { value })`
-- `controls.color(label, { value })`
-- `controls.select(label, { options, value })`
-- `controls.text(label, { value, placeholder })`
+### Available Controls
 
-Each returns a handle with `.value` and `.set(value)`.
+| Control | Signature | Returns |
+|---------|-----------|---------|
+| Slider | `controls.slider(label, { min, max, value, step })` | `ControlHandle<number>` |
+| Checkbox | `controls.checkbox(label, { value })` | `ControlHandle<boolean>` |
+| Color | `controls.color(label, { value })` | `ControlHandle<string>` |
+| Select | `controls.select(label, { options, value })` | `ControlHandle<string>` |
+| Text | `controls.text(label, { value, placeholder })` | `ControlHandle<string>` |
 
-## Drag, Hover, and Click
+Each handle has `.value` (current value), `.set(v)` (update programmatically), and `.onChange(fn)` (per-control callback).
 
-### Draggable Shapes
+## Mouse Interaction
 
-`interact.draggable(shape, { onDrag })` makes a shape draggable. The callback receives the world-space position:
+The `interact` API lets you make shapes draggable, hoverable, and clickable. Hit testing works through the scene graph — clicking on text above a shape correctly targets the shape underneath if only the shape is interactive.
+
+### Draggable
+
+`interact.draggable(shape, opts)` makes a shape follow the mouse. The `onDrag` callback receives the world-space position:
 
 <ClientOnly>
   <VizzyExample :code="draggableExample" />
 </ClientOnly>
 
+::: tip
+The cursor automatically changes to `grab`/`grabbing` for draggable shapes, `pointer` for hoverable/clickable shapes.
+:::
+
 ### Hover and Click
 
-`interact.hoverable()` fires callbacks on mouse enter/leave. `interact.clickable()` fires on click. Hit testing automatically pierces through non-interactive shapes:
+- **`interact.hoverable(shape, { onEnter, onLeave })`** — mouse enter/leave
+- **`interact.clickable(shape, { onClick })`** — click handler
 
 <ClientOnly>
   <VizzyExample :code="hoverClickExample" />
@@ -162,8 +177,12 @@ Each returns a handle with `.value` and `.set(value)`.
 
 ### Constrained Dragging
 
-Use `constrainX` and `constrainY` to restrict drag movement to a range:
+Restrict drag movement to a range with `constrainX` and `constrainY`. This is useful for building slider-like interactions:
 
 <ClientOnly>
   <VizzyExample :code="constrainedDrag" />
 </ClientOnly>
+
+::: tip Cleanup
+Each interaction method returns an unsubscribe function: `const unsub = interact.draggable(shape, opts)`. Call `unsub()` to remove the interaction.
+:::

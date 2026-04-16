@@ -102,11 +102,15 @@ const optionsExample = `export default async function({ add, play, wait }) {
 
 # Animations
 
-Vizzy's animation system uses async/await. Call `play()` to run animations and `await` the result. This gives you sequential flow with native JavaScript — no queues or schedulers.
+Vizzy's animation system uses `async/await`. Call `play()` to run animations and `await` the result. This gives you sequential flow with native JavaScript — no queues or schedulers.
+
+::: tip Key concept
+Shapes added with `add()` are visible immediately. If you want them to appear with an animation, skip the `add()` — `play(fadeIn(shape))` will add the shape to the scene automatically.
+:::
 
 ## Fade In / Fade Out
 
-The simplest animations. Shapes are invisible until animated in:
+The simplest way to make shapes appear and disappear:
 
 <ClientOnly>
   <VizzyExample :code="fadeExample" />
@@ -114,7 +118,7 @@ The simplest animations. Shapes are invisible until animated in:
 
 ## Create (Draw-On)
 
-`create()` draws a shape's stroke progressively, like a pen tracing it:
+`create()` progressively draws a shape's stroke, like a pen tracing it. Works best with shapes that have visible strokes:
 
 <ClientOnly>
   <VizzyExample :code="createExample" />
@@ -122,7 +126,10 @@ The simplest animations. Shapes are invisible until animated in:
 
 ## Movement
 
-`animateShift(shape, [dx, dy])` moves by a relative offset. `animateMoveTo(shape, [x, y])` moves to an absolute position:
+Two ways to animate position:
+
+- **`animateShift(shape, [dx, dy])`** — relative offset from current position
+- **`animateMoveTo(shape, [x, y])`** — absolute destination
 
 <ClientOnly>
   <VizzyExample :code="movementExample" />
@@ -130,7 +137,8 @@ The simplest animations. Shapes are invisible until animated in:
 
 ## Rotation and Scale
 
-`animateRotate(shape, angle)` rotates by an angle in radians. `animateScale(shape, factor)` scales uniformly:
+- **`animateRotate(shape, angle)`** — rotate by angle in radians
+- **`animateScale(shape, factor)`** — scale uniformly (1 = no change)
 
 <ClientOnly>
   <VizzyExample :code="transformExample" />
@@ -138,25 +146,36 @@ The simplest animations. Shapes are invisible until animated in:
 
 ## Color and Opacity
 
-`animateColor(shape, { stroke?, fill? })` transitions colors smoothly. `animateOpacity(shape, target)` fades to a specific opacity:
+- **`animateColor(shape, { stroke?, fill? })`** — smooth color transition
+- **`animateOpacity(shape, target)`** — fade to a specific opacity (0-1)
 
 <ClientOnly>
   <VizzyExample :code="colorExample" />
 </ClientOnly>
 
-## Simultaneous Animations
+## Simultaneous vs Sequential
 
-Pass multiple animations to a single `play()` call and they run at the same time:
+**Simultaneous:** pass multiple animations to a single `play()` call:
+
+```typescript
+await play(fadeIn(a), fadeIn(b), fadeIn(c)); // all at once
+```
+
+**Sequential:** use separate `await play()` calls:
+
+```typescript
+await play(fadeIn(a)); // first
+await play(fadeIn(b)); // then
+await play(fadeIn(c)); // then
+```
 
 <ClientOnly>
   <VizzyExample :code="simultaneousExample" />
 </ClientOnly>
 
-For sequential animations, use separate `await play()` calls — one after the other.
-
 ## Per-Frame Updates with during()
 
-`during(callback)` runs a function every frame during an animation. Use it for dynamic labels, computed positions, or anything that needs to update continuously:
+`during(callback)` runs a function every frame while other animations play. The callback receives the eased progress `t` (0 to 1). Use it for dynamic labels, computed positions, or anything that needs continuous updates:
 
 <ClientOnly>
   <VizzyExample :code="duringExample" />
@@ -164,13 +183,22 @@ For sequential animations, use separate `await play()` calls — one after the o
 
 ## Options
 
-Pass options as the last argument to `play()`. Available options:
+Pass an options object as the last argument to `play()`:
 
-- `duration` — animation length in seconds (default: 1)
-- `easing` — easing function (default: `smooth`)
+| Option | Default | Description |
+|--------|---------|-------------|
+| `duration` | `1` | Animation length in seconds |
+| `easing` | `smooth` | Easing function |
 
 <ClientOnly>
   <VizzyExample :code="optionsExample" />
 </ClientOnly>
 
-Available easing functions: `linear`, `easeIn`, `easeOut`, `easeInOut`, `smooth` (default), `smoother`.
+::: details Available easing functions
+- `linear` — constant speed
+- `easeIn` — starts slow, accelerates
+- `easeOut` — starts fast, decelerates
+- `easeInOut` — slow at both ends
+- `smooth` — Hermite smoothstep (default)
+- `smoother` — Ken Perlin's smootherstep
+:::

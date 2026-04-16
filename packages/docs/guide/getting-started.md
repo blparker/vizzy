@@ -31,47 +31,76 @@ const animationIntro = `export default async function({ add, play, grid }) {
 npm install @vizzyjs/core @vizzyjs/renderer-canvas
 ```
 
+::: tip pnpm / yarn
+Works with any package manager: `pnpm add`, `yarn add`, etc.
+:::
+
 ## Your First Scene
 
-Create an HTML page with a `<canvas>` element, then use `createScene` to start drawing:
+Vizzy renders to an HTML `<canvas>`. Use `createScene()` to set up the scene, then `add()` shapes and call `render()`:
 
 ```typescript
 import { circle, sky } from '@vizzyjs/core';
 import { createScene } from '@vizzyjs/renderer-canvas';
 
 const canvas = document.querySelector('canvas');
-const { add, grid, render } = createScene(canvas);
+const { add, render } = createScene(canvas);
 
-grid();
 add(circle({ color: sky }));
 render();
 ```
-
-Here's what that produces:
 
 <ClientOnly>
   <VizzyExample :code="firstScene" />
 </ClientOnly>
 
-## Adding More Shapes
+`createScene()` returns an object you can destructure. The most common properties are:
 
-Vizzy comes with 30+ shape factories. Here's a scene with several shapes:
+| Property | Purpose |
+|----------|---------|
+| `add(shape)` | Add a shape to the scene |
+| `render()` | Draw the current frame |
+| `grid()` | Add a coordinate grid |
+| `play(animation)` | Run an animation (returns a Promise) |
+| `wait(seconds)` | Pause between animations |
+| `controls` | Create HTML controls (sliders, etc.) |
+| `interact` | Add drag/hover/click to shapes |
+
+## Shapes
+
+Vizzy has 30+ shape factory functions. Every shape starts at the origin — use `shift(x, y)` to position it.
 
 <ClientOnly>
   <VizzyExample :code="shapesIntro" />
 </ClientOnly>
 
+All shapes support a `color` shorthand for quick styling, or a `style` object for full control. See [Shapes](/guide/shapes) for the complete list.
+
 ## Animations
 
-Use `play()` with `await` to animate shapes. Multiple animations in one `play()` call run simultaneously:
+Animations use `async/await`. Call `play()` to animate, and `await` the result. Pass multiple animations to `play()` to run them simultaneously.
 
 <ClientOnly>
   <VizzyExample :code="animationIntro" />
 </ClientOnly>
 
+See [Animations](/guide/animations) for all animation types and options.
+
+## Coordinate System
+
+Vizzy uses a 14x8 world-unit coordinate system with the origin at center and Y pointing up. You never deal with pixels — shapes are positioned in world units, and the renderer handles DPR scaling.
+
+```
+         (0, 4)
+           │
+(-7, 0) ───┼─── (7, 0)
+           │
+         (0, -4)
+```
+
 ## What's Next
 
--   [Shapes](/guide/shapes) — All available shape factories and their options
--   [Animations](/guide/animations) — The animation system in depth
--   [Interactivity](/guide/interactivity) — Controls, dragging, and click handlers
--   [Examples](/examples/) — Gallery of complete examples
+- [Shapes](/guide/shapes) — All shape factories, positioning, colors, groups, and text
+- [Animations](/guide/animations) — The animation system in depth
+- [Interactivity](/guide/interactivity) — Controls and mouse interaction
+- [Examples](/examples/) — Gallery of interactive examples

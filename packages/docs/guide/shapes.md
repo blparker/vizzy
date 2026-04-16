@@ -128,11 +128,13 @@ Vizzy provides factory functions for creating shapes. Every factory returns a sh
 
 ## Basic Shapes
 
-The most common shapes: circles, rectangles, and triangles. Use the `color` shorthand to set the stroke color.
+The most common shapes. Use the `color` shorthand to set the stroke color in one line:
 
 <ClientOnly>
   <VizzyExample :code="basicShapes" />
 </ClientOnly>
+
+All shapes accept an optional props object. Without props, you get sensible defaults (radius 1, width 2, etc.).
 
 ## More Shapes
 
@@ -142,9 +144,13 @@ Polygons, stars, ellipses, and squares:
   <VizzyExample :code="moreShapes" />
 </ClientOnly>
 
+::: details Full list of shape factories
+`circle()`, `rect()`, `line()`, `arrow()`, `polygon()`, `regularPolygon()`, `triangle()`, `square()`, `ellipse()`, `arc()`, `star()`, `point()`, `text()`, `tex()`, `dashedLine()`, `vector()`, `doubleArrow()`, `curvedArrow()`, `arcBetweenPoints()`, `rightAngle()`, `surroundingRectangle()`, `numberLine()`, `axes()`, `functionGraph()`, `brace()`, `braceOver()`, `braceBetween()`, `angleShape()`, `edgeLabel()`, `lineLabel()`, `label()`, `group()`
+:::
+
 ## Lines and Arrows
 
-Lines, arrows, dashed lines, double arrows, vectors, and curved arrows:
+`line()` and `arrow()` support a positional shorthand — pass start and end points directly instead of a props object:
 
 <ClientOnly>
   <VizzyExample :code="linesAndArrows" />
@@ -152,44 +158,62 @@ Lines, arrows, dashed lines, double arrows, vectors, and curved arrows:
 
 ## Positioning
 
-Shapes start at the origin. Use `shift(x, y)` for relative movement, `moveTo([x, y])` for absolute positioning, and `nextTo(shape, direction)` to place one shape adjacent to another:
+Shapes start at the origin. Three ways to position them:
+
+- **`shift(x, y)`** — move by a relative offset (chainable)
+- **`moveTo([x, y])`** — move to an absolute position
+- **`nextTo(shape, direction)`** — place adjacent to another shape
 
 <ClientOnly>
   <VizzyExample :code="positioning" />
 </ClientOnly>
 
+Direction constants: `UP`, `DOWN`, `LEFT`, `RIGHT`, `UP_LEFT`, `UP_RIGHT`, `DOWN_LEFT`, `DOWN_RIGHT`, `ORIGIN`.
+
 ## Colors
 
-Use the `color` shorthand for simple stroke coloring, or the `style` object for full control. Vizzy includes the full Tailwind color palette with shade access and alpha support:
+Use the `color` shorthand for simple stroke coloring, or the `style` object for full control over stroke, fill, and opacity:
 
 <ClientOnly>
   <VizzyExample :code="colors" />
 </ClientOnly>
 
-Available colors: `red`, `orange`, `yellow`, `green`, `emerald`, `sky`, `blue`, `violet`, `purple`, `pink`, `neutral`, and more. Each has shades from `[50]` to `[950]`, and an `.alpha(n)` method.
+Vizzy includes the full Tailwind color palette. Each color has shades from `[50]` (lightest) to `[950]` (darkest), and an `.alpha(n)` method for transparency.
+
+::: details Available colors
+`red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`, `slate`, `gray`, `zinc`, `neutral`, `stone`, plus `white` and `black`.
+:::
 
 ## Groups
 
-Use `group()` to compose shapes. Groups can be positioned and transformed as a unit. `arrange(direction, spacing)` auto-layouts children:
+Use `group()` to compose shapes into a single unit. Groups can be positioned and transformed together. `arrange(direction, spacing)` auto-layouts children in a row or column:
 
 <ClientOnly>
   <VizzyExample :code="groups" />
 </ClientOnly>
 
+Groups also support `moveToFront(shape)` and `moveToBack(shape)` for z-ordering within the group.
+
 ## Text and Labels
 
-`text()` renders plain text. `label(shape, content, direction)` places text near a shape automatically:
+`text()` renders plain text. `label(shape, content, direction)` is a convenience that positions text near a shape automatically:
 
 <ClientOnly>
   <VizzyExample :code="textAndTex" />
 </ClientOnly>
 
-For math formulas, use `tex()` which renders LaTeX via KaTeX.
+For math formulas, use `tex()` which renders LaTeX via KaTeX. See the [TeX Formulas example](/examples/) in the gallery.
 
 ## Axes and Function Graphs
 
-`axes()` creates a coordinate system. `functionGraph()` plots a function on axes:
+`axes()` creates a coordinate system with tick marks and optional labels. `functionGraph()` plots a function on axes:
 
 <ClientOnly>
   <VizzyExample :code="axesExample" />
 </ClientOnly>
+
+Axes auto-frame the camera to fit their range. Use `c2p([x, y])` (coord-to-point) and `p2c([x, y])` (point-to-coord) to convert between axis coordinates and world coordinates.
+
+::: tip
+Use `ax.plot(fn, opts)` as a shorthand for creating and adding a function graph to axes in one call.
+:::

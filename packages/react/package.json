@@ -1,6 +1,6 @@
 {
     "name": "@vizzyjs/react",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "React bindings for vizzy — a useScene hook for rendering vizzy scenes in React components",
     "type": "module",
     "license": "MIT",
@@ -33,7 +33,9 @@
             "import": "./dist/index.js"
         }
     },
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "publishConfig": {
         "access": "public"
     },
@@ -48,8 +50,8 @@
         "react": "^19.0.0"
     },
     "peerDependencies": {
-        "@vizzyjs/core": "^0.0.1",
-        "@vizzyjs/renderer-canvas": "^0.0.1",
+        "@vizzyjs/core": "^0.1.0",
+        "@vizzyjs/renderer-canvas": "^0.1.0",
         "react": ">=19"
     }
 }

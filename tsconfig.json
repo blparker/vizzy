@@ -15,7 +15,8 @@
   },
   "references": [
     { "path": "packages/core" },
-    { "path": "packages/renderer-canvas" }
+    { "path": "packages/renderer-canvas" },
+    { "path": "packages/react" }
   ],
   "files": []
 }

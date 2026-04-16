@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, nextTick, watch, computed } from 'vue';
+import { useData } from 'vitepress';
 import { allSnippets } from '../../../snippets/index';
+
+const { isDark } = useData();
 
 const containerRef = ref<HTMLDivElement | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const errorEl = ref('');
 const errorVisible = ref(false);
 const selectedIndex = ref(0);
-const currentTheme = ref<'dark' | 'light'>('dark');
+const currentTheme = computed<'dark' | 'light'>(() => isDark.value ? 'dark' : 'light');
 
 let editor: any = null;
 let monacoModule: any = null;
@@ -82,10 +85,18 @@ async function initMonaco() {
         noSyntaxValidation: false,
     });
 
+    // GitHub themes to match Shiki code blocks
+    const [githubDark, githubLight] = await Promise.all([
+        import('../monaco-themes/github-dark.json'),
+        import('../monaco-themes/github-light.json'),
+    ]);
+    monaco.editor.defineTheme('github-dark', (githubDark.default || githubDark) as any);
+    monaco.editor.defineTheme('github-light', (githubLight.default || githubLight) as any);
+
     editor = monaco.editor.create(containerRef.value!, {
         value: '',
         language: 'typescript',
-        theme: 'vs-dark',
+        theme: isDark.value ? 'github-dark' : 'github-light',
         minimap: { enabled: false },
         fontSize: 13,
         lineNumbers: 'on',
@@ -144,15 +155,6 @@ function run() {
     runCode(canvas, editor.getValue(), currentTheme.value);
 }
 
-function toggleTheme() {
-    const theme = currentTheme.value === 'dark' ? 'light' : 'dark';
-    currentTheme.value = theme;
-    if (monacoModule) {
-        monacoModule.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs');
-    }
-    run();
-}
-
 function onExampleChange(e: Event) {
     loadExample(Number((e.target as HTMLSelectElement).value));
 }
@@ -160,6 +162,13 @@ function onExampleChange(e: Event) {
 onMounted(async () => {
     await nextTick();
     initMonaco();
+});
+
+watch(isDark, (dark) => {
+    if (monacoModule) {
+        monacoModule.editor.setTheme(dark ? 'github-dark' : 'github-light');
+    }
+    run();
 });
 </script>
 
@@ -171,9 +180,6 @@ onMounted(async () => {
                 <option v-for="(ex, i) in allSnippets" :key="i" :value="i">{{ ex.title }}</option>
             </select>
             <div class="playground__spacer" />
-            <button class="playground__btn playground__btn--theme" @click="toggleTheme">
-                {{ currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark' }}
-            </button>
             <button class="playground__btn playground__btn--run" @click="run">
                 Run (⌘ Enter)
             </button>
@@ -182,7 +188,7 @@ onMounted(async () => {
             <div class="playground__editor">
                 <div ref="containerRef" class="playground__editor-inner" />
             </div>
-            <div class="playground__canvas-panel" :class="{ 'playground__canvas-panel--light': currentTheme === 'light' }">
+            <div class="playground__canvas-panel">
                 <canvas
                     ref="canvasRef"
                     :width="canvasDisplayWidth"
@@ -204,29 +210,28 @@ onMounted(async () => {
     bottom: 0;
     display: grid;
     grid-template-rows: auto 1fr;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .playground__toolbar {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 16px;
-    background: #1e1e1e;
-    border-bottom: 1px solid #333;
+    padding: 8px 16px;
+    background: var(--vp-c-bg);
+    border-bottom: 1px solid var(--vp-c-divider);
 }
 
 .playground__toolbar label {
-    color: #aaa;
+    color: var(--vp-c-text-2);
     font-size: 13px;
 }
 
 .playground__toolbar select {
     padding: 5px 10px;
-    border-radius: 4px;
-    border: 1px solid #555;
-    background: #2d2d2d;
-    color: #e0e0e0;
+    border-radius: 6px;
+    border: 1px solid var(--vp-c-divider);
+    background: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-1);
     font-size: 13px;
 }
 
@@ -235,29 +240,37 @@ onMounted(async () => {
 }
 
 .playground__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     padding: 5px 16px;
-    border-radius: 4px;
-    border: 1px solid #555;
+    border-radius: 6px;
+    border: 1px solid var(--vp-c-divider);
     font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
 }
 
 .playground__btn--run {
-    background: #2d5a2d;
-    color: #c0e0c0;
+    background: var(--vp-c-brand-soft);
+    color: var(--vp-c-brand-1);
+    border-color: var(--vp-c-brand-1);
 }
 
 .playground__btn--run:hover {
-    background: #3a7a3a;
+    background: var(--vp-c-brand-2);
+    color: white;
 }
 
 .playground__btn--theme {
-    background: #3a3a3a;
-    color: #ccc;
+    background: var(--vp-c-bg-soft);
+    color: var(--vp-c-text-2);
 }
 
 .playground__btn--theme:hover {
-    background: #4a4a4a;
+    color: var(--vp-c-text-1);
+    border-color: var(--vp-c-text-2);
 }
 
 .playground__panels {
@@ -269,6 +282,7 @@ onMounted(async () => {
 .playground__editor {
     background: #1e1e1e;
     overflow: hidden;
+    border-right: 1px solid var(--vp-c-divider);
 }
 
 .playground__editor-inner {
@@ -281,27 +295,24 @@ onMounted(async () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #f0f0f0;
+    background: var(--vp-c-bg-soft);
     padding: 16px;
     gap: 8px;
 }
 
-.playground__canvas-panel--light {
-    background: #ffffff;
-}
-
 .playground__canvas {
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 1px solid var(--vp-c-divider);
     max-width: 100%;
     height: auto;
 }
 
 .playground__error {
     color: #e05050;
-    background: #2a1515;
+    background: rgba(224, 80, 80, 0.1);
+    border: 1px solid rgba(224, 80, 80, 0.2);
     padding: 8px 12px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-family: monospace;
     font-size: 12px;
     max-width: 800px;

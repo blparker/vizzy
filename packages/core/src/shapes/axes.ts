@@ -6,6 +6,7 @@ import type { Camera } from '../scene/camera';
 import { Group } from './group';
 import { TextShape } from './text';
 import { NumberLine, type NumberLineProps } from './number-line';
+import { FunctionGraph, type FunctionGraphProps } from './function-graph';
 
 export interface AxesProps {
     xRange?: [number, number] | [number, number, number];
@@ -51,8 +52,8 @@ export class Axes extends Group {
         this._xMax = xRange[1];
         this._yMin = yRange[0];
         this._yMax = yRange[1];
-        this._xLength = props.xLength ?? (this._xMax - this._xMin);
-        this._yLength = props.yLength ?? (this._yMax - this._yMin);
+        this._xLength = props.xLength ?? this._xMax - this._xMin;
+        this._yLength = props.yLength ?? this._yMax - this._yMin;
         this.autoFrame = props.autoFrame ?? true;
         this.framePadding = props.padding ?? 1;
 
@@ -67,8 +68,8 @@ export class Axes extends Group {
             length: this._xLength,
             includeNumbers,
             includeTip,
-            ...color !== undefined ? { color } : {},
-            ...style !== undefined ? { style } : {},
+            ...(color !== undefined ? { color } : {}),
+            ...(style !== undefined ? { style } : {}),
             labelDirection: 1,
             labelsToExclude: [0],
             ...props.xAxis,
@@ -83,8 +84,8 @@ export class Axes extends Group {
             length: this._yLength,
             includeNumbers,
             includeTip,
-            ...color !== undefined ? { color } : {},
-            ...style !== undefined ? { style } : {},
+            ...(color !== undefined ? { color } : {}),
+            ...(style !== undefined ? { style } : {}),
             labelDirection: -1,
             labelsToExclude: [0],
             labelRotation: -Math.PI / 2,
@@ -129,7 +130,7 @@ export class Axes extends Group {
             const xRatio = (0 - this._xMin) / (this._xMax - this._xMin);
             const labelRight = xRatio < 0.3;
             const xOffset = labelRight ? 0.35 : -0.35;
-            const textAlign = labelRight ? 'left' as const : 'right' as const;
+            const textAlign = labelRight ? ('left' as const) : ('right' as const);
             const yLabelShape = new TextShape({
                 content: props.yLabel,
                 position: [xOffset, yTipY],
@@ -142,7 +143,6 @@ export class Axes extends Group {
             });
             super.add(yLabelShape);
         }
-
     }
 
     /** Convert an (x, y) coordinate to a local-space point */
@@ -175,10 +175,7 @@ export class Axes extends Group {
         const xT = (localX + this._xLength / 2) / this._xLength;
         const yT = (localY + this._yLength / 2) / this._yLength;
 
-        return [
-            this._xMin + xT * (this._xMax - this._xMin),
-            this._yMin + yT * (this._yMax - this._yMin),
-        ];
+        return [this._xMin + xT * (this._xMax - this._xMin), this._yMin + yT * (this._yMax - this._yMin)];
     }
 
     /** Shorthand for pointToCoord */
@@ -186,10 +183,23 @@ export class Axes extends Group {
         return this.pointToCoord(point);
     }
 
-    get xMin(): number { return this._xMin; }
-    get xMax(): number { return this._xMax; }
-    get yMin(): number { return this._yMin; }
-    get yMax(): number { return this._yMax; }
+    plot(fn: (x: number) => number, opts?: Omit<FunctionGraphProps, 'fn' | 'axes'>): FunctionGraph {
+        const graph = new FunctionGraph({ fn, axes: this, ...opts });
+        return graph;
+    }
+
+    get xMin(): number {
+        return this._xMin;
+    }
+    get xMax(): number {
+        return this._xMax;
+    }
+    get yMin(): number {
+        return this._yMin;
+    }
+    get yMax(): number {
+        return this._yMax;
+    }
 
     frameCamera(camera: Camera, padding?: number): void {
         // Center the camera on the midpoint of the axes ranges

@@ -435,6 +435,260 @@ export function braceBetween(props: BraceBetweenProps): Group {
     return g;
 }
 
+// --- Label helper (auto-positioned text near a shape) ---
+
+export type Direction = Vec2;
+
+export interface LabelProps {
+    content: string;
+    direction?: Direction;
+    offset?: number;
+    style?: Style;
+}
+
+export function label(shape: Shape, content: string, direction?: Direction, opts?: { offset?: number; style?: Style }): TextShape {
+    const dir = direction ?? [0, 1]; // default: above
+    const offset = opts?.offset ?? 0.25;
+
+    const center = shape.center;
+    const position: Vec2 = [
+        center[0] + dir[0] * (shape.width / 2 + offset),
+        center[1] + dir[1] * (shape.height / 2 + offset),
+    ];
+
+    let textAlign: 'left' | 'center' | 'right' = 'center';
+    if (dir[0] > 0.5) textAlign = 'left';
+    else if (dir[0] < -0.5) textAlign = 'right';
+
+    return new TextShape({
+        content,
+        position,
+        style: {
+            fill: { r: 1, g: 1, b: 1, a: 1 },
+            stroke: null,
+            fontSize: 0.22,
+            textAlign,
+            ...opts?.style,
+        },
+    });
+}
+
+// --- Trivial shape factories ---
+
+export interface SquareProps {
+    size?: number;
+    cornerRadius?: number;
+    style?: Style;
+}
+
+export function square(props: SquareProps = {}): RectShape {
+    const size = props.size ?? 2;
+    return new RectShape({
+        width: size,
+        height: size,
+        cornerRadius: props.cornerRadius,
+        style: props.style,
+    });
+}
+
+export interface EllipseProps {
+    rx?: number;
+    ry?: number;
+    style?: Style;
+}
+
+export function ellipse(props: EllipseProps = {}): CircleShape {
+    const rx = props.rx ?? 1;
+    const ry = props.ry ?? 0.6;
+    const c = new CircleShape({
+        radius: 1,
+        style: props.style,
+    });
+    c.scale(rx, ry);
+    return c;
+}
+
+export interface DoubleArrowProps {
+    start?: Vec2;
+    end?: Vec2;
+    tipSize?: number;
+    style?: Style;
+}
+
+export function doubleArrow(props: DoubleArrowProps = {}): Group {
+    const start = props.start ?? [-1, 0];
+    const end = props.end ?? [1, 0];
+    const g = new Group();
+    const fwd = new ArrowShape({ start, end, tipSize: props.tipSize, style: props.style });
+    const bwd = new ArrowShape({ start: end, end: start, tipSize: props.tipSize, style: props.style });
+    g.add(fwd, bwd);
+    return g;
+}
+
+export interface VectorProps {
+    direction?: Vec2;
+    style?: Style;
+    tipSize?: number;
+}
+
+export function vector(props: VectorProps = {}): ArrowShape {
+    const dir = props.direction ?? [1, 0];
+    return new ArrowShape({
+        start: [0, 0],
+        end: dir,
+        tipSize: props.tipSize,
+        style: props.style,
+    });
+}
+
+export interface StarProps {
+    points?: number;
+    outerRadius?: number;
+    innerRadius?: number;
+    center?: Vec2;
+    style?: Style;
+}
+
+export function star(props: StarProps = {}): PolygonShape {
+    const n = props.points ?? 5;
+    const outer = props.outerRadius ?? 1;
+    const inner = props.innerRadius ?? outer * 0.4;
+    const cx = props.center?.[0] ?? 0;
+    const cy = props.center?.[1] ?? 0;
+
+    const pts: Vec2[] = [];
+    for (let i = 0; i < n * 2; i++) {
+        const angle = Math.PI / 2 + (Math.PI * i) / n;
+        const r = i % 2 === 0 ? outer : inner;
+        pts.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+    }
+    return new PolygonShape({ points: pts, closed: true, style: props.style });
+}
+
+export interface RightAngleProps {
+    vertex: Vec2;
+    point1: Vec2;
+    point2: Vec2;
+    size?: number;
+    style?: Style;
+}
+
+export function rightAngle(props: RightAngleProps): PolygonShape {
+    const { vertex, point1, point2 } = props;
+    const size = props.size ?? 0.25;
+
+    const dir1 = normalize(sub(point1, vertex));
+    const dir2 = normalize(sub(point2, vertex));
+
+    const corner1: Vec2 = addVec(vertex, scaleVec(dir1, size));
+    const corner2: Vec2 = addVec(vertex, scaleVec(dir2, size));
+    const corner3: Vec2 = addVec(addVec(vertex, scaleVec(dir1, size)), scaleVec(dir2, size));
+
+    return new PolygonShape({
+        points: [corner1, corner3, corner2],
+        closed: false,
+        style: {
+            stroke: { r: 1, g: 1, b: 1, a: 1 },
+            fill: null,
+            strokeWidth: 0.03,
+            ...props.style,
+        },
+    });
+}
+
+export interface CurvedArrowProps {
+    start?: Vec2;
+    end?: Vec2;
+    angle?: number;
+    tipSize?: number;
+    style?: Style;
+}
+
+export function curvedArrow(props: CurvedArrowProps = {}): Group {
+    const start = props.start ?? [-1, 0];
+    const end = props.end ?? [1, 0];
+    const bendAngle = props.angle ?? Math.PI / 4;
+    const tipSize = props.tipSize ?? 0.15;
+
+    const mid = addVec(start, scaleVec(sub(end, start), 0.5));
+    const diff = sub(end, start);
+    const perp: Vec2 = [-diff[1], diff[0]];
+    const perpNorm = normalize(perp);
+    const dist = Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
+    const arcMid: Vec2 = addVec(mid, scaleVec(perpNorm, dist * Math.tan(bendAngle) * 0.5));
+
+    // Sample a quadratic bezier as points
+    const n = 20;
+    const pts: Vec2[] = [];
+    for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        const u = 1 - t;
+        pts.push([
+            u * u * start[0] + 2 * u * t * arcMid[0] + t * t * end[0],
+            u * u * start[1] + 2 * u * t * arcMid[1] + t * t * end[1],
+        ]);
+    }
+
+    const curve = new PolygonShape({
+        points: pts,
+        closed: false,
+        style: {
+            stroke: { r: 1, g: 1, b: 1, a: 1 },
+            fill: null,
+            strokeWidth: 0.04,
+            ...props.style,
+        },
+    });
+
+    // Arrow tip at end
+    const lastDir = normalize(sub(pts[n]!, pts[n - 1]!));
+    const tipPerp: Vec2 = [-lastDir[1], lastDir[0]];
+    const tipBase = addVec(end, scaleVec(lastDir, -tipSize));
+    const tip = new PolygonShape({
+        points: [
+            end,
+            addVec(tipBase, scaleVec(tipPerp, tipSize * 0.4)),
+            addVec(tipBase, scaleVec(tipPerp, -tipSize * 0.4)),
+        ],
+        closed: true,
+        style: { fill: props.style?.stroke ?? { r: 1, g: 1, b: 1, a: 1 }, stroke: null },
+    });
+
+    const g = new Group();
+    g.add(curve, tip);
+    return g;
+}
+
+export interface SurroundingRectangleProps {
+    shape: Shape;
+    padding?: number;
+    cornerRadius?: number;
+    style?: Style;
+}
+
+export function surroundingRectangle(props: SurroundingRectangleProps): RectShape {
+    const { shape } = props;
+    const padding = props.padding ?? 0.2;
+
+    const w = shape.width + padding * 2;
+    const h = shape.height + padding * 2;
+    const center = shape.center;
+
+    const r = new RectShape({
+        width: w,
+        height: h,
+        cornerRadius: props.cornerRadius ?? 0.1,
+        style: {
+            stroke: { r: 1, g: 1, b: 0, a: 1 },
+            fill: null,
+            strokeWidth: 0.04,
+            ...props.style,
+        },
+    });
+    r.moveTo(center);
+    return r;
+}
+
 export function group(...children: Shape[]): Group {
     const g = new Group();
     if (children.length > 0) {

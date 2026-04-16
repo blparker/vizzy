@@ -31,6 +31,8 @@ export interface BoundScene {
         (...shapes: Shape[]): Shape[];
     };
     remove: (shape: Shape) => BoundScene;
+    moveToFront: (shape: Shape) => void;
+    moveToBack: (shape: Shape) => void;
     render: () => void;
     grid: (props?: Omit<GridProps, 'camera'>) => Group;
     play: (...args: (Animation | AnimationOptions)[]) => Promise<void>;
@@ -71,6 +73,12 @@ export function createScene(
         remove(shape: Shape) {
             scene.remove(shape);
             return bound;
+        },
+        moveToFront(shape: Shape) {
+            scene.root.moveToFront(shape);
+        },
+        moveToBack(shape: Shape) {
+            scene.root.moveToBack(shape);
         },
 
         render() {

@@ -34,6 +34,24 @@ export class Group extends Shape {
         return this;
     }
 
+    moveToFront(shape: Shape): this {
+        const idx = this._children.indexOf(shape);
+        if (idx !== -1 && idx !== this._children.length - 1) {
+            this._children.splice(idx, 1);
+            this._children.push(shape);
+        }
+        return this;
+    }
+
+    moveToBack(shape: Shape): this {
+        const idx = this._children.indexOf(shape);
+        if (idx > 0) {
+            this._children.splice(idx, 1);
+            this._children.unshift(shape);
+        }
+        return this;
+    }
+
     clear(): this {
         for (const child of this._children) {
             child.parent = null;

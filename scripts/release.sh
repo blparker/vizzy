@@ -12,12 +12,14 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
-# Bump version in both packages (npm version updates package.json and returns new version)
+# Bump version in all publishable packages
 NEW_VERSION=$(cd packages/core && npm version "$BUMP" --no-git-tag-version | tr -d 'v')
 cd packages/renderer-canvas && npm version "$BUMP" --no-git-tag-version > /dev/null
 cd ../..
+cd packages/react && npm version "$BUMP" --no-git-tag-version > /dev/null
+cd ../..
 
-# Update renderer-canvas peer dep range to match new core version
+# Update peer dep ranges to match new core version
 MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
 MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
 if [ "$MAJOR" -eq 0 ]; then
@@ -26,12 +28,19 @@ else
     PEER_RANGE="^${MAJOR}.0.0"
 fi
 
-# Use node to update the peerDependencies field reliably
 node -e "
 const fs = require('fs');
-const pkg = JSON.parse(fs.readFileSync('packages/renderer-canvas/package.json', 'utf8'));
-pkg.peerDependencies['@vizzyjs/core'] = '${PEER_RANGE}';
-fs.writeFileSync('packages/renderer-canvas/package.json', JSON.stringify(pkg, null, 4) + '\n');
+
+// Update renderer-canvas peer deps
+const rc = JSON.parse(fs.readFileSync('packages/renderer-canvas/package.json', 'utf8'));
+rc.peerDependencies['@vizzyjs/core'] = '${PEER_RANGE}';
+fs.writeFileSync('packages/renderer-canvas/package.json', JSON.stringify(rc, null, 4) + '\n');
+
+// Update react peer deps
+const react = JSON.parse(fs.readFileSync('packages/react/package.json', 'utf8'));
+react.peerDependencies['@vizzyjs/core'] = '${PEER_RANGE}';
+react.peerDependencies['@vizzyjs/renderer-canvas'] = '${PEER_RANGE}';
+fs.writeFileSync('packages/react/package.json', JSON.stringify(react, null, 4) + '\n');
 "
 
 echo "Bumped to v${NEW_VERSION}"
@@ -47,8 +56,11 @@ pnpm --filter @vizzyjs/core publish --no-git-checks
 echo "Publishing @vizzyjs/renderer-canvas@${NEW_VERSION}..."
 pnpm --filter @vizzyjs/renderer-canvas publish --no-git-checks
 
+echo "Publishing @vizzyjs/react@${NEW_VERSION}..."
+pnpm --filter @vizzyjs/react publish --no-git-checks
+
 # Commit and tag
-git add packages/core/package.json packages/renderer-canvas/package.json
+git add packages/core/package.json packages/renderer-canvas/package.json packages/react/package.json
 git commit -m "v${NEW_VERSION}"
 git tag "v${NEW_VERSION}"
 

@@ -1,6 +1,6 @@
 {
     "name": "@vizzyjs/core",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Render-agnostic core for vizzy — a TypeScript math visualization library inspired by manim",
     "type": "module",
     "license": "MIT",
@@ -32,7 +32,9 @@
             "import": "./dist/index.js"
         }
     },
-    "files": ["dist"],
+    "files": [
+        "dist"
+    ],
     "publishConfig": {
         "access": "public"
     },

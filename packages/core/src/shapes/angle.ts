@@ -1,9 +1,10 @@
 import type { Vec2 } from '../math/vec2';
-import { sub, normalize, angle as vecAngle } from '../math/vec2';
+import { sub, angle as vecAngle } from '../math/vec2';
 import type { Style } from '../style/types';
 import { Group } from './group';
 import { ArcShape } from './arc';
 import { TextShape } from './text';
+import type { LineShape } from './line';
 
 export interface AngleProps {
     vertex: Vec2;
@@ -15,9 +16,45 @@ export interface AngleProps {
     style?: Style;
 }
 
+export interface AngleFromLinesProps {
+    line1: LineShape;
+    line2: LineShape;
+    radius?: number;
+    label?: string;
+    labelFontSize?: number;
+    style?: Style;
+}
+
+function findIntersection(l1: LineShape, l2: LineShape): Vec2 | null {
+    const [x1, y1] = l1.start;
+    const [x2, y2] = l1.end;
+    const [x3, y3] = l2.start;
+    const [x4, y4] = l2.end;
+
+    const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if (Math.abs(denom) < 1e-10) return null;
+
+    const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
+    return [x1 + t * (x2 - x1), y1 + t * (y2 - y1)];
+}
+
 export class AngleShape extends Group {
     readonly arc: ArcShape;
     readonly label: TextShape | null;
+
+    static fromLines(props: AngleFromLinesProps): AngleShape {
+        const vertex = findIntersection(props.line1, props.line2)
+            ?? props.line1.end;
+        return new AngleShape({
+            vertex,
+            point1: props.line1.end,
+            point2: props.line2.end,
+            radius: props.radius,
+            label: props.label,
+            labelFontSize: props.labelFontSize,
+            style: props.style,
+        });
+    }
 
     constructor(props: AngleProps) {
         super();

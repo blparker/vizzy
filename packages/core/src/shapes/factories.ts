@@ -2,6 +2,13 @@ import type { Vec2 } from '../math/vec2';
 import { sub, add as addVec, scale as scaleVec, normalize } from '../math/vec2';
 import type { Color } from '../math/color';
 import type { Style } from '../style/types';
+
+type ColorLike = Color | string;
+
+function colorToStyle(color?: ColorLike): Style {
+    if (!color) return {};
+    return { stroke: color };
+}
 import { CircleShape, type CircleProps } from './circle';
 import { RectShape, type RectProps } from './rect';
 import { LineShape, type LineProps } from './line';
@@ -14,20 +21,38 @@ import { NumberLine, type NumberLineProps } from './number-line';
 import { Axes, type AxesProps } from './axes';
 import { FunctionGraph, type FunctionGraphProps } from './function-graph';
 import { BraceShape, type BraceProps } from './brace';
-import { AngleShape, type AngleProps } from './angle';
+import { AngleShape, type AngleProps, type AngleFromLinesProps } from './angle';
 import { Group } from './group';
 import type { Shape } from './shape';
 
-export function circle(props?: CircleProps): CircleShape {
-    return new CircleShape(props);
+export function circle(props?: CircleProps & { color?: ColorLike }): CircleShape {
+    const { color, ...rest } = props ?? {};
+    if (color) rest.style = { ...colorToStyle(color), ...rest.style };
+    return new CircleShape(rest);
 }
 
-export function rect(props?: RectProps): RectShape {
-    return new RectShape(props);
+export function rect(props?: RectProps & { color?: ColorLike }): RectShape {
+    const { color, ...rest } = props ?? {};
+    if (color) rest.style = { ...colorToStyle(color), ...rest.style };
+    return new RectShape(rest);
 }
 
-export function line(props?: LineProps): LineShape {
-    return new LineShape(props);
+export function line(start: Vec2, end: Vec2, props?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike }): LineShape;
+export function line(props?: LineProps & { color?: ColorLike }): LineShape;
+export function line(
+    startOrProps?: Vec2 | (LineProps & { color?: ColorLike }),
+    endOrNothing?: Vec2,
+    extraProps?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike },
+): LineShape {
+    if (Array.isArray(startOrProps) && Array.isArray(endOrNothing)) {
+        const { color, ...rest } = extraProps ?? {};
+        const style = color ? { ...colorToStyle(color), ...rest.style } : rest.style;
+        return new LineShape({ start: startOrProps as Vec2, end: endOrNothing as Vec2, style });
+    }
+    const props = (startOrProps ?? {}) as LineProps & { color?: ColorLike };
+    const { color, ...rest } = props;
+    if (color) rest.style = { ...colorToStyle(color), ...rest.style };
+    return new LineShape(rest);
 }
 
 export function polygon(props?: PolygonProps): PolygonShape {
@@ -56,8 +81,22 @@ export function text(props?: TextProps): TextShape {
     return new TextShape(props);
 }
 
-export function arrow(props?: ArrowProps): ArrowShape {
-    return new ArrowShape(props);
+export function arrow(start: Vec2, end: Vec2, props?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike }): ArrowShape;
+export function arrow(props?: ArrowProps & { color?: ColorLike }): ArrowShape;
+export function arrow(
+    startOrProps?: Vec2 | (ArrowProps & { color?: ColorLike }),
+    endOrNothing?: Vec2,
+    extraProps?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike },
+): ArrowShape {
+    if (Array.isArray(startOrProps) && Array.isArray(endOrNothing)) {
+        const { color, ...rest } = extraProps ?? {};
+        const style = color ? { stroke: color, fill: color, ...rest.style } : rest.style;
+        return new ArrowShape({ start: startOrProps as Vec2, end: endOrNothing as Vec2, style, ...rest });
+    }
+    const props = (startOrProps ?? {}) as ArrowProps & { color?: ColorLike };
+    const { color, ...rest } = props;
+    if (color) rest.style = { stroke: color, fill: color, ...rest.style };
+    return new ArrowShape(rest);
 }
 
 export function tex(props?: TexProps): TexShape {
@@ -117,7 +156,10 @@ export function dashedLine(props: DashedLineProps = {}): LineShape {
     });
 }
 
-export function angleShape(props: AngleProps): AngleShape {
+export function angleShape(props: AngleProps | AngleFromLinesProps): AngleShape {
+    if ('line1' in props) {
+        return AngleShape.fromLines(props);
+    }
     return new AngleShape(props);
 }
 

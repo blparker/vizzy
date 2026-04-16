@@ -14,7 +14,7 @@ export { NumberLine, type NumberLineProps } from './number-line';
 export { Axes, type AxesProps } from './axes';
 export { FunctionGraph, type FunctionGraphProps, type Discontinuity } from './function-graph';
 export { BraceShape, type BraceProps } from './brace';
-export { AngleShape, type AngleProps } from './angle';
+export { AngleShape, type AngleProps, type AngleFromLinesProps } from './angle';
 export { PathShape, type PathProps, type PathCommand } from './path';
 export {
     circle, rect, line, polygon, regularPolygon, triangle,

@@ -1,3 +1,4 @@
+import type { Vec2 } from '../math/vec2';
 import type { BoundingBox } from '../math/bbox';
 import * as M from '../math/mat3';
 import type { Style } from '../style/types';
@@ -57,6 +58,40 @@ export class Group extends Shape {
             child.parent = null;
         }
         this._children.length = 0;
+        return this;
+    }
+
+    arrange(direction: Vec2 = [1, 0], buff: number = 0.5): this {
+        if (this._children.length <= 1) return this;
+
+        const isHorizontal = Math.abs(direction[0]) > Math.abs(direction[1]);
+
+        // Compute total size and position each child sequentially
+        let cursor = 0;
+        for (const child of this._children) {
+            if (isHorizontal) {
+                const hw = child.width / 2;
+                const targetX = cursor + hw;
+                const currentCenter = child.center;
+                child.shift(targetX - currentCenter[0], -currentCenter[1]);
+                cursor = targetX + hw + buff;
+            } else {
+                const hh = child.height / 2;
+                const targetY = cursor - hh;
+                const currentCenter = child.center;
+                child.shift(-currentCenter[0], targetY - currentCenter[1]);
+                cursor = targetY - hh - buff;
+            }
+        }
+
+        // Center the group at origin
+        const bounds = this.getBounds();
+        const cx = (bounds.min[0] + bounds.max[0]) / 2;
+        const cy = (bounds.min[1] + bounds.max[1]) / 2;
+        for (const child of this._children) {
+            child.shift(-cx, -cy);
+        }
+
         return this;
     }
 

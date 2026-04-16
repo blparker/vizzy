@@ -128,4 +128,9 @@ export abstract class Shape {
         this.transform[7] = y;
         return this;
     }
+
+    setStyle(updates: Partial<Style>): this {
+        this.style = { ...this.style, ...updates };
+        return this;
+    }
 }

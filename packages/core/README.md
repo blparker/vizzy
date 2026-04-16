@@ -1,6 +1,6 @@
 # @vizzyjs/core
 
-Render-agnostic core for [vizzy](https://github.com/bryantpark04/vizzy) — a TypeScript math visualization library inspired by manim.
+Render-agnostic core for [vizzy](https://github.com/blparker/vizzy) — a TypeScript math visualization library inspired by manim.
 
 This package contains the scene graph, shapes, animation system, math utilities, and styling — everything except the actual rendering. Pair it with [`@vizzyjs/renderer-canvas`](https://www.npmjs.com/package/@vizzyjs/renderer-canvas) for Canvas2D output.
 
@@ -21,4 +21,4 @@ npm install @vizzyjs/core
 
 ## License
 
-[MIT](https://github.com/bryantpark04/vizzy/blob/main/LICENSE)
+[MIT](https://github.com/blparker/vizzy/blob/main/LICENSE)

@@ -1,6 +1,6 @@
 # @vizzyjs/renderer-canvas
 
-Canvas2D renderer for [vizzy](https://github.com/bryantpark04/vizzy) — a TypeScript math visualization library inspired by manim.
+Canvas2D renderer for [vizzy](https://github.com/blparker/vizzy) — a TypeScript math visualization library inspired by manim.
 
 This package renders vizzy scenes to an HTML `<canvas>` element, with support for animations, interactive controls, and mouse interaction.
 
@@ -40,4 +40,4 @@ await play(fadeIn(c));
 
 ## License
 
-[MIT](https://github.com/bryantpark04/vizzy/blob/main/LICENSE)
+[MIT](https://github.com/blparker/vizzy/blob/main/LICENSE)

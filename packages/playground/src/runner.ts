@@ -1,6 +1,6 @@
 import 'katex/dist/katex.min.css';
-import * as core from '@vimath/core';
-import * as rendererCanvas from '@vimath/renderer-canvas';
+import * as core from '@vizzyjs/core';
+import * as rendererCanvas from '@vizzyjs/renderer-canvas';
 
 const modules: Record<string, unknown> = {
     ...core,
@@ -22,7 +22,7 @@ function prepareCode(code: string): string {
 export async function runCode(canvas: HTMLCanvasElement, code: string, theme: 'dark' | 'light' = 'dark'): Promise<{ error?: string }> {
     const prepared = prepareCode(code);
 
-    // The user's code gets `canvas` and all vimath exports in scope.
+    // The user's code gets `canvas` and all vizzy exports in scope.
     // Two modes:
     //   1. export default function({ add, grid }) { ... }  — auto-wrapped in renderScene
     //   2. Direct: createScene / renderScene call           — full control (supports async)

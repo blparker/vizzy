@@ -8,7 +8,7 @@ import {
     type Group,
     type Animation,
     type AnimationOptions,
-} from '@vimath/core';
+} from '@vizzyjs/core';
 import { CanvasRenderer } from './canvas-renderer';
 import { AnimationPlayer } from './animation-player';
 import { createControlsManager, type ControlsManager } from './controls';

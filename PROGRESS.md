@@ -1,8 +1,8 @@
-# Vimath3 Progress
+# Vizzy Progress
 
 ## Architecture
 
-- **Monorepo**: pnpm workspace with `@vimath/core`, `@vimath/renderer-canvas`, `@vimath/playground`
+- **Monorepo**: pnpm workspace with `@vizzyjs/core`, `@vizzyjs/renderer-canvas`, `@vizzyjs/playground`
 - **Coordinate system**: 14x8 world units (configurable), origin center, Y-up. Height is fixed, width adapts to canvas aspect ratio via `min(scaleX, scaleY)`
 - **Render model**: Visitor pattern — shapes are data, renderer walks the scene graph. Core owns traversal + transform/style composition. Renderer just draws.
 - **Scene model**: Retained scene graph. Animation loop via requestAnimationFrame, idle when no animations active.
@@ -55,7 +55,7 @@
 - `grid()` factory — creates Group of lines for coordinate grid. Accepts camera for auto-sizing to viewport. Emphasized axis lines.
 - Factory functions (all support `color` shorthand where applicable):
   - Core: `circle()`, `rect()`, `line(p1, p2)`, `polygon()`, `regularPolygon()`, `triangle()`, `arc()`, `text()`, `tex()`, `arrow(p1, p2)`, `group()`
-  - Convenience: `square()`, `ellipse()`, `point()`, `dashedLine()`, `star()`, `vector()`, `doubleArrow()`, `curvedArrow()`, `rightAngle()`, `surroundingRectangle()`
+  - Convenience: `square()`, `ellipse()`, `point()`, `dashedLine()`, `star()`, `vector()`, `doubleArrow()`, `curvedArrow()`, `rightAngle()`, `surroundingRectangle()`, `arcBetweenPoints()`
   - Coordinate: `numberLine()`, `axes()`, `functionGraph()`, `tangentLine()`, `lineThrough()`
   - Annotation: `edgeLabel()`, `lineLabel()`, `label(shape, content, direction)`, `brace()`, `braceOver()`, `braceBetween()`, `angleShape()`
 - `line()` and `arrow()` support positional arg shorthand: `line([0,0], [1,1])`, `arrow([0,0], [2,1], { color: red })`
@@ -126,11 +126,11 @@
 
 - Monaco editor with TypeScript syntax highlighting (semantic validation disabled)
 - Example gallery: Blank Canvas, Shapes, Animations, Text + Animation, Interactive, Draggable, Function Plot, Calculus, Secant → Tangent, First Quadrant, Annotations, More Shapes, Number Lines, TeX Formulas, Logo
-- Live code execution via `new Function()` with all vimath exports injected
+- Live code execution via `new Function()` with all vizzy exports injected
 - Supports async examples via `AsyncFunction` constructor (detected by presence of `await`)
 - Two coding patterns: `export default function({ add, grid })` (auto-wrapped) or direct `createScene(canvas, ...)` (supports async)
-- Dark/Light theme toggle (switches Monaco theme + vimath scene theme)
-- Controls panel cleanup on re-run (unwraps canvas from vimath-container)
+- Dark/Light theme toggle (switches Monaco theme + vizzy scene theme)
+- Controls panel cleanup on re-run (unwraps canvas from vizzy-container)
 - Error display panel
 - Cmd/Ctrl+Enter to run
 
@@ -141,5 +141,5 @@
 ### Build & Tooling
 
 - pnpm workspaces, Vite (build + dev server), Vitest, TypeScript 5.7 (strict, composite projects)
-- Playground: Vite aliases resolve `@vimath/*` to source files for HMR
+- Playground: Vite aliases resolve `@vizzyjs/*` to source files for HMR
 - ESM throughout, no `.js` extensions in imports (bundler module resolution)

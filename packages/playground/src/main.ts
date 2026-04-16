@@ -83,7 +83,7 @@ function run() {
 
     // Clean up previous controls panel (unwrap canvas if it was wrapped)
     const wrapper = canvas.parentElement;
-    if (wrapper?.classList.contains('vimath-container')) {
+    if (wrapper?.classList.contains('vizzy-container')) {
         wrapper.parentElement!.insertBefore(canvas, wrapper);
         wrapper.remove();
     }

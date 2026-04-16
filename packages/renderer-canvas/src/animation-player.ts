@@ -1,5 +1,5 @@
-import type { Animation } from '@vimath/core';
-import { clamp } from '@vimath/core';
+import type { Animation } from '@vizzyjs/core';
+import { clamp } from '@vizzyjs/core';
 
 interface ActiveAnimation {
     animation: Animation;

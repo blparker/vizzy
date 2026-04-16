@@ -28,10 +28,10 @@ importers:
 
   packages/playground:
     dependencies:
-      '@vimath/core':
+      '@vizzyjs/core':
         specifier: workspace:*
         version: link:../core
-      '@vimath/renderer-canvas':
+      '@vizzyjs/renderer-canvas':
         specifier: workspace:*
         version: link:../renderer-canvas
       monaco-editor:
@@ -47,7 +47,7 @@ importers:
 
   packages/renderer-canvas:
     dependencies:
-      '@vimath/core':
+      '@vizzyjs/core':
         specifier: workspace:*
         version: link:../core
       katex:

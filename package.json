@@ -1,5 +1,5 @@
 {
-  "name": "vimath",
+  "name": "vizzyjs",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "test": "vitest",
     "lint": "eslint packages/",
     "typecheck": "tsc -b",
-    "playground": "pnpm --filter @vimath/playground dev"
+    "playground": "pnpm --filter @vizzyjs/playground dev"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

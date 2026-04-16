@@ -15,7 +15,7 @@ export const shapes: Example = {
         regularPolygon({ sides: 5, radius: 0.9, style: { stroke: green } }).shift(2, -1),
         arc({ radius: 0.8, startAngle: 0, endAngle: Math.PI * 1.5, style: { stroke: pink } }).shift(5, -1),
         arrow({ start: [-4, -3], end: [-1, -3], style: { stroke: sky, fill: sky } }),
-        text({ content: 'vimath', position: [2, -3], style: { fill: white, fontSize: 0.4 } }),
+        text({ content: 'vizzy', position: [2, -3], style: { fill: white, fontSize: 0.4 } }),
     );
 }
 `,

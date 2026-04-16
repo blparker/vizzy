@@ -1,5 +1,5 @@
 {
-  "name": "@vimath/playground",
+  "name": "@vizzyjs/playground",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -8,8 +8,8 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@vimath/core": "workspace:*",
-    "@vimath/renderer-canvas": "workspace:*",
+    "@vizzyjs/core": "workspace:*",
+    "@vizzyjs/renderer-canvas": "workspace:*",
     "monaco-editor": "^0.55.1"
   },
   "devDependencies": {

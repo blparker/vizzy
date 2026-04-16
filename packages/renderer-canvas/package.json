@@ -1,5 +1,5 @@
 {
-  "name": "@vimath/renderer-canvas",
+  "name": "@vizzyjs/renderer-canvas",
   "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
@@ -18,7 +18,7 @@
     "dev": "vite build --watch"
   },
   "dependencies": {
-    "@vimath/core": "workspace:*",
+    "@vizzyjs/core": "workspace:*",
     "katex": "^0.16.45"
   }
 }

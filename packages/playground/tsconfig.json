@@ -6,8 +6,8 @@
         "declarationMap": false,
         "noEmit": true,
         "paths": {
-            "@vimath/core": ["../core/src/index.ts"],
-            "@vimath/renderer-canvas": ["../renderer-canvas/src/index.ts"]
+            "@vizzyjs/core": ["../core/src/index.ts"],
+            "@vizzyjs/renderer-canvas": ["../renderer-canvas/src/index.ts"]
         }
     },
     "include": ["src"]

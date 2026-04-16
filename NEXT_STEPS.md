@@ -1,4 +1,4 @@
-# Vimath3 Next Steps
+# Vizzy Next Steps
 
 ## High Priority
 
@@ -6,7 +6,6 @@
 - `ParametricCurve` — plot `(x(t), y(t))` on Axes
 - `Sector` — filled arc wedge
 - `Annulus` — ring/donut shape
-- `ArcBetweenPoints` — arc connecting two arbitrary points
 - `Cross` — X mark through a shape
 - `Underline` — line under a shape
 - `NumberPlane` — combined grid + axes
@@ -27,7 +26,7 @@
 ## Medium Priority
 
 ### Distribution / Community (shadcn-style Shape Registry)
-- CLI tool: `npx vimath add spiral` copies shape source into your project
+- CLI tool: `npx vizzy add spiral` copies shape source into your project
 - Shapes are standalone `.ts` files extending `Shape`/`PathShape` — easy to fork and modify
 - Community registry where developers publish shapes
 - Similar model to shadcn/ui: you own the code, not a dependency
@@ -46,9 +45,9 @@
 - Smooth animated transitions
 
 ### Additional Renderers
-- `@vimath/renderer-svg` — SVG output for static exports
-- `@vimath/renderer-webgl` — WebGL for large scenes / performance
-- `@vimath/renderer-rough` — rough.js for hand-drawn aesthetic
+- `@vizzyjs/renderer-svg` — SVG output for static exports
+- `@vizzyjs/renderer-webgl` — WebGL for large scenes / performance
+- `@vizzyjs/renderer-rough` — rough.js for hand-drawn aesthetic
 - The Renderer interface is already defined, each just implements the visitor methods
 
 ### Export / Recording
@@ -65,7 +64,7 @@
 ## Lower Priority
 
 ### Developer Experience
-- TypeScript type declarations for Monaco (playground autocomplete for vimath API)
+- TypeScript type declarations for Monaco (playground autocomplete for vizzy API)
 - Store playground examples as real `.ts` files, import with Vite's `?raw` suffix
 - Better error messages when shapes are misconfigured
 - Documentation site with interactive examples

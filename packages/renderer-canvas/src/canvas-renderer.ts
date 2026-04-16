@@ -12,8 +12,8 @@ import type {
     TexShape,
     PathShape,
     Group,
-} from '@vimath/core';
-import { Mat3, colorToCss } from '@vimath/core';
+} from '@vizzyjs/core';
+import { Mat3, colorToCss } from '@vizzyjs/core';
 import katex from 'katex';
 
 type Mat3Type = ReturnType<typeof Mat3.identity>;

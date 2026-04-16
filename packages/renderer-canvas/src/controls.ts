@@ -57,13 +57,13 @@ function injectStyles() {
     stylesInjected = false;
 
     const style = document.createElement('style');
-    style.setAttribute('data-vimath-controls', '');
+    style.setAttribute('data-vizzy-controls', '');
     style.textContent = `
-        .vimath-container {
+        .vizzy-container {
             position: relative;
             display: inline-block;
         }
-        .vimath-panel {
+        .vizzy-panel {
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -74,19 +74,19 @@ function injectStyles() {
             max-height: calc(100% - 16px);
             overflow: hidden;
         }
-        .vimath-panel[data-theme="dark"] {
+        .vizzy-panel[data-theme="dark"] {
             background: rgba(23, 23, 23, 0.85);
             color: #e5e5e5;
             backdrop-filter: blur(8px);
             border: 1px solid #404040;
         }
-        .vimath-panel[data-theme="light"] {
+        .vizzy-panel[data-theme="light"] {
             background: rgba(255, 255, 255, 0.85);
             color: #171717;
             backdrop-filter: blur(8px);
             border: 1px solid #d4d4d4;
         }
-        .vimath-panel__header {
+        .vizzy-panel__header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -94,81 +94,81 @@ function injectStyles() {
             cursor: pointer;
             user-select: none;
         }
-        .vimath-panel__header:hover {
+        .vizzy-panel__header:hover {
             opacity: 0.8;
         }
-        .vimath-panel__title {
+        .vizzy-panel__title {
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             opacity: 0.6;
         }
-        .vimath-panel__toggle {
+        .vizzy-panel__toggle {
             font-size: 10px;
             opacity: 0.5;
             transition: transform 0.15s ease;
             margin-left: 4px;
         }
-        .vimath-panel--collapsed .vimath-panel__toggle {
+        .vizzy-panel--collapsed .vizzy-panel__toggle {
             transform: rotate(-90deg);
         }
-        .vimath-panel__body {
+        .vizzy-panel__body {
             display: flex;
             flex-direction: column;
             gap: 6px;
             padding: 0 10px 10px;
             overflow-y: auto;
         }
-        .vimath-panel--collapsed .vimath-panel__body {
+        .vizzy-panel--collapsed .vizzy-panel__body {
             display: none;
         }
-        .vimath-control {
+        .vizzy-control {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-        .vimath-control label {
+        .vizzy-control label {
             font-size: 11px;
             font-weight: 500;
             opacity: 0.7;
         }
-        .vimath-control__row {
+        .vizzy-control__row {
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .vimath-control input[type="range"] {
+        .vizzy-control input[type="range"] {
             flex: 1;
             min-width: 100px;
             accent-color: #3b82f6;
         }
-        .vimath-control__value {
+        .vizzy-control__value {
             font-size: 11px;
             font-variant-numeric: tabular-nums;
             min-width: 32px;
             text-align: right;
         }
-        .vimath-control select,
-        .vimath-control input[type="text"] {
+        .vizzy-control select,
+        .vizzy-control input[type="text"] {
             padding: 3px 6px;
             border-radius: 3px;
             font-size: 12px;
             font-family: inherit;
         }
-        [data-theme="dark"] .vimath-control select,
-        [data-theme="dark"] .vimath-control input[type="text"] {
+        [data-theme="dark"] .vizzy-control select,
+        [data-theme="dark"] .vizzy-control input[type="text"] {
             background: #2d2d2d;
             color: #e5e5e5;
             border: 1px solid #404040;
         }
-        [data-theme="light"] .vimath-control select,
-        [data-theme="light"] .vimath-control input[type="text"] {
+        [data-theme="light"] .vizzy-control select,
+        [data-theme="light"] .vizzy-control input[type="text"] {
             background: #ffffff;
             color: #171717;
             border: 1px solid #d4d4d4;
         }
-        .vimath-control input[type="color"] {
+        .vizzy-control input[type="color"] {
             width: 32px;
             height: 24px;
             padding: 0;
@@ -176,14 +176,14 @@ function injectStyles() {
             border-radius: 3px;
             cursor: pointer;
         }
-        .vimath-control--checkbox label {
+        .vizzy-control--checkbox label {
             display: flex;
             align-items: center;
             gap: 6px;
             opacity: 1;
             cursor: pointer;
         }
-        .vimath-control--checkbox label span {
+        .vizzy-control--checkbox label span {
             font-size: 11px;
             font-weight: 500;
             opacity: 0.7;
@@ -263,13 +263,13 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             injectStyles();
 
             const el = document.createElement('div');
-            el.className = 'vimath-control vimath-control--slider';
+            el.className = 'vizzy-control vizzy-control--slider';
 
             const labelEl = document.createElement('label');
             labelEl.textContent = label;
 
             const row = document.createElement('div');
-            row.className = 'vimath-control__row';
+            row.className = 'vizzy-control__row';
 
             const input = document.createElement('input');
             input.type = 'range';
@@ -279,7 +279,7 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             input.value = String(opts.value);
 
             const valueEl = document.createElement('span');
-            valueEl.className = 'vimath-control__value';
+            valueEl.className = 'vizzy-control__value';
             valueEl.textContent = formatNumber(opts.value, opts.step);
 
             row.append(input, valueEl);
@@ -309,7 +309,7 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             injectStyles();
 
             const el = document.createElement('div');
-            el.className = 'vimath-control vimath-control--checkbox';
+            el.className = 'vizzy-control vizzy-control--checkbox';
 
             const labelEl = document.createElement('label');
             const input = document.createElement('input');
@@ -342,7 +342,7 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             injectStyles();
 
             const el = document.createElement('div');
-            el.className = 'vimath-control vimath-control--select';
+            el.className = 'vizzy-control vizzy-control--select';
 
             const labelEl = document.createElement('label');
             labelEl.textContent = label;
@@ -380,7 +380,7 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             injectStyles();
 
             const el = document.createElement('div');
-            el.className = 'vimath-control vimath-control--text';
+            el.className = 'vizzy-control vizzy-control--text';
 
             const labelEl = document.createElement('label');
             labelEl.textContent = label;
@@ -413,20 +413,20 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
             injectStyles();
 
             const el = document.createElement('div');
-            el.className = 'vimath-control vimath-control--color';
+            el.className = 'vizzy-control vizzy-control--color';
 
             const labelEl = document.createElement('label');
             labelEl.textContent = label;
 
             const row = document.createElement('div');
-            row.className = 'vimath-control__row';
+            row.className = 'vizzy-control__row';
 
             const input = document.createElement('input');
             input.type = 'color';
             input.value = opts.value ?? '#ffffff';
 
             const valueEl = document.createElement('span');
-            valueEl.className = 'vimath-control__value';
+            valueEl.className = 'vizzy-control__value';
             valueEl.textContent = opts.value ?? '#ffffff';
 
             row.append(input, valueEl);
@@ -466,13 +466,13 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
 
             // Wrap canvas in a container
             wrapperEl = document.createElement('div');
-            wrapperEl.className = 'vimath-container';
+            wrapperEl.className = 'vizzy-container';
             canvas.parentElement!.insertBefore(wrapperEl, canvas);
             wrapperEl.appendChild(canvas);
 
             // Create panel
             panelEl = document.createElement('div');
-            panelEl.className = 'vimath-panel' + (collapsed ? ' vimath-panel--collapsed' : '');
+            panelEl.className = 'vizzy-panel' + (collapsed ? ' vizzy-panel--collapsed' : '');
             panelEl.setAttribute('data-theme', theme);
 
             // Position
@@ -486,24 +486,24 @@ export function createControlsManager(canvas: HTMLCanvasElement, theme: string, 
 
             // Header with collapse toggle
             const header = document.createElement('div');
-            header.className = 'vimath-panel__header';
+            header.className = 'vizzy-panel__header';
 
             const titleEl = document.createElement('span');
-            titleEl.className = 'vimath-panel__title';
+            titleEl.className = 'vizzy-panel__title';
             titleEl.textContent = title;
 
             const toggleEl = document.createElement('span');
-            toggleEl.className = 'vimath-panel__toggle';
+            toggleEl.className = 'vizzy-panel__toggle';
             toggleEl.textContent = '\u25BC';
 
             header.append(titleEl, toggleEl);
             header.addEventListener('click', () => {
-                panelEl!.classList.toggle('vimath-panel--collapsed');
+                panelEl!.classList.toggle('vizzy-panel--collapsed');
             });
 
             // Body for controls
             panelBodyEl = document.createElement('div');
-            panelBodyEl.className = 'vimath-panel__body';
+            panelBodyEl.className = 'vizzy-panel__body';
 
             panelEl.append(header, panelBodyEl);
             wrapperEl.appendChild(panelEl);

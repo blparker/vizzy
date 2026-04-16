@@ -1,8 +1,8 @@
-# Vimath3 Initial Build Plan
+# Vizzy Initial Build Plan
 
 ## Context
 
-Building a TypeScript visualization library inspired by manim (3blue1brown). The goal is a library that makes it trivially easy to create math visualizations — static initially, with animation and interactivity designed in from day 1. The project is a pnpm monorepo with `@vimath/core` (render-agnostic), `@vimath/renderer-canvas` (Canvas2D), and `@vimath/playground` (dev sandbox). All three packages exist as stubs.
+Building a TypeScript visualization library inspired by manim (3blue1brown). The goal is a library that makes it trivially easy to create math visualizations — static initially, with animation and interactivity designed in from day 1. The project is a pnpm monorepo with `@vizzyjs/core` (render-agnostic), `@vizzyjs/renderer-canvas` (Canvas2D), and `@vizzyjs/playground` (dev sandbox). All three packages exist as stubs.
 
 ## Architecture Decisions
 

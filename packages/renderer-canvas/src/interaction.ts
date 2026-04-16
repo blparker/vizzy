@@ -1,5 +1,5 @@
-import type { Scene, Shape, Vec2 } from '@vimath/core';
-import { Mat3, clamp, hitTestAll } from '@vimath/core';
+import type { Scene, Shape, Vec2 } from '@vizzyjs/core';
+import { Mat3, clamp, hitTestAll } from '@vizzyjs/core';
 
 export interface DraggableOptions {
     onDrag: (worldPos: Vec2) => void;

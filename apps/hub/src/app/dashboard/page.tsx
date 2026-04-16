@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import { auth } from '@clerk/nextjs/server';
+import { UserButton } from '@clerk/nextjs';
 import { desc, eq } from 'drizzle-orm';
+import { ArrowLeft } from 'lucide-react';
 import { db, schema } from '@/db/client';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { VizCard } from '@/components/viz-card';
 
 export default async function DashboardPage() {
     const { userId } = await auth();
@@ -14,38 +19,48 @@ export default async function DashboardPage() {
     });
 
     return (
-        <main className="mx-auto min-h-screen max-w-4xl px-4 py-8">
-            <header className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-semibold text-neutral-100">My vizzes</h1>
-                <Link
-                    href="/new"
-                    className="rounded bg-sky-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-sky-500"
-                >
-                    New viz
-                </Link>
+        <div className="min-h-screen bg-background text-foreground">
+            <header className="flex items-center gap-3 border-b px-5 py-3">
+                <Button asChild variant="ghost">
+                    <Link href="/">
+                        <ArrowLeft className="size-4" />
+                        vizzy hub
+                    </Link>
+                </Button>
+                <div className="flex-1" />
+                <ThemeToggle />
+                <UserButton afterSignOutUrl="/" />
             </header>
 
-            {vizzes.length === 0 ? (
-                <div className="rounded border border-dashed border-neutral-800 p-10 text-center text-neutral-500">
-                    No vizzes yet. <Link href="/new" className="text-sky-400 hover:underline">Create one</Link>.
+            <main className="mx-auto max-w-5xl px-5 py-10">
+                <div className="mb-8 flex items-end justify-between">
+                    <div>
+                        <h1 className="text-3xl font-semibold tracking-tight">My vizzes</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">{vizzes.length} saved</p>
+                    </div>
+                    <Button asChild>
+                        <Link href="/">New viz</Link>
+                    </Button>
                 </div>
-            ) : (
-                <ul className="grid gap-3 sm:grid-cols-2">
-                    {vizzes.map((v) => (
-                        <li key={v.id}>
-                            <Link
-                                href={`/v/${v.id}/edit`}
-                                className="block rounded border border-neutral-800 bg-neutral-950 p-4 transition hover:border-neutral-700"
-                            >
-                                <div className="text-sm font-medium text-neutral-100">{v.title}</div>
-                                <div className="mt-1 text-xs text-neutral-500">
-                                    {v.id} · updated {new Date(v.updatedAt).toLocaleDateString()}
-                                </div>
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </main>
+
+                {vizzes.length === 0 ? (
+                    <div className="rounded-lg border border-dashed p-16 text-center text-muted-foreground">
+                        No vizzes yet.{' '}
+                        <Link href="/" className="text-foreground underline-offset-4 hover:underline">
+                            Create one
+                        </Link>
+                        .
+                    </div>
+                ) : (
+                    <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        {vizzes.map((v) => (
+                            <li key={v.id}>
+                                <VizCard id={v.id} title={v.title} updatedAt={v.updatedAt} />
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </main>
+        </div>
     );
 }

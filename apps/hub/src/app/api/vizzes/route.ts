@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     const body = (await req.json().catch(() => null)) as
-        | { title?: string; code?: string }
+        | { title?: string; code?: string; theme?: 'light' | 'dark' }
         | null;
     if (!body || typeof body.code !== 'string') {
         return NextResponse.json({ error: 'invalid body' }, { status: 400 });
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
         title: body.title?.slice(0, 200) || 'Untitled',
         codeTs: body.code,
         codeJs: result.code,
+        theme: body.theme === 'light' ? 'light' : 'dark',
     });
 
     return NextResponse.json({ id });

@@ -10,21 +10,21 @@ export function EmbedSnippet({ id }: { id: string }) {
     const iframe = `<iframe src="${url}" width="800" height="600" frameborder="0"></iframe>`;
 
     return (
-        <section>
-            <h2 className="mb-2 text-sm font-medium text-neutral-400">Embed</h2>
-            <div className="space-y-2">
-                <div>
-                    <div className="text-xs text-neutral-500">URL (paste into Notion Embed block)</div>
-                    <pre className="overflow-x-auto rounded border border-neutral-800 bg-neutral-950 p-3 text-xs text-neutral-300">
-                        {url || `…/embed/${id}`}
-                    </pre>
+        <section className="space-y-3">
+            <h2 className="text-sm font-medium text-muted-foreground">Embed</h2>
+            <div>
+                <div className="mb-1 text-xs text-muted-foreground">
+                    URL (paste into Notion Embed block)
                 </div>
-                <div>
-                    <div className="text-xs text-neutral-500">HTML iframe</div>
-                    <pre className="overflow-x-auto rounded border border-neutral-800 bg-neutral-950 p-3 text-xs text-neutral-300">
-                        {iframe}
-                    </pre>
-                </div>
+                <pre className="overflow-x-auto rounded-lg border bg-card p-3 font-mono text-xs">
+                    {url || `…/embed/${id}`}
+                </pre>
+            </div>
+            <div>
+                <div className="mb-1 text-xs text-muted-foreground">HTML iframe</div>
+                <pre className="overflow-x-auto rounded-lg border bg-card p-3 font-mono text-xs">
+                    {iframe}
+                </pre>
             </div>
         </section>
     );

@@ -8,6 +8,7 @@ export const vizzes = pgTable(
         title: text('title').notNull().default('Untitled'),
         codeTs: text('code_ts').notNull(),
         codeJs: text('code_js').notNull(),
+        theme: text('theme', { enum: ['light', 'dark'] }).notNull().default('dark'),
         forkedFrom: text('forked_from'),
         createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
         updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

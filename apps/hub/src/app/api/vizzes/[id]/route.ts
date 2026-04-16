@@ -22,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     }
 
     const body = (await req.json().catch(() => null)) as
-        | { title?: string; code?: string }
+        | { title?: string; code?: string; theme?: 'light' | 'dark' }
         | null;
     if (!body) {
         return NextResponse.json({ error: 'invalid body' }, { status: 400 });
@@ -32,6 +32,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         updatedAt: new Date(),
     };
     if (typeof body.title === 'string') update.title = body.title.slice(0, 200);
+    if (body.theme === 'light' || body.theme === 'dark') update.theme = body.theme;
     if (typeof body.code === 'string') {
         const result = await transpileTs(body.code);
         if (!result.ok) {
@@ -43,4 +44,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     await db.update(schema.vizzes).set(update).where(eq(schema.vizzes.id, id));
     return NextResponse.json({ id });
+}
+
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+    const { userId } = await auth();
+    if (!userId) {
+        return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const existing = await db.query.vizzes.findFirst({ where: eq(schema.vizzes.id, id) });
+    if (!existing) {
+        return NextResponse.json({ error: 'not found' }, { status: 404 });
+    }
+    if (existing.ownerId !== userId) {
+        return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    }
+
+    await db.delete(schema.vizzes).where(eq(schema.vizzes.id, id));
+    return NextResponse.json({ ok: true });
 }

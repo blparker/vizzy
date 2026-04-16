@@ -25,6 +25,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         title: source.title,
         codeTs: source.codeTs,
         codeJs: source.codeJs,
+        theme: source.theme,
         forkedFrom: source.id,
     });
 

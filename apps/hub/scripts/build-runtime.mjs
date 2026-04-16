@@ -20,7 +20,6 @@ export * from '@vizzyjs/renderer-canvas';
     outfile: resolve(root, 'public/vizzy-runtime.js'),
     sourcemap: true,
     minify: true,
-    external: ['katex'],
     logLevel: 'info',
 });
 

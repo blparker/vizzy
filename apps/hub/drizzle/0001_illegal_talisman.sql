@@ -1,0 +1,1 @@
+ALTER TABLE "vizzes" ADD COLUMN "theme" text DEFAULT 'dark' NOT NULL;

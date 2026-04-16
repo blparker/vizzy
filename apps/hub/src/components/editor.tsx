@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
 
 const Monaco = dynamic(() => import('@monaco-editor/react'), { ssr: false });
 
@@ -10,11 +11,14 @@ export interface EditorProps {
 }
 
 export function Editor({ value, onChange }: EditorProps) {
+    const { resolvedTheme } = useTheme();
+    const monacoTheme = resolvedTheme === 'light' ? 'vs' : 'vs-dark';
+
     return (
         <Monaco
             height="100%"
             defaultLanguage="typescript"
-            theme="vs-dark"
+            theme={monacoTheme}
             value={value}
             onChange={(v) => onChange(v ?? '')}
             options={{

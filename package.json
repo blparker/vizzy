@@ -1,26 +1,27 @@
 {
-  "name": "vizzyjs",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "pnpm -r build",
-    "test": "vitest",
-    "lint": "eslint packages/",
-    "typecheck": "tsc -b",
-    "playground": "pnpm --filter @vizzyjs/playground dev",
-    "docs": "pnpm --filter @vizzyjs/docs dev",
-    "release": "./scripts/release.sh"
-  },
-  "devDependencies": {
-    "@types/node": "^22.0.0",
-    "eslint": "^9.0.0",
-    "typescript": "^5.7.0",
-    "vite": "^6.0.0",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.0.0"
-  },
-  "engines": {
-    "node": ">=22",
-    "pnpm": ">=10"
-  }
+    "name": "vizzyjs",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "pnpm -r build",
+        "test": "vitest",
+        "lint": "eslint packages/",
+        "typecheck": "tsc -b",
+        "playground": "pnpm --filter @vizzyjs/playground dev",
+        "docs": "pnpm --filter @vizzyjs/docs dev",
+        "hub": "pnpm --filter @vizzyjs/hub dev",
+        "release": "./scripts/release.sh"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "eslint": "^9.0.0",
+        "typescript": "^5.7.0",
+        "vite": "^6.0.0",
+        "vite-plugin-dts": "^4.5.4",
+        "vitest": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=22",
+        "pnpm": ">=10"
+    }
 }

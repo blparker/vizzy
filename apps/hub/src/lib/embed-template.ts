@@ -7,12 +7,15 @@ function escapeHtml(s: string): string {
         .replace(/'/g, '&#039;');
 }
 
+export type EmbedTheme = 'light' | 'dark';
+
 export interface EmbedOptions {
     title: string;
     compiledJs: string;
     width?: number;
     height?: number;
     runtimeUrl?: string;
+    theme?: EmbedTheme;
 }
 
 export function renderEmbed({
@@ -21,7 +24,10 @@ export function renderEmbed({
     width = 800,
     height = 600,
     runtimeUrl = '/vizzy-runtime.js',
+    theme = 'dark',
 }: EmbedOptions): string {
+    const bg = theme === 'dark' ? '#0b0b0e' : '#ffffff';
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +36,7 @@ export function renderEmbed({
 <title>${escapeHtml(title)} · vizzy</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; height: 100%; background: #0b0b0e; }
+html, body { margin: 0; padding: 0; height: 100%; background: ${bg}; }
 body { display: flex; align-items: center; justify-content: center; overflow: hidden; }
 #c { display: block; max-width: 100%; max-height: 100%; }
 </style>
@@ -40,7 +46,7 @@ body { display: flex; align-items: center; justify-content: center; overflow: hi
 <script type="module">
 import * as vizzy from ${JSON.stringify(runtimeUrl)};
 const canvas = document.getElementById('c');
-const scene = vizzy.createScene(canvas);
+const scene = vizzy.createScene(canvas, { theme: ${JSON.stringify(theme)} });
 Object.assign(globalThis, { vizzy, scene });
 const { add, play, wait, grid, render } = scene;
 (async () => {

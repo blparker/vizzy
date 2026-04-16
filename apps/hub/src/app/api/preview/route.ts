@@ -1,18 +1,12 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { transpileTs } from '@/lib/transpile';
-import { renderEmbed } from '@/lib/embed-template';
+import { renderEmbed, type EmbedTheme } from '@/lib/embed-template';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
-    const { userId } = await auth();
-    if (!userId) {
-        return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-    }
-
     const body = (await req.json().catch(() => null)) as
-        | { title?: string; code?: string }
+        | { title?: string; code?: string; theme?: EmbedTheme }
         | null;
     if (!body || typeof body.code !== 'string') {
         return NextResponse.json({ error: 'invalid body' }, { status: 400 });
@@ -23,9 +17,13 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: false, errors: result.errors });
     }
 
+    const origin = new URL(req.url).origin;
+
     const html = renderEmbed({
         title: body.title ?? 'preview',
         compiledJs: result.code,
+        theme: body.theme === 'light' ? 'light' : 'dark',
+        runtimeUrl: `${origin}/vizzy-runtime.js`,
     });
 
     return NextResponse.json({ ok: true, html });

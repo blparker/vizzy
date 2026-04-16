@@ -16,5 +16,12 @@ export default async function VizEditPage({ params }: Props) {
     const { userId } = await auth();
     if (userId !== viz.ownerId) redirect(`/v/${viz.id}`);
 
-    return <VizEditorPage initialId={viz.id} initialTitle={viz.title} initialCode={viz.codeTs} />;
+    return (
+        <VizEditorPage
+            isAuthed
+            initialId={viz.id}
+            initialTitle={viz.title}
+            initialCode={viz.codeTs}
+        />
+    );
 }

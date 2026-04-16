@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { ClerkProvider } from '@clerk/nextjs';
+import { Geist } from 'next/font/google';
+import { cn } from '@/lib/utils';
+import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
     title: 'vizzy hub',
@@ -10,8 +15,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <ClerkProvider>
-            <html lang="en">
-                <body>{children}</body>
+            <html lang="en" className={cn('font-sans', geist.variable)} suppressHydrationWarning>
+                <body>
+                    <ThemeProvider>{children}</ThemeProvider>
+                </body>
             </html>
         </ClerkProvider>
     );

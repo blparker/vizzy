@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 
 export interface VizPreviewProps {
     code: string;
@@ -15,9 +16,11 @@ interface PreviewError {
 }
 
 export function VizPreview({ code, title, debounceMs = 400 }: VizPreviewProps) {
-    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const { resolvedTheme } = useTheme();
+    const [srcDoc, setSrcDoc] = useState<string | undefined>(undefined);
     const [errors, setErrors] = useState<PreviewError[]>([]);
     const [loading, setLoading] = useState(false);
+    const theme = resolvedTheme === 'light' ? 'light' : 'dark';
 
     useEffect(() => {
         const handle = setTimeout(async () => {
@@ -26,7 +29,7 @@ export function VizPreview({ code, title, debounceMs = 400 }: VizPreviewProps) {
                 const res = await fetch('/api/preview', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code, title }),
+                    body: JSON.stringify({ code, title, theme }),
                 });
                 const data = await res.json();
                 if (!data.ok) {
@@ -40,9 +43,7 @@ export function VizPreview({ code, title, debounceMs = 400 }: VizPreviewProps) {
                     return;
                 }
                 setErrors([]);
-                if (iframeRef.current) {
-                    iframeRef.current.srcdoc = data.html;
-                }
+                setSrcDoc(data.html);
             } catch (err) {
                 setErrors([{ text: String(err) }]);
             } finally {
@@ -50,23 +51,23 @@ export function VizPreview({ code, title, debounceMs = 400 }: VizPreviewProps) {
             }
         }, debounceMs);
         return () => clearTimeout(handle);
-    }, [code, title, debounceMs]);
+    }, [code, title, theme, debounceMs]);
 
     return (
-        <div className="relative flex h-full w-full flex-col">
+        <div className="relative flex h-full w-full flex-col bg-muted/30">
             <iframe
-                ref={iframeRef}
-                className="h-full w-full flex-1 border-0 bg-[#0b0b0e]"
-                sandbox="allow-scripts"
+                srcDoc={srcDoc}
+                className="h-full w-full flex-1 border-0"
+                sandbox="allow-scripts allow-same-origin"
                 title="viz preview"
             />
             {loading && (
-                <div className="pointer-events-none absolute right-2 top-2 rounded bg-black/60 px-2 py-1 text-xs text-neutral-400">
+                <div className="pointer-events-none absolute right-2 top-2 rounded bg-background/80 px-2 py-1 text-xs text-muted-foreground backdrop-blur">
                     compiling…
                 </div>
             )}
             {errors.length > 0 && (
-                <div className="max-h-40 overflow-auto border-t border-red-900/50 bg-red-950/40 p-3 font-mono text-xs text-red-300">
+                <div className="max-h-40 overflow-auto border-t border-destructive/40 bg-destructive/10 p-3 font-mono text-xs text-destructive">
                     {errors.map((e, i) => (
                         <div key={i}>
                             {e.line != null ? `[${e.line}:${e.column ?? 0}] ` : ''}

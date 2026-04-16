@@ -1,18 +1,27 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import Link from 'next/link';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Editor } from './editor';
 import { VizPreview } from './viz-preview';
 
+const DRAFT_KEY = 'vizzy-hub:draft';
+
 export interface VizEditorPageProps {
+    isAuthed: boolean;
     initialId?: string;
     initialTitle: string;
     initialCode: string;
 }
 
-const DEFAULT_CODE = `// Write your vizzy scene here.
-// Available: scene (with add/play/wait/grid/render), and everything from @vizzyjs/core via the \`vizzy\` global.
+const DEFAULT_CODE = `// Welcome to vizzy hub. Write a scene and see it render on the right.
+// \`scene\` (add/play/wait/grid/render) and \`vizzy\` (all of @vizzyjs/core) are injected.
 
 grid();
 
@@ -22,22 +31,53 @@ add(c);
 await play(vizzy.fadeIn(c));
 `;
 
-export function VizEditorPage({ initialId, initialTitle, initialCode }: VizEditorPageProps) {
+export function VizEditorPage({
+    isAuthed,
+    initialId,
+    initialTitle,
+    initialCode,
+}: VizEditorPageProps) {
     const router = useRouter();
+    const { resolvedTheme } = useTheme();
     const [title, setTitle] = useState(initialTitle);
     const [code, setCode] = useState(initialCode || DEFAULT_CODE);
     const [saving, startSaving] = useTransition();
     const [saveError, setSaveError] = useState<string | null>(null);
+    const hydratedRef = useRef(false);
+
+    useEffect(() => {
+        if (initialId || hydratedRef.current) return;
+        hydratedRef.current = true;
+        try {
+            const raw = localStorage.getItem(DRAFT_KEY);
+            if (!raw) return;
+            const draft = JSON.parse(raw) as { title?: string; code?: string };
+            if (draft.code) setCode(draft.code);
+            if (draft.title) setTitle(draft.title);
+        } catch {
+            // ignore
+        }
+    }, [initialId]);
+
+    useEffect(() => {
+        if (initialId) return;
+        try {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify({ title, code }));
+        } catch {
+            // ignore
+        }
+    }, [title, code, initialId]);
 
     const onSave = () => {
         setSaveError(null);
         startSaving(async () => {
             const url = initialId ? `/api/vizzes/${initialId}` : '/api/vizzes';
             const method = initialId ? 'PATCH' : 'POST';
+            const theme = resolvedTheme === 'light' ? 'light' : 'dark';
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, code }),
+                body: JSON.stringify({ title, code, theme }),
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) {
@@ -45,40 +85,76 @@ export function VizEditorPage({ initialId, initialTitle, initialCode }: VizEdito
                 return;
             }
             const id = data.id ?? initialId;
-            if (!initialId && id) router.push(`/v/${id}/edit`);
-            else router.refresh();
+            if (!initialId && id) {
+                try {
+                    localStorage.removeItem(DRAFT_KEY);
+                } catch {
+                    /* noop */
+                }
+                router.push(`/v/${id}/edit`);
+            } else {
+                router.refresh();
+            }
         });
     };
 
     return (
-        <div className="flex h-screen flex-col">
-            <header className="flex items-center gap-3 border-b border-neutral-800 bg-neutral-950 px-4 py-2">
-                <input
+        <div className="flex h-screen flex-col bg-background text-foreground">
+            <header className="flex items-center gap-3 border-b px-5 py-3">
+                <Link
+                    href="/"
+                    className="text-base font-semibold tracking-tight hover:text-foreground/80"
+                >
+                    vizzy hub
+                </Link>
+                <span className="text-muted-foreground/50">/</span>
+                <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Untitled viz"
-                    className="flex-1 bg-transparent text-sm text-neutral-100 outline-none placeholder:text-neutral-500"
+                    className="h-9 max-w-xs border-none bg-transparent shadow-none focus-visible:ring-0"
                 />
-                {saveError && <span className="text-xs text-red-400">{saveError}</span>}
-                <button
-                    onClick={onSave}
-                    disabled={saving}
-                    className="rounded bg-sky-600 px-3 py-1 text-sm font-medium text-white hover:bg-sky-500 disabled:opacity-50"
-                >
-                    {saving ? 'Saving…' : initialId ? 'Save' : 'Create'}
-                </button>
-                {initialId && (
-                    <a
-                        href={`/v/${initialId}`}
-                        className="text-xs text-neutral-400 hover:text-neutral-200"
-                        target="_blank"
-                    >
-                        view
-                    </a>
+                <div className="flex-1" />
+                {saveError && <span className="text-xs text-destructive">{saveError}</span>}
+
+                {isAuthed ? (
+                    <>
+                        <Button onClick={onSave} disabled={saving}>
+                            {saving ? 'Saving…' : initialId ? 'Save' : 'Create'}
+                        </Button>
+                        {initialId && (
+                            <Button asChild variant="ghost">
+                                <a href={`/v/${initialId}`} target="_blank" rel="noreferrer">
+                                    View
+                                </a>
+                            </Button>
+                        )}
+                        <Button asChild variant="ghost">
+                            <Link href="/dashboard">My vizzes</Link>
+                        </Button>
+                        <ThemeToggle />
+                        <SignedIn>
+                            <UserButton afterSignOutUrl="/" />
+                        </SignedIn>
+                    </>
+                ) : (
+                    <SignedOut>
+                        <SignUpButton
+                            mode="modal"
+                            forceRedirectUrl="/"
+                            signInForceRedirectUrl="/"
+                        >
+                            <Button>Sign up to save</Button>
+                        </SignUpButton>
+                        <SignInButton mode="modal" forceRedirectUrl="/">
+                            <Button variant="ghost">Sign in</Button>
+                        </SignInButton>
+                        <ThemeToggle />
+                    </SignedOut>
                 )}
             </header>
             <div className="grid flex-1 grid-cols-2 overflow-hidden">
-                <div className="border-r border-neutral-800">
+                <div className="border-r">
                     <Editor value={code} onChange={setCode} />
                 </div>
                 <VizPreview code={code} title={title} />

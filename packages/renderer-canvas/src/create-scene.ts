@@ -57,6 +57,19 @@ export function createScene(
         pixelHeight: displayHeight,
     });
 
+    // Auto-render via microtask batching: multiple add/remove/grid calls
+    // in the same synchronous block produce only one render.
+    let renderQueued = false;
+    function queueRender() {
+        if (!renderQueued) {
+            renderQueued = true;
+            queueMicrotask(() => {
+                renderQueued = false;
+                scene.render(renderer);
+            });
+        }
+    }
+
     function addShapes(...shapes: Shape[]): Shape | Shape[] {
         scene.add(...shapes);
         for (const shape of shapes) {
@@ -64,6 +77,7 @@ export function createScene(
                 shape.frameCamera(scene.camera);
             }
         }
+        queueRender();
         return shapes.length === 1 ? shapes[0]! : shapes;
     }
 
@@ -72,6 +86,7 @@ export function createScene(
         add: addShapes as BoundScene['add'],
         remove(shape: Shape) {
             scene.remove(shape);
+            queueRender();
             return bound;
         },
         moveToFront(shape: Shape) {
@@ -88,6 +103,7 @@ export function createScene(
         grid(props?: Omit<GridProps, 'camera'>) {
             const g = createGrid({ ...props, camera: scene.camera });
             scene.add(g);
+            queueRender();
             return g;
         },
 

@@ -12,16 +12,17 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
-# Bump version in all publishable packages
+# Bump version in all packages (public and private move in lock step)
 NEW_VERSION=$(cd packages/core && npm version "$BUMP" --no-git-tag-version | tr -d 'v')
-cd packages/renderer-canvas && npm version "$BUMP" --no-git-tag-version > /dev/null
-cd ../..
-cd packages/react && npm version "$BUMP" --no-git-tag-version > /dev/null
-cd ../..
+for pkg in packages/renderer-canvas packages/react packages/docs packages/playground apps/hub; do
+    if [ -d "$pkg" ]; then
+        cd "$pkg" && npm version "$BUMP" --no-git-tag-version > /dev/null
+        cd - > /dev/null
+    fi
+done
 
-# Update peer dep ranges to match new core version
+# Update peer dep ranges to match new version
 MAJOR=$(echo "$NEW_VERSION" | cut -d. -f1)
-MINOR=$(echo "$NEW_VERSION" | cut -d. -f2)
 if [ "$MAJOR" -eq 0 ]; then
     PEER_RANGE="^${NEW_VERSION}"
 else
@@ -49,7 +50,7 @@ echo "Bumped to v${NEW_VERSION}"
 echo "Building..."
 pnpm build
 
-# Publish
+# Publish public packages
 echo "Publishing @vizzyjs/core@${NEW_VERSION}..."
 pnpm --filter @vizzyjs/core publish --no-git-checks
 
@@ -60,7 +61,7 @@ echo "Publishing @vizzyjs/react@${NEW_VERSION}..."
 pnpm --filter @vizzyjs/react publish --no-git-checks
 
 # Commit and tag
-git add packages/core/package.json packages/renderer-canvas/package.json packages/react/package.json
+git add -A
 git commit -m "v${NEW_VERSION}"
 git tag "v${NEW_VERSION}"
 

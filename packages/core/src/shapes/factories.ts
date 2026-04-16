@@ -77,6 +77,61 @@ export function arc(props?: ArcProps): ArcShape {
     return new ArcShape(props);
 }
 
+export interface ArcBetweenPointsProps {
+    start: Vec2;
+    end: Vec2;
+    angle?: number;
+    style?: Style;
+    color?: ColorLike;
+}
+
+export function arcBetweenPoints(props: ArcBetweenPointsProps): ArcShape {
+    const { start, end } = props;
+    const bendAngle = props.angle ?? Math.PI / 2;
+
+    const mx = (start[0] + end[0]) / 2;
+    const my = (start[1] + end[1]) / 2;
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Radius from chord length and bend angle
+    const radius = dist / (2 * Math.sin(Math.abs(bendAngle) / 2));
+
+    // Center of the arc circle: offset from midpoint perpendicular to the chord
+    const perpDist = radius * Math.cos(Math.abs(bendAngle) / 2);
+    const sign = bendAngle > 0 ? 1 : -1;
+    const nx = -dy / dist * sign;
+    const ny = dx / dist * sign;
+    const cx = mx + nx * perpDist;
+    const cy = my + ny * perpDist;
+
+    // Compute start and end angles on this circle
+    const startAngle = Math.atan2(start[1] - cy, start[0] - cx);
+    let endAngle = Math.atan2(end[1] - cy, end[0] - cx);
+
+    // Ensure the arc goes the right direction
+    if (bendAngle > 0) {
+        while (endAngle < startAngle) endAngle += Math.PI * 2;
+    } else {
+        while (endAngle > startAngle) endAngle -= Math.PI * 2;
+    }
+
+    const style = props.color
+        ? { ...colorToStyle(props.color), ...props.style }
+        : props.style;
+
+    const a = new ArcShape({
+        center: [cx, cy],
+        radius,
+        startAngle,
+        endAngle,
+        style,
+    });
+
+    return a;
+}
+
 export function text(props?: TextProps): TextShape {
     return new TextShape(props);
 }

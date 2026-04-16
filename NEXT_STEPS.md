@@ -2,38 +2,15 @@
 
 ## High Priority
 
-### API Ergonomics Improvements
-- **Z-ordering**: add `moveToFront(shape)` / `moveToBack(shape)` on BoundScene, or `zIndex` on Shape
-- **`ax.plot(fn, opts?)`**: convenience method on Axes that creates + adds a FunctionGraph (like manim)
-- **Simpler point creation**: `point(position, opts?)` overload or `ax.point([x, y], opts?)`
-- **`label(shape, content, direction?)`**: auto-positioned text label near a shape, using `nextTo` logic
-- **Mutable line endpoints**: encourage updating `line.start`/`line.end` + re-render instead of remove/add dance
-
-### Low-Hanging Fruit Shapes
-Trivial factory wrappers (no new classes needed):
-- `square(size, opts?)` — rect with equal width/height
-- `ellipse(rx, ry, opts?)` — scaled circle
-- `doubleArrow(start, end, opts?)` — arrow with tips on both ends
-- `rightAngle(vertex, p1, p2, opts?)` — small square instead of arc
-- `star(points, outerRadius, innerRadius, opts?)` — star polygon
-- `vector(direction, opts?)` — arrow from origin
-- `curvedArrow(start, end, opts?)` — arc with arrowhead
-
-Small new shapes:
+### Quick-Win Shapes
 - `ParametricCurve` — plot `(x(t), y(t))` on Axes
 - `Sector` — filled arc wedge
 - `Annulus` — ring/donut shape
 - `ArcBetweenPoints` — arc connecting two arbitrary points
-- `SurroundingRectangle` — auto-sized rect that surrounds a shape with padding
 - `Cross` — X mark through a shape
 - `Underline` — line under a shape
-- `NumberPlane` — combined grid + axes (merge our `grid()` and `axes()`)
+- `NumberPlane` — combined grid + axes
 - `BarChart` — bars on axes
-
-### Showcase Examples
-- More calculus: area under curve (Riemann sums), derivative visualization
-- Parametric curves gallery (spirals, Lissajous, cardioid)
-- Interactive function explorer (drag coefficients, see curve change)
 
 ### Shape Morphing / Transform Animation
 - Manim's `Transform(square, circle)` that morphs one shape into another
@@ -41,6 +18,11 @@ Small new shapes:
 - `PathShape` already exists — shapes need `toPath()` methods returning PathCommands
 - Every shape returns cubic bezier segments, morph lerps control points
 - This is the single biggest animation feature missing
+
+### Showcase Examples
+- More calculus: area under curve (Riemann sums), derivative visualization
+- Parametric curves gallery (spirals, Lissajous, cardioid)
+- Interactive function explorer (drag coefficients, see curve change)
 
 ## Medium Priority
 

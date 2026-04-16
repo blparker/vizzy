@@ -42,13 +42,15 @@ export const moreShapes: Example = {
     add(curvedArrow({ start: [1, 0.5], end: [3.5, 0.5], angle: Math.PI / 4, style: { stroke: violet } }));
     add(text({ content: 'curved arrow', position: [2.25, -0.7], style: { fill: white, fontSize: 0.18 } }));
 
-    // Line label
-    const lStart = [4.5, 0.3];
-    const lEnd = [6.5, -0.5];
-    add(line({ start: lStart, end: lEnd, style: { stroke: sky } }));
-    add(point({ position: lStart, color: sky }));
-    add(point({ position: lEnd, color: sky }));
-    add(lineLabel({ start: lStart, end: lEnd, content: 'd = 2.7', offset: 0.3, style: { fill: sky, fontSize: 0.18 } }));
+    // Arc between points — various bend angles
+    const a1 = [5, 0.5];
+    const a2 = [6.5, 0.5];
+    add(point({ position: a1, color: white }));
+    add(point({ position: a2, color: white }));
+    add(arcBetweenPoints({ start: a1, end: a2, angle: Math.PI / 3, color: sky }));
+    add(arcBetweenPoints({ start: a1, end: a2, angle: Math.PI, color: orange }));
+    add(arcBetweenPoints({ start: a1, end: a2, angle: -Math.PI / 4, color: red }));
+    add(text({ content: 'arc between', position: [5.75, -0.7], style: { fill: white, fontSize: 0.18 } }));
 
     // --- Row 3: ax.plot convenience ---
 

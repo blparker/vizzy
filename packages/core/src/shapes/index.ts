@@ -22,7 +22,7 @@ export {
     brace, angleShape, point, dashedLine, lineThrough, tangentLine,
     edgeLabel, lineLabel, braceOver, braceBetween,
     label, square, ellipse, doubleArrow, vector, star,
-    rightAngle, curvedArrow, surroundingRectangle,
+    rightAngle, curvedArrow, surroundingRectangle, arcBetweenPoints,
     group,
     type DotProps, type DashedLineProps, type LineThroughProps, type TangentLineProps,
     type EdgePosition, type EdgeLabelProps, type LineLabelProps,
@@ -30,4 +30,5 @@ export {
     type Direction, type LabelProps, type SquareProps, type EllipseProps,
     type DoubleArrowProps, type VectorProps, type StarProps,
     type RightAngleProps, type CurvedArrowProps, type SurroundingRectangleProps,
+    type ArcBetweenPointsProps,
 } from './factories';

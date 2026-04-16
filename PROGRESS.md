@@ -34,6 +34,7 @@
 - `Shape` (abstract base) — id, type, style, transform (Mat3), parent pointer, visible flag
   - Bounding box getters: `center`, `top`, `bottom`, `left`, `right`, `width`, `height` (world-space, via abstract `getBounds()`)
   - `getPathLength()` — approximate path length for draw-on animations (overridden per shape)
+  - `setStyle(updates)` — chainable partial style updates
   - Positioning: `moveTo(target)`, `shift(delta)`, `nextTo(other, direction, buffer)`
   - Transforms: `translate(x, y)`, `rotate(angle)`, `scale(sx, sy)`, `setPosition(x, y)`
 - `CircleShape` — localCenter, radius
@@ -45,14 +46,19 @@
 - `TextShape` — content (mutable), position. Defaults: fill white, no stroke, monospace font. Uses `OffscreenCanvas` for accurate `getBounds()`
 - `TexShape` — content (LaTeX string), position. Has `measuredBounds` field populated by renderer after rasterization
 - `ArrowShape` (extends Group) — start, end, tipSize. Manages internal Line + triangle Polygon.
-- `Group` — children array, add/remove/clear. `getBounds()` is union of transformed child bounds.
+- `Group` — children array, add/remove/clear/moveToFront/moveToBack. `getBounds()` is union of transformed child bounds. `arrange(direction, buff)` for auto-layout (horizontal/vertical with spacing).
 - `NumberLine` (extends Group) — range [min, max, step], ticks, labels (with `labelRotation` for y-axis upright text), arrow tips, `numberToPoint()`/`n2p()` for coordinate conversion
 - `Axes` (extends Group) — two NumberLines (x horizontal, y rotated 90° with counter-rotated labels). `coordToPoint()`/`c2p()` and `pointToCoord()`/`p2c()` for coordinate conversion. Per-axis option overrides via `xAxis`/`yAxis`. Smart axis label positioning (`xLabel`/`yLabel`) adapts based on range. Auto-frames camera when added to scene (`autoFrame` default true). Origin-aligned: coordinate (0,0) maps to local-space (0,0).
 - `FunctionGraph` (extends Group) — plots `y = f(x)` on an Axes. Samples function, handles discontinuities (NaN/Infinity/large jumps break into separate polyline segments, declared discontinuities with open/filled circle markers). `setFunction(fn)` for live updates.
 - `BraceShape` (extends PathShape) — curly brace annotation using 4 bezier segments. Filled shape with proper thickness and pointed tip. Configurable `sharpness`.
-- `AngleShape` (extends Group) — arc between two directions from a vertex with optional label.
+- `AngleShape` (extends Group) — arc between two directions from a vertex with optional label. `AngleShape.fromLines()` accepts two LineShape objects (computes intersection).
 - `grid()` factory — creates Group of lines for coordinate grid. Accepts camera for auto-sizing to viewport. Emphasized axis lines.
-- Factory functions: `circle()`, `rect()`, `line()`, `polygon()`, `regularPolygon()`, `triangle()`, `arc()`, `text()`, `tex()`, `arrow()`, `numberLine()`, `axes()`, `functionGraph()`, `brace()`, `angleShape()`, `point()`, `dashedLine()`, `lineThrough()`, `tangentLine()`, `edgeLabel()`, `braceOver()`, `braceBetween()`, `group()`
+- Factory functions (all support `color` shorthand where applicable):
+  - Core: `circle()`, `rect()`, `line(p1, p2)`, `polygon()`, `regularPolygon()`, `triangle()`, `arc()`, `text()`, `tex()`, `arrow(p1, p2)`, `group()`
+  - Convenience: `square()`, `ellipse()`, `point()`, `dashedLine()`, `star()`, `vector()`, `doubleArrow()`, `curvedArrow()`, `rightAngle()`, `surroundingRectangle()`
+  - Coordinate: `numberLine()`, `axes()`, `functionGraph()`, `tangentLine()`, `lineThrough()`
+  - Annotation: `edgeLabel()`, `lineLabel()`, `label(shape, content, direction)`, `brace()`, `braceOver()`, `braceBetween()`, `angleShape()`
+- `line()` and `arrow()` support positional arg shorthand: `line([0,0], [1,1])`, `arrow([0,0], [2,1], { color: red })`
 
 **Animation system** (`src/animation/`):
 - `Animation` interface — `begin()`, `update(t)`, `finish()` lifecycle with duration, easing, targets
@@ -110,15 +116,16 @@
   - Automatic cursor management (grab/grabbing/pointer)
   - Each method returns an unsubscribe function
   - Auto-renders after any state change
-- `createScene(canvas, opts)` — returns `BoundScene` with destructurable `add`, `remove`, `render`, `grid`, `play`, `wait`, `controls`, `interact`, `scene`
+- `createScene(canvas, opts)` — returns `BoundScene` with destructurable `add`, `remove`, `moveToFront`, `moveToBack`, `render`, `grid`, `play`, `wait`, `controls`, `interact`, `scene`
   - `add()` returns the shape (single arg) or typed tuple (2-5 args) for inline usage
+  - `moveToFront(shape)` / `moveToBack(shape)` for z-ordering without remove/add dance
   - Auto-detects `Axes` shapes and frames the camera to fit
 - `renderScene(canvas, opts, callback)` — one-shot convenience
 
 ### Playground (`packages/playground`)
 
 - Monaco editor with TypeScript syntax highlighting (semantic validation disabled)
-- Example gallery: Blank Canvas, Shapes, Animations, Text + Animation, Interactive, Draggable, Function Plot, Calculus, First Quadrant, Annotations, Number Lines, TeX Formulas, Logo
+- Example gallery: Blank Canvas, Shapes, Animations, Text + Animation, Interactive, Draggable, Function Plot, Calculus, Secant → Tangent, First Quadrant, Annotations, More Shapes, Number Lines, TeX Formulas, Logo
 - Live code execution via `new Function()` with all vimath exports injected
 - Supports async examples via `AsyncFunction` constructor (detected by presence of `await`)
 - Two coding patterns: `export default function({ add, grid })` (auto-wrapped) or direct `createScene(canvas, ...)` (supports async)

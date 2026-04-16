@@ -2,10 +2,13 @@
 
 ## High Priority
 
+### Showcase Examples
+- Secant-to-tangent animation (P→Q limit visualization) — all primitives exist, needs an example combining axes, lineThrough, during, animateMoveTo, point
+- More calculus examples: area under curve (Riemann sums), derivative visualization
+
 ### More Shapes
 - `ParametricCurve` — plot `(x(t), y(t))` parametric curves on Axes
 - `VectorField` — grid of arrows showing vector field `(dx, dy) = f(x, y)`
-- `Angle` — arc showing angle between two lines with optional label
 - `Sector` — filled arc/pie slice
 - `Annulus` — ring shape (donut)
 - `CurveLabel` — text that follows along a curve
@@ -14,17 +17,14 @@
 ### Shape Morphing / Transform Animation
 - Manim's `Transform(square, circle)` that morphs one shape into another
 - Requires `toPath()` bezier representation for each shape
+- `PathShape` already exists — shapes need `toPath()` methods that return PathCommands
 - Every shape returns cubic bezier segments, morph lerps control points
-- Also enables generic rendering fallback for custom shapes
 - This is the single biggest animation feature missing
 
-### Path Representation (`toPath()`)
-- Prerequisite for shape morphing
-- `CircleShape.toPath()` → 4 cubic bezier arcs
-- `RectShape.toPath()` → 4 line segments (with optional corner arcs)
-- `PolygonShape.toPath()` → line segments between points
-- `ArcShape.toPath()` → cubic bezier arc approximation
-- `FunctionGraph` already produces point arrays — convert to smoothed bezier
+### Annotation Improvements
+- Edge labels for line segments (annotate triangle sides, etc.)
+- Brace tip pinch refinement (outer contour meets slightly at center)
+- Label collision avoidance (auto-offset when labels overlap)
 
 ## Medium Priority
 
@@ -88,3 +88,5 @@
 - **Grid auto-sizing**: Grid accepts camera for viewport-aware sizing. Could be more automatic (scene-level grid that always fills).
 - **Canvas DPR handling**: Currently reads `canvas.width`/`canvas.height` HTML attributes as display size. Works but fragile if users set canvas size via CSS instead of attributes.
 - **TeX dynamic content**: Currently TeX is static (async rasterization pipeline). Regular `TextShape` works for dynamic labels. Revisit when canvas-direct TeX rendering is implemented.
+- **Brace shape**: Uses PathShape with 4 bezier segments. Looks good but has a slight pinch where outer contour halves meet at center. Could be refined with a 5th segment bridging the top.
+- **Playground examples as strings**: Works but no IDE support inside template literals. Consider `?raw` imports for real `.ts` files.

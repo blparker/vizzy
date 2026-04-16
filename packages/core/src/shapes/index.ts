@@ -22,5 +22,7 @@ export {
     brace, angleShape, point, dashedLine, lineThrough, tangentLine,
     edgeLabel, braceOver, braceBetween, group,
     type DotProps, type DashedLineProps, type LineThroughProps, type TangentLineProps,
-    type EdgePosition, type EdgeLabelProps, type BraceOverProps, type BraceBetweenProps,
+    type EdgePosition, type EdgeLabelProps, type LineLabelProps,
+    type BraceOverProps, type BraceBetweenProps,
+    lineLabel,
 } from './factories';

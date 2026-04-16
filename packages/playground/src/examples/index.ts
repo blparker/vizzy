@@ -7,6 +7,7 @@ import { interactive } from './interactive';
 import { draggable } from './draggable';
 import { functionPlot } from './function-plot';
 import { calculus } from './calculus';
+import { secantTangent } from './secant-tangent';
 import { firstQuadrant } from './first-quadrant';
 import { annotations } from './annotations';
 import { numberLines } from './number-lines';
@@ -22,6 +23,7 @@ export const examples: Example[] = [
     draggable,
     functionPlot,
     calculus,
+    secantTangent,
     firstQuadrant,
     annotations,
     numberLines,

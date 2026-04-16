@@ -6,8 +6,8 @@
 - **Coordinate system**: 14x8 world units (configurable), origin center, Y-up. Height is fixed, width adapts to canvas aspect ratio via `min(scaleX, scaleY)`
 - **Render model**: Visitor pattern — shapes are data, renderer walks the scene graph. Core owns traversal + transform/style composition. Renderer just draws.
 - **Scene model**: Retained scene graph. Animation loop via requestAnimationFrame, idle when no animations active.
-- **Shape taxonomy**: Shallow hierarchy — abstract `Shape` base class, thin concrete classes, `Group` for composites
-- **API style**: Hybrid — functional factories (`circle()`, `rect()`) as primary API, with `createScene`/`renderScene` convenience wrappers. BoundScene returns destructurable `add`, `play`, `wait`, `controls`, `interact`, `render`, `grid`.
+- **Shape taxonomy**: Shallow hierarchy — abstract `Shape` base class, thin concrete classes, `Group` for composites, `PathShape` for native bezier curves
+- **API style**: Hybrid — functional factories (`circle()`, `rect()`) as primary API, with `createScene`/`renderScene` convenience wrappers. BoundScene returns destructurable `add`, `play`, `wait`, `controls`, `interact`, `render`, `grid`, `scene`.
 - **Extensibility**: `ShapeType` is open (`string`). Renderer has `drawShape()` fallback for unknown types. Third-party shapes just extend `Shape`.
 
 ## What's Built
@@ -41,16 +41,18 @@
 - `LineShape` — start, end
 - `PolygonShape` — points[], closed
 - `ArcShape` — localCenter, radius, startAngle, endAngle
+- `PathShape` — native bezier path commands (M, L, C, Z). Rendered with `ctx.bezierCurveTo()` for perfectly smooth curves. Builder API: `.M()`, `.L()`, `.C()`, `.Z()`.
 - `TextShape` — content (mutable), position. Defaults: fill white, no stroke, monospace font. Uses `OffscreenCanvas` for accurate `getBounds()`
 - `TexShape` — content (LaTeX string), position. Has `measuredBounds` field populated by renderer after rasterization
 - `ArrowShape` (extends Group) — start, end, tipSize. Manages internal Line + triangle Polygon.
 - `Group` — children array, add/remove/clear. `getBounds()` is union of transformed child bounds.
-- `NumberLine` (extends Group) — range [min, max, step], ticks, labels, arrow tips, `numberToPoint()`/`n2p()` for coordinate conversion
-- `Axes` (extends Group) — two NumberLines (x horizontal, y rotated 90°). `coordToPoint()`/`c2p()` and `pointToCoord()`/`p2c()` for coordinate conversion. Per-axis option overrides via `xAxis`/`yAxis`.
-- `FunctionGraph` (extends Group) — plots `y = f(x)` on an Axes. Samples function, handles discontinuities (NaN/Infinity/large jumps break into separate polyline segments). `setFunction(fn)` for live updates.
-- `BraceShape` (extends PolygonShape) — curly brace annotation between two points.
+- `NumberLine` (extends Group) — range [min, max, step], ticks, labels (with `labelRotation` for y-axis upright text), arrow tips, `numberToPoint()`/`n2p()` for coordinate conversion
+- `Axes` (extends Group) — two NumberLines (x horizontal, y rotated 90° with counter-rotated labels). `coordToPoint()`/`c2p()` and `pointToCoord()`/`p2c()` for coordinate conversion. Per-axis option overrides via `xAxis`/`yAxis`. Smart axis label positioning (`xLabel`/`yLabel`) adapts based on range. Auto-frames camera when added to scene (`autoFrame` default true). Origin-aligned: coordinate (0,0) maps to local-space (0,0).
+- `FunctionGraph` (extends Group) — plots `y = f(x)` on an Axes. Samples function, handles discontinuities (NaN/Infinity/large jumps break into separate polyline segments, declared discontinuities with open/filled circle markers). `setFunction(fn)` for live updates.
+- `BraceShape` (extends PathShape) — curly brace annotation using 4 bezier segments. Filled shape with proper thickness and pointed tip. Configurable `sharpness`.
+- `AngleShape` (extends Group) — arc between two directions from a vertex with optional label.
 - `grid()` factory — creates Group of lines for coordinate grid. Accepts camera for auto-sizing to viewport. Emphasized axis lines.
-- Factory functions: `circle()`, `rect()`, `line()`, `polygon()`, `regularPolygon()`, `triangle()`, `arc()`, `text()`, `tex()`, `arrow()`, `numberLine()`, `axes()`, `functionGraph()`, `brace()`, `point()`, `dashedLine()`, `group()`
+- Factory functions: `circle()`, `rect()`, `line()`, `polygon()`, `regularPolygon()`, `triangle()`, `arc()`, `text()`, `tex()`, `arrow()`, `numberLine()`, `axes()`, `functionGraph()`, `brace()`, `angleShape()`, `point()`, `dashedLine()`, `lineThrough()`, `tangentLine()`, `edgeLabel()`, `braceOver()`, `braceBetween()`, `group()`
 
 **Animation system** (`src/animation/`):
 - `Animation` interface — `begin()`, `update(t)`, `finish()` lifecycle with duration, easing, targets
@@ -76,17 +78,18 @@
 - `hitTest()` — returns topmost hit shape
 
 **Scene** (`src/scene/`):
-- `Camera` — worldWidth (14), worldHeight (8), pixelWidth, pixelHeight. `getWorldToPixel()` / `getPixelToWorld()`. `visibleWidth` / `visibleHeight` for letterbox-aware bounds.
+- `Camera` — worldWidth (14), worldHeight (8), pixelWidth, pixelHeight (all mutable). `getWorldToPixel()` / `getPixelToWorld()`. `visibleWidth` / `visibleHeight` for letterbox-aware bounds.
 - `Scene` — root Group, camera, theme, background (accepts string or Color). Render traversal dispatches to typed renderer methods with `drawShape()` fallback for unknown types.
 
 **Renderer interface** (`src/renderer/`):
-- `Renderer` — beginFrame, endFrame, draw methods for each shape type, enterGroup/exitGroup, drawShape (generic fallback)
+- `Renderer` — beginFrame, endFrame, draw methods for each shape type (including drawPath for PathShape), enterGroup/exitGroup, drawShape (generic fallback)
 
 ### Canvas Renderer (`packages/renderer-canvas`)
 
 - `CanvasRenderer` — implements full Renderer interface for Canvas2D
   - High-DPI support (devicePixelRatio scaling)
   - Per-shape draw methods with transform + style application
+  - `drawPath` — renders PathShape commands natively with `ctx.bezierCurveTo()`
   - Opacity support for text and TeX (globalAlpha)
   - lineDashOffset support for draw-on animations
   - Text: Y-flip compensation, font sizing in world units
@@ -107,14 +110,15 @@
   - Automatic cursor management (grab/grabbing/pointer)
   - Each method returns an unsubscribe function
   - Auto-renders after any state change
-- `createScene(canvas, opts)` — returns `BoundScene` with destructurable `add`, `remove`, `render`, `grid`, `play`, `wait`, `controls`, `interact`
-  - `add()` returns the shape (single arg) or typed tuple (multiple args) for inline usage
+- `createScene(canvas, opts)` — returns `BoundScene` with destructurable `add`, `remove`, `render`, `grid`, `play`, `wait`, `controls`, `interact`, `scene`
+  - `add()` returns the shape (single arg) or typed tuple (2-5 args) for inline usage
+  - Auto-detects `Axes` shapes and frames the camera to fit
 - `renderScene(canvas, opts, callback)` — one-shot convenience
 
 ### Playground (`packages/playground`)
 
 - Monaco editor with TypeScript syntax highlighting (semantic validation disabled)
-- Example gallery: Blank Canvas, Shapes, Animations, Text + Animation, Interactive, Draggable, Function Plot, Number Lines, TeX Formulas, Logo
+- Example gallery: Blank Canvas, Shapes, Animations, Text + Animation, Interactive, Draggable, Function Plot, Calculus, First Quadrant, Annotations, Number Lines, TeX Formulas, Logo
 - Live code execution via `new Function()` with all vimath exports injected
 - Supports async examples via `AsyncFunction` constructor (detected by presence of `await`)
 - Two coding patterns: `export default function({ add, grid })` (auto-wrapped) or direct `createScene(canvas, ...)` (supports async)

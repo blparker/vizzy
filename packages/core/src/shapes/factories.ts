@@ -234,6 +234,52 @@ export function edgeLabel(props: EdgeLabelProps): TextShape {
     });
 }
 
+// --- Line / Segment Labels ---
+
+export interface LineLabelProps {
+    start: Vec2;
+    end: Vec2;
+    content: string;
+    offset?: number;
+    side?: 1 | -1;
+    style?: Style;
+}
+
+export function lineLabel(props: LineLabelProps): TextShape {
+    const { start, end, content } = props;
+    const offset = props.offset ?? 0.2;
+    const side = props.side ?? 1;
+
+    // Midpoint of the segment
+    const mx = (start[0] + end[0]) / 2;
+    const my = (start[1] + end[1]) / 2;
+
+    // Perpendicular direction (rotated 90° from the line direction)
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 1e-10) {
+        return new TextShape({ content, position: [mx, my + offset], style: props.style });
+    }
+
+    // Normal: perpendicular to the line, pointing to the given side
+    const nx = (-dy / len) * side;
+    const ny = (dx / len) * side;
+
+    const position: Vec2 = [mx + nx * offset, my + ny * offset];
+
+    return new TextShape({
+        content,
+        position,
+        style: {
+            fill: { r: 1, g: 1, b: 1, a: 1 },
+            stroke: null,
+            fontSize: 0.22,
+            ...props.style,
+        },
+    });
+}
+
 // --- Brace ergonomic helpers ---
 
 export interface BraceOverProps {

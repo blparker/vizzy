@@ -10,7 +10,7 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 const errorEl = ref('');
 const errorVisible = ref(false);
 const selectedIndex = ref(0);
-const currentTheme = computed<'dark' | 'light'>(() => isDark.value ? 'dark' : 'light');
+const currentTheme = computed<'dark' | 'light'>(() => (isDark.value ? 'dark' : 'light'));
 
 let editor: any = null;
 let monacoModule: any = null;
@@ -68,19 +68,17 @@ async function initMonaco() {
     (self as any).MonacoEnvironment = {
         getWorker(_workerId: string, label: string) {
             if (label === 'typescript' || label === 'javascript') {
-                return new Worker(
-                    new URL('monaco-editor/esm/vs/language/typescript/ts.worker.js', import.meta.url),
-                    { type: 'module' },
-                );
+                return new Worker(new URL('monaco-editor/esm/vs/language/typescript/ts.worker.js', import.meta.url), {
+                    type: 'module',
+                });
             }
-            return new Worker(
-                new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url),
-                { type: 'module' },
-            );
+            return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), {
+                type: 'module',
+            });
         },
     };
 
-    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    monaco.typescript.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: false,
     });
@@ -180,9 +178,7 @@ watch(isDark, (dark) => {
                 <option v-for="(ex, i) in allSnippets" :key="i" :value="i">{{ ex.title }}</option>
             </select>
             <div class="playground__spacer" />
-            <button class="playground__btn playground__btn--run" @click="run">
-                Run (⌘ Enter)
-            </button>
+            <button class="playground__btn playground__btn--run" @click="run">Run (⌘ Enter)</button>
         </div>
         <div class="playground__panels">
             <div class="playground__editor">

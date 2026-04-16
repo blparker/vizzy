@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed } from 'vue';
+import { withBase } from 'vitepress';
 import { codeToHtml } from 'shiki';
 
 const props = defineProps<{
@@ -16,7 +17,7 @@ const highlightedCode = ref('');
 
 const playgroundUrl = computed(() => {
     const encoded = btoa(encodeURIComponent(props.code));
-    return `/playground/#code=${encoded}`;
+    return withBase(`/playground/#code=${encoded}`);
 });
 
 async function highlight() {

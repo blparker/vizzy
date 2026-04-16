@@ -11,6 +11,7 @@ import { PolygonShape } from '../shapes/polygon';
 import { ArcShape } from '../shapes/arc';
 import { TextShape } from '../shapes/text';
 import { TexShape } from '../shapes/tex';
+import { PathShape } from '../shapes/path';
 import type { Renderer } from '../renderer/types';
 import type { Color } from '../math/color';
 import { colorToCss } from '../math/color';
@@ -96,6 +97,8 @@ export class Scene {
             renderer.drawText(shape, worldTransform, computedStyle);
         } else if (shape instanceof TexShape) {
             renderer.drawTex(shape, worldTransform, computedStyle);
+        } else if (shape instanceof PathShape) {
+            renderer.drawPath(shape, worldTransform, computedStyle);
         } else {
             renderer.drawShape(shape, worldTransform, computedStyle);
         }

@@ -6,6 +6,9 @@ import { textAnimation } from './text-animation';
 import { interactive } from './interactive';
 import { draggable } from './draggable';
 import { functionPlot } from './function-plot';
+import { calculus } from './calculus';
+import { firstQuadrant } from './first-quadrant';
+import { annotations } from './annotations';
 import { numberLines } from './number-lines';
 import { texFormulas } from './tex-formulas';
 import { logo } from './logo';
@@ -18,6 +21,9 @@ export const examples: Example[] = [
     interactive,
     draggable,
     functionPlot,
+    calculus,
+    firstQuadrant,
+    annotations,
     numberLines,
     texFormulas,
     logo,

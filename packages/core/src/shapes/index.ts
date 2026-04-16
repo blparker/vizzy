@@ -12,11 +12,15 @@ export { TexShape, type TexProps } from './tex';
 export { grid, type GridProps } from './grid';
 export { NumberLine, type NumberLineProps } from './number-line';
 export { Axes, type AxesProps } from './axes';
-export { FunctionGraph, type FunctionGraphProps } from './function-graph';
+export { FunctionGraph, type FunctionGraphProps, type Discontinuity } from './function-graph';
 export { BraceShape, type BraceProps } from './brace';
+export { AngleShape, type AngleProps } from './angle';
+export { PathShape, type PathProps, type PathCommand } from './path';
 export {
     circle, rect, line, polygon, regularPolygon, triangle,
     arc, text, arrow, tex, numberLine, axes, functionGraph,
-    brace, point, dashedLine, group,
-    type DotProps, type DashedLineProps,
+    brace, angleShape, point, dashedLine, lineThrough, tangentLine,
+    edgeLabel, braceOver, braceBetween, group,
+    type DotProps, type DashedLineProps, type LineThroughProps, type TangentLineProps,
+    type EdgePosition, type EdgeLabelProps, type BraceOverProps, type BraceBetweenProps,
 } from './factories';

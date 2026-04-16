@@ -2,42 +2,44 @@
 
 ## High Priority
 
-### Animation System
-The architecture is ready (retained scene graph, shape identity, easing functions). Needs:
-- `Timeline` / animation loop with requestAnimationFrame
-- Tween system: animate any shape property over time (position, radius, opacity, color, etc.)
-- `scene.play()` or similar API to queue and run animations
-- Easing functions are already built in `math/easing.ts`
-- Consider manim's animation API: `scene.play(FadeIn(circle), Transform(square, triangle))`
+### More Shapes
+- `ParametricCurve` — plot `(x(t), y(t))` parametric curves on Axes
+- `VectorField` — grid of arrows showing vector field `(dx, dy) = f(x, y)`
+- `Angle` — arc showing angle between two lines with optional label
+- `Sector` — filled arc/pie slice
+- `Annulus` — ring shape (donut)
+- `CurveLabel` — text that follows along a curve
+- `Table` — grid of text cells for matrix/table display
 
-### Interactivity
-- Hit testing: point-in-shape detection for mouse events
-- Event system on shapes: onClick, onHover, onDrag
-- Draggable shapes / input controls (sliders, draggable points)
-- Camera pan/zoom via mouse
+### Shape Morphing / Transform Animation
+- Manim's `Transform(square, circle)` that morphs one shape into another
+- Requires `toPath()` bezier representation for each shape
+- Every shape returns cubic bezier segments, morph lerps control points
+- Also enables generic rendering fallback for custom shapes
+- This is the single biggest animation feature missing
 
 ### Path Representation (`toPath()`)
-- Every shape should eventually have `toPath()` returning cubic bezier segments
-- Enables shape morphing (lerp control points between any two shapes)
-- Enables generic rendering fallback for custom shapes
-- Not blocking other work, but should be added incrementally as shapes are refined
+- Prerequisite for shape morphing
+- `CircleShape.toPath()` → 4 cubic bezier arcs
+- `RectShape.toPath()` → 4 line segments (with optional corner arcs)
+- `PolygonShape.toPath()` → line segments between points
+- `ArcShape.toPath()` → cubic bezier arc approximation
+- `FunctionGraph` already produces point arrays — convert to smoothed bezier
 
 ## Medium Priority
 
-### More Composite Shapes
-- `Axes` — x/y number lines with labels, building on `NumberLine`
-- `FunctionGraph` — plot y = f(x) as a polyline/bezier path
-- `ParametricCurve` — plot parametric curves
-- `Brace` / `BraceBetweenPoints` — curly brace annotations
-- `DashedLine` — line with dash pattern (already supported via style.lineDash, but a convenience shape)
-- `Dot` — small filled circle (convenience)
-- `Angle` — arc showing angle between two lines
-
 ### TeX Rendering Performance
-- Current approach: KaTeX → SVG foreignObject → rasterize to canvas (async, ~500ms first render)
-- Investigate canvas-latex approach: walk KaTeX's internal tree, draw directly with `ctx.fillText()`
-- Would eliminate SVG round-trip and font inlining complexity
-- Reference: https://github.com/CurriculumAssociates/canvas-latex
+- Current: KaTeX → SVG foreignObject → font inlining → rasterize to canvas (~500ms first render)
+- Better: walk KaTeX's parsed AST, draw glyphs directly with `ctx.fillText()`
+- Would make TeX synchronous (~1ms), enabling per-frame content updates during animation
+- Reference: canvas-latex (github.com/CurriculumAssociates/canvas-latex)
+- Not blocking anything now but needed for animated equations
+
+### Camera Pan/Zoom
+- Mouse wheel to zoom (scale worldWidth/worldHeight)
+- Middle-click drag or Ctrl+drag to pan (shift camera.center)
+- Smooth animated transitions
+- Useful for dense or large scenes
 
 ### Additional Renderers
 - `@vimath/renderer-svg` — SVG output for static exports
@@ -46,14 +48,16 @@ The architecture is ready (retained scene graph, shape identity, easing function
 - The Renderer interface is already defined, each just implements the visitor methods
 
 ### Export / Recording
-- Export scene as PNG/SVG
+- Export scene as PNG (canvas.toDataURL)
+- Export as SVG (via SVG renderer)
 - Record animations as video (canvas.captureStream → MediaRecorder)
 - Export to GIF
 
 ## Lower Priority
 
 ### Developer Experience
-- TypeScript type declarations for the playground editor (so Monaco autocomplete works with vimath API)
+- TypeScript type declarations for Monaco (playground autocomplete for vimath API)
+- Store playground examples as real `.ts` files, import with Vite's `?raw` suffix
 - Better error messages when shapes are misconfigured
 - Documentation site with interactive examples
 - npm publishing pipeline
@@ -70,9 +74,17 @@ The architecture is ready (retained scene graph, shape identity, easing function
 - Clipping / masking support
 - Gradient fills
 
+### Interactivity Enhancements
+- Touch event support (mobile)
+- Keyboard event handling
+- Infinite/looping animations
+- Group-level interaction (make a whole group draggable/clickable)
+- Shadow DOM for controls CSS isolation (if style conflicts arise)
+
 ## Design Decisions to Revisit
 
 - **Text bounds**: `TextShape` uses `OffscreenCanvas.measureText()` which works well. `TexShape` uses rough estimates until post-render measurement. Consider a `prepare()` step.
 - **Shape property naming**: `CircleShape.localCenter` vs manim's `center`. The `local` prefix avoids collision with the base class `center` getter. Could revisit if confusing for users.
 - **Grid auto-sizing**: Grid accepts camera for viewport-aware sizing. Could be more automatic (scene-level grid that always fills).
 - **Canvas DPR handling**: Currently reads `canvas.width`/`canvas.height` HTML attributes as display size. Works but fragile if users set canvas size via CSS instead of attributes.
+- **TeX dynamic content**: Currently TeX is static (async rasterization pipeline). Regular `TextShape` works for dynamic labels. Revisit when canvas-direct TeX rendering is implemented.

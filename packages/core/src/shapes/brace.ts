@@ -1,91 +1,106 @@
 import type { Vec2 } from '../math/vec2';
-import { sub, add as addVec, scale as scaleVec, length, normalize } from '../math/vec2';
+import { sub, add as addVec, scale as scaleVec, length, angle as vecAngle } from '../math/vec2';
 import type { Style } from '../style/types';
-import { PolygonShape } from './polygon';
+import { PathShape } from './path';
 
 export interface BraceProps {
     start?: Vec2;
     end?: Vec2;
     direction?: number;
-    curveHeight?: number;
+    sharpness?: number;
     style?: Style;
 }
 
-export class BraceShape extends PolygonShape {
+export class BraceShape extends PathShape {
     constructor(props: BraceProps = {}) {
         const start = props.start ?? [0, 0];
         const end = props.end ?? [2, 0];
         const direction = props.direction ?? 1;
-        const curveHeight = props.curveHeight ?? 0.2;
-
-        const points = buildBracePoints(start, end, direction, curveHeight);
+        const sharpness = props.sharpness ?? 2;
 
         super({
-            points,
-            closed: false,
             style: {
-                stroke: { r: 1, g: 1, b: 1, a: 1 },
-                fill: null,
-                strokeWidth: 0.03,
+                fill: { r: 1, g: 1, b: 1, a: 1 },
+                stroke: null,
                 ...props.style,
             },
         });
         (this as { type: string }).type = 'brace';
+
+        buildBraceCommands(this, start, end, direction, sharpness);
     }
 }
 
-function buildBracePoints(
+function buildBraceCommands(
+    path: PathShape,
     start: Vec2,
     end: Vec2,
     direction: number,
-    curveHeight: number,
-): Vec2[] {
-    const diff = sub(end, start);
-    const len = length(diff);
-    if (len < 1e-10) return [start, end];
+    _sharpness: number,
+): void {
+    const totalLen = length(sub(end, start));
+    if (totalLen < 1e-10) return;
 
-    const tangent = normalize(diff);
-    // Perpendicular (rotated 90 degrees in the given direction)
-    const normal: Vec2 = [-tangent[1] * direction, tangent[0] * direction];
+    const mid = addVec(start, scaleVec(sub(end, start), 0.5));
+    const angle = vecAngle(sub(end, start));
 
-    const mid = addVec(start, scaleVec(diff, 0.5));
-    const q1 = addVec(start, scaleVec(diff, 0.25));
-    const q3 = addVec(start, scaleVec(diff, 0.75));
+    const halfLen = totalLen / 2;
 
-    const h = curveHeight;
-    const tipH = h * 1.5;
+    const standoff = 0.15;
+    const braceWidth = Math.min(0.3 + totalLen * 0.06, 0.7);
+    const thickness = Math.min(0.03 + totalLen * 0.008, 0.08);
 
-    // Build the brace as a series of points approximating the curly shape
-    const numPoints = 20;
-    const points: Vec2[] = [];
+    // Local coordinate system:
+    //   x: along the brace (left = -halfLen, right = +halfLen)
+    //   y: perpendicular. y>0 = direction the tip points (away from the shape)
+    //
+    // direction=1: tip points in the +normal direction (above for horizontal)
+    // direction=-1: tip points in the -normal direction (below for horizontal)
 
-    for (let i = 0; i <= numPoints; i++) {
-        const t = i / numPoints;
-        let offset: number;
-
-        if (t <= 0.5) {
-            // First half: curve up to the tip
-            const s = t * 2; // 0 to 1
-            // Smooth rise: starts flat, curves to peak
-            offset = tipH * Math.sin(s * Math.PI / 2) * Math.sin(s * Math.PI / 2);
-            // Add extra bump at midpoint
-            if (s > 0.8) {
-                const bump = (s - 0.8) / 0.2;
-                offset = tipH + (tipH * 0.3) * Math.sin(bump * Math.PI);
-            }
-        } else {
-            // Second half: mirror
-            const s = (1 - t) * 2; // 1 to 0
-            offset = tipH * Math.sin(s * Math.PI / 2) * Math.sin(s * Math.PI / 2);
-            if (s > 0.8) {
-                const bump = (s - 0.8) / 0.2;
-                offset = tipH + (tipH * 0.3) * Math.sin(bump * Math.PI);
-            }
-        }
-
-        const basePoint = addVec(start, scaleVec(diff, t));
-        points.push(addVec(basePoint, scaleVec(normal, offset)));
+    function transform(lx: number, ly: number): Vec2 {
+        // Flip y by direction so tip always points the right way
+        ly = ly * direction;
+        // Add standoff (push brace away from shape in the tip direction)
+        ly = ly + standoff * direction;
+        // Rotate to match the start→end angle
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const rx = lx * cos - ly * sin;
+        const ry = lx * sin + ly * cos;
+        return [mid[0] + rx, mid[1] + ry];
     }
 
-    return points;
+    // Key points in local space (before direction flip):
+    // Left end:  (-halfLen, 0)
+    // Right end: (+halfLen, 0)
+    // Tip:       (0, braceWidth)  — the pointy part, extends away from shape
+
+    const tipPt = transform(0, braceWidth);
+    const leftPt = transform(-halfLen, 0);
+    const rightPt = transform(halfLen, 0);
+
+    // Start at tip
+    path.M(tipPt[0], tipPt[1]);
+
+    // Segment 1: outer curve, tip → left end
+    let cp1 = transform(0, 0);
+    let cp2 = transform(-halfLen, braceWidth);
+    path.C(cp1[0], cp1[1], cp2[0], cp2[1], leftPt[0], leftPt[1]);
+
+    // Segment 2: inner curve, left end → tip
+    cp1 = transform(-halfLen, braceWidth + thickness);
+    cp2 = transform(-braceWidth * 0.4, thickness);
+    path.C(cp1[0], cp1[1], cp2[0], cp2[1], tipPt[0], tipPt[1]);
+
+    // Segment 3: outer curve, tip → right end
+    cp1 = transform(0, 0);
+    cp2 = transform(halfLen, braceWidth);
+    path.C(cp1[0], cp1[1], cp2[0], cp2[1], rightPt[0], rightPt[1]);
+
+    // Segment 4: inner curve, right end → tip
+    cp1 = transform(halfLen, braceWidth + thickness);
+    cp2 = transform(braceWidth * 0.4, thickness);
+    path.C(cp1[0], cp1[1], cp2[0], cp2[1], tipPt[0], tipPt[1]);
+
+    path.Z();
 }

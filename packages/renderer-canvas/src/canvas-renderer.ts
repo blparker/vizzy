@@ -10,6 +10,7 @@ import type {
     ArcShape,
     TextShape,
     TexShape,
+    PathShape,
     Group,
 } from '@vimath/core';
 import { Mat3, colorToCss } from '@vimath/core';
@@ -409,6 +410,38 @@ export class CanvasRenderer implements Renderer {
 
     exitGroup(_group: Group): void {
         this.ctx.restore();
+    }
+
+    drawPath(shape: PathShape, wt: Mat3Type, style: Style): void {
+        const ctx = this.ctx;
+        ctx.save();
+        this.applyTransform(wt);
+        this.applyStyle(style);
+
+        ctx.beginPath();
+        for (const cmd of shape.commands) {
+            switch (cmd.type) {
+                case 'M':
+                    ctx.moveTo(cmd.to[0], cmd.to[1]);
+                    break;
+                case 'L':
+                    ctx.lineTo(cmd.to[0], cmd.to[1]);
+                    break;
+                case 'C':
+                    ctx.bezierCurveTo(
+                        cmd.cp1[0], cmd.cp1[1],
+                        cmd.cp2[0], cmd.cp2[1],
+                        cmd.to[0], cmd.to[1],
+                    );
+                    break;
+                case 'Z':
+                    ctx.closePath();
+                    break;
+            }
+        }
+        this.fillAndStroke(style);
+
+        ctx.restore();
     }
 
     drawShape(_shape: Shape, _wt: Mat3Type, _style: Style): void {

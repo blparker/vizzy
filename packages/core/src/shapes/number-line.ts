@@ -1,4 +1,5 @@
 import type { Vec2 } from '../math/vec2';
+import type { Mat3 } from '../math/mat3';
 import * as M from '../math/mat3';
 import type { Style } from '../style/types';
 import type { Color } from '../math/color';
@@ -31,6 +32,8 @@ export interface NumberLineProps {
     labelFontSize?: number;
     labelsToExclude?: number[];
     decimalPlaces?: number;
+    /** Rotation to apply to each label (radians). Useful for y-axis counter-rotation. */
+    labelRotation?: number;
 
     // Tips (arrow ends)
     includeTip?: boolean;
@@ -148,6 +151,18 @@ export class NumberLine extends Group {
                         fontSize,
                     },
                 });
+                if (props.labelRotation) {
+                    // Rotate around the label's own position, not around (0,0)
+                    const px = x;
+                    const py = -dir * offset;
+                    label.transform = M.multiply(
+                        M.multiply(
+                            M.translation(px, py),
+                            M.rotation(props.labelRotation),
+                        ),
+                        M.translation(-px, -py),
+                    );
+                }
                 super.add(label);
             }
         }

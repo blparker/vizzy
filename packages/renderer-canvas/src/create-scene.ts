@@ -1,5 +1,6 @@
 import {
     Scene,
+    Axes,
     grid as createGrid,
     type SceneOptions,
     type Shape,
@@ -56,6 +57,11 @@ export function createScene(
 
     function addShapes(...shapes: Shape[]): Shape | Shape[] {
         scene.add(...shapes);
+        for (const shape of shapes) {
+            if (shape instanceof Axes && shape.autoFrame) {
+                shape.frameCamera(scene.camera);
+            }
+        }
         return shapes.length === 1 ? shapes[0]! : shapes;
     }
 

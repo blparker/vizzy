@@ -10,6 +10,7 @@ import { calculus } from './calculus';
 import { secantTangent } from './secant-tangent';
 import { firstQuadrant } from './first-quadrant';
 import { annotations } from './annotations';
+import { moreShapes } from './more-shapes';
 import { numberLines } from './number-lines';
 import { texFormulas } from './tex-formulas';
 import { logo } from './logo';
@@ -26,6 +27,7 @@ export const examples: Example[] = [
     secantTangent,
     firstQuadrant,
     annotations,
+    moreShapes,
     numberLines,
     texFormulas,
     logo,

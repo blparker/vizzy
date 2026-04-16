@@ -450,10 +450,23 @@ export function label(shape: Shape, content: string, direction?: Direction, opts
     const dir = direction ?? [0, 1]; // default: above
     const offset = opts?.offset ?? 0.25;
 
-    const center = shape.center;
+    // Use the edge point in the given direction as anchor
+    let anchor: Vec2;
+    if (dir[1] > 0.5 && Math.abs(dir[0]) < 0.5) {
+        anchor = shape.top;
+    } else if (dir[1] < -0.5 && Math.abs(dir[0]) < 0.5) {
+        anchor = shape.bottom;
+    } else if (dir[0] > 0.5 && Math.abs(dir[1]) < 0.5) {
+        anchor = shape.right;
+    } else if (dir[0] < -0.5 && Math.abs(dir[1]) < 0.5) {
+        anchor = shape.left;
+    } else {
+        anchor = shape.center;
+    }
+
     const position: Vec2 = [
-        center[0] + dir[0] * (shape.width / 2 + offset),
-        center[1] + dir[1] * (shape.height / 2 + offset),
+        anchor[0] + dir[0] * offset,
+        anchor[1] + dir[1] * offset,
     ];
 
     let textAlign: 'left' | 'center' | 'right' = 'center';
@@ -518,10 +531,32 @@ export interface DoubleArrowProps {
 export function doubleArrow(props: DoubleArrowProps = {}): Group {
     const start = props.start ?? [-1, 0];
     const end = props.end ?? [1, 0];
-    const g = new Group();
-    const fwd = new ArrowShape({ start, end, tipSize: props.tipSize, style: props.style });
-    const bwd = new ArrowShape({ start: end, end: start, tipSize: props.tipSize, style: props.style });
-    g.add(fwd, bwd);
+    const tipSize = props.tipSize ?? 0.2;
+    const dir = normalize(sub(end, start));
+    const perp: Vec2 = [-dir[1], dir[0]];
+    const halfW = tipSize * 0.4;
+
+    // Line shortened on both ends
+    const startBase = addVec(start, scaleVec(dir, tipSize));
+    const endBase = addVec(end, scaleVec(dir, -tipSize));
+    const l = new LineShape({ start: startBase, end: endBase, style: { fill: null, lineCap: 'butt', ...props.style } });
+
+    // Tip at end
+    const tipEnd = new PolygonShape({
+        points: [end, addVec(endBase, scaleVec(perp, halfW)), addVec(endBase, scaleVec(perp, -halfW))],
+        closed: true,
+        style: { fill: props.style?.stroke ?? { r: 1, g: 1, b: 1, a: 1 }, stroke: null },
+    });
+
+    // Tip at start (pointing backward)
+    const tipStart = new PolygonShape({
+        points: [start, addVec(startBase, scaleVec(perp, halfW)), addVec(startBase, scaleVec(perp, -halfW))],
+        closed: true,
+        style: { fill: props.style?.stroke ?? { r: 1, g: 1, b: 1, a: 1 }, stroke: null },
+    });
+
+    const g = new Group(props.style);
+    g.add(l, tipEnd, tipStart);
     return g;
 }
 
@@ -617,17 +652,26 @@ export function curvedArrow(props: CurvedArrowProps = {}): Group {
     const dist = Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
     const arcMid: Vec2 = addVec(mid, scaleVec(perpNorm, dist * Math.tan(bendAngle) * 0.5));
 
-    // Sample a quadratic bezier as points
+    // Sample a quadratic bezier as points, stopping short of end for the tip
     const n = 20;
-    const pts: Vec2[] = [];
+    const allPts: Vec2[] = [];
     for (let i = 0; i <= n; i++) {
         const t = i / n;
         const u = 1 - t;
-        pts.push([
+        allPts.push([
             u * u * start[0] + 2 * u * t * arcMid[0] + t * t * end[0],
             u * u * start[1] + 2 * u * t * arcMid[1] + t * t * end[1],
         ]);
     }
+
+    // Compute tip direction from the last two points
+    const lastDir = normalize(sub(allPts[n]!, allPts[n - 1]!));
+    const tipPerp: Vec2 = [-lastDir[1], lastDir[0]];
+    const tipBase = addVec(end, scaleVec(lastDir, -tipSize));
+
+    // Truncate curve at tip base
+    const pts = allPts.slice(0, -1);
+    pts.push(tipBase);
 
     const curve = new PolygonShape({
         points: pts,
@@ -636,14 +680,10 @@ export function curvedArrow(props: CurvedArrowProps = {}): Group {
             stroke: { r: 1, g: 1, b: 1, a: 1 },
             fill: null,
             strokeWidth: 0.04,
+            lineCap: 'butt',
             ...props.style,
         },
     });
-
-    // Arrow tip at end
-    const lastDir = normalize(sub(pts[n]!, pts[n - 1]!));
-    const tipPerp: Vec2 = [-lastDir[1], lastDir[0]];
-    const tipBase = addVec(end, scaleVec(lastDir, -tipSize));
     const tip = new PolygonShape({
         points: [
             end,

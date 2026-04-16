@@ -1,11 +1,12 @@
-import type { Example } from '../types';
+import type { Snippet } from './types';
 
-export const numberLines: Example = {
-    name: 'Number Lines',
-    source: `export default function({ add, grid }) {
+const snippet: Snippet = {
+    title: 'Number Lines',
+    description: 'Number lines with ticks, labels, and mapped points.',
+    category: 'Math',
+    code: `export default function({ add, grid }) {
     grid();
 
-    // Basic number line with labels
     const nl = numberLine({
         range: [-5, 5, 1],
         includeNumbers: true,
@@ -13,7 +14,6 @@ export const numberLines: Example = {
     });
     nl.shift(0, 1.5);
 
-    // Number line with tips and custom range
     const nl2 = numberLine({
         range: [0, 10, 2],
         includeTip: true,
@@ -23,14 +23,11 @@ export const numberLines: Example = {
     });
     nl2.shift(0, -1.5);
 
-    // A dot at value 3 on the first number line
-    const dot = circle({
-        radius: 0.12,
-        style: { fill: red, stroke: null },
-    });
+    const dot = circle({ radius: 0.12, style: { fill: red, stroke: null } });
     dot.moveTo(nl.numberToPoint(3));
 
     add(nl, nl2, dot);
-}
-`,
+}`,
 };
+
+export default snippet;

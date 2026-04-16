@@ -1,8 +1,10 @@
-import type { Example } from '../types';
+import type { Snippet } from './types';
 
-export const functionPlot: Example = {
-    name: 'Function Plot',
-    source: `export default function({ add, controls, render }) {
+const snippet: Snippet = {
+    title: 'Function Plot (Interactive)',
+    description: 'Switch between functions with sliders for frequency and amplitude.',
+    category: 'Math',
+    code: `export default function({ add, controls, render }) {
     controls.panel();
 
     const freq = controls.slider('Frequency', { min: 0.1, max: 5, value: 1, step: 0.1 });
@@ -40,6 +42,7 @@ export const functionPlot: Example = {
     controls.onUpdate(() => {
         graph.setFunction((x) => amp.value * fns[fnType.value](freq.value * x));
     });
-}
-`,
+}`,
 };
+
+export default snippet;

@@ -1,8 +1,11 @@
-import type { Example } from '../types';
+import type { Snippet } from './types';
 
-export const interactive: Example = {
-    name: 'Interactive',
-    source: `export default function({ add, controls, grid, render }) {
+const snippet: Snippet = {
+    title: 'Interactive Controls',
+    description: 'Sliders, checkboxes, color pickers, and select dropdowns.',
+    category: 'Interactivity',
+    playgroundOnly: true,
+    code: `export default function({ add, controls, grid, render }) {
     controls.panel();
 
     const radius = controls.slider('Radius', { min: 0.1, max: 3, value: 1, step: 0.1 });
@@ -22,17 +25,13 @@ export const interactive: Example = {
     render();
 
     controls.onUpdate(() => {
-        // Update circle
         c.radius = radius.value;
         c.style = { ...c.style, fill: fillColor.value, stroke: strokeColor.value };
-
-        // Update polygon sides
         const s = sides.value || 6;
         p.points = regularPolygonPoints([0, 0], 2, s);
-
-        // Toggle grid
         g.visible = showGrid.value;
     });
-}
-`,
+}`,
 };
+
+export default snippet;

@@ -1,16 +1,16 @@
-import type { Example } from '../types';
+import type { Snippet } from './types';
 
-export const texFormulas: Example = {
-    name: 'TeX Formulas',
-    source: `export default function({ add, grid }) {
+const snippet: Snippet = {
+    title: 'TeX Formulas',
+    description: 'LaTeX rendering with KaTeX.',
+    category: 'Math',
+    code: `export default function({ add, grid }) {
     grid();
 
-    // Circle with area formula
     const c = circle({ radius: 0.8, style: { stroke: sky } });
     const area = tex({ content: 'A = \\\\pi r^2', style: { fill: white, fontSize: 0.35 } });
     area.nextTo(c, UP);
 
-    // Famous formulas
     add(
         c, area,
         tex({ content: 'E = mc^2', position: [-4, 2.5], style: { fill: white, fontSize: 0.5 } }),
@@ -25,6 +25,7 @@ export const texFormulas: Example = {
             style: { fill: sky[300], fontSize: 0.35 },
         }),
     );
-}
-`,
+}`,
 };
+
+export default snippet;

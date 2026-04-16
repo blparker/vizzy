@@ -8,6 +8,7 @@
     "lint": "eslint packages/",
     "typecheck": "tsc -b",
     "playground": "pnpm --filter @vizzyjs/playground dev",
+    "docs": "pnpm --filter @vizzyjs/docs dev",
     "release": "./scripts/release.sh"
   },
   "devDependencies": {

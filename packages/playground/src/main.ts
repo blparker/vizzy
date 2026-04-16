@@ -107,8 +107,20 @@ select.addEventListener('change', () => loadExample(Number(select.value)));
 runBtn.addEventListener('click', run);
 themeBtn.addEventListener('click', () => setTheme(currentTheme === 'dark' ? 'light' : 'dark'));
 
-// Load first example on start
-loadExample(0);
+// Check for #code= hash param (base64 encoded)
+const hash = window.location.hash.slice(1);
+const codeMatch = hash.match(/^code=(.+)/);
+if (codeMatch) {
+    try {
+        const code = decodeURIComponent(atob(codeMatch[1]));
+        editor.setValue(code);
+        run();
+    } catch {
+        loadExample(0);
+    }
+} else {
+    loadExample(0);
+}
 
 if (import.meta.hot) {
     import.meta.hot.accept();

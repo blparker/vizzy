@@ -1,24 +1,56 @@
 {
-  "name": "@vizzyjs/renderer-canvas",
-  "version": "0.0.1",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+    "name": "@vizzyjs/renderer-canvas",
+    "version": "0.0.1",
+    "description": "Canvas2D renderer for vizzy — animations, controls, and interaction on HTML canvas",
+    "type": "module",
+    "license": "MIT",
+    "author": "Bryan Parker",
+    "homepage": "https://github.com/bryantpark04/vizzy",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bryantpark04/vizzy.git",
+        "directory": "packages/renderer-canvas"
+    },
+    "bugs": {
+        "url": "https://github.com/bryantpark04/vizzy/issues"
+    },
+    "keywords": [
+        "visualization",
+        "math",
+        "animation",
+        "manim",
+        "canvas",
+        "typescript",
+        "renderer"
+    ],
+    "sideEffects": false,
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
+    "files": ["dist"],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite build --watch"
+    },
+    "devDependencies": {
+        "@vizzyjs/core": "workspace:*",
+        "katex": "^0.16.45"
+    },
+    "peerDependencies": {
+        "@vizzyjs/core": "^0.0.1",
+        "katex": "^0.16.0"
+    },
+    "peerDependenciesMeta": {
+        "katex": {
+            "optional": true
+        }
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch"
-  },
-  "dependencies": {
-    "@vizzyjs/core": "workspace:*",
-    "katex": "^0.16.45"
-  }
 }

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { vec2, add, sub, scale, length, normalize, distance } from './math/vec2';
-import * as Mat3 from './math/mat3';
-import { fromHex, toHex, rgba, lerpColor } from './math/color';
-import { lerp, clamp, remap } from './math/lerp';
-import { CircleShape } from './shapes/circle';
-import { Group } from './shapes/group';
-import { circle, group } from './shapes/factories';
-import { red, blue, green, sky } from './math/palette';
+import { vec2, add, sub, scale, length, normalize, distance } from '../src/math/vec2';
+import * as Mat3 from '../src/math/mat3';
+import { fromHex, toHex, rgba, lerpColor } from '../src/math/color';
+import { lerp, clamp, remap } from '../src/math/lerp';
+import { CircleShape } from '../src/shapes/circle';
+import { Group } from '../src/shapes/group';
+import { circle, group } from '../src/shapes/factories';
+import { red, blue, green, sky } from '../src/math/palette';
 
 describe('vec2', () => {
     it('creates a vec2', () => {

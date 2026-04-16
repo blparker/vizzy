@@ -1,0 +1,8 @@
+node_modules
+.next
+.turbo
+.env
+.env.local
+next-env.d.ts
+public/vizzy-runtime.js
+public/vizzy-runtime.js.map

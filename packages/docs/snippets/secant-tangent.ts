@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Secant to Tangent',
     description: 'Animated limit — Q approaches P to reveal the derivative.',
     category: 'Math',
-    code: `export default async function({ add, remove, play, wait, render }) {
+    code: `export default async function({ add, remove, play, wait }) {
     const ax = axes({
         xRange: [-1, 5, 1],
         yRange: [-1, 5, 1],
@@ -36,7 +36,6 @@ const snippet: Snippet = {
     const slopeLabel = text({ content: 'slope = ' + ((qy - py) / (qx - px)).toFixed(2), position: ax.c2p([3.5, 0.5]), style: { fill: yellow, fontSize: 0.22 } });
     add(pDot, pLabel, qDot, qLabel, slopeLabel);
 
-    render();
     await wait(1);
 
     await play(

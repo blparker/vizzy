@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Calculus',
     description: 'Tangent line, angle visualization, and interactive derivative.',
     category: 'Math',
-    code: `export default function({ add, controls, render }) {
+    code: `export default function({ add, controls }) {
     controls.panel();
     const xVal = controls.slider('x', { min: -4, max: 4, value: 1, step: 0.1 });
 
@@ -27,7 +27,6 @@ const snippet: Snippet = {
 
     const p = point({ position: ax.c2p([xVal.value, fn(xVal.value)]), color: red, radius: 0.1 });
     add(p);
-    render();
 
     controls.onUpdate(() => {
         const x = xVal.value;

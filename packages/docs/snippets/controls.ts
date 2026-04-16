@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Controls',
     description: 'Sliders and checkboxes that update the scene in real time.',
     category: 'Interactivity',
-    code: `export default function({ add, controls, grid, render }) {
+    code: `export default function({ add, controls, grid }) {
     controls.panel();
 
     const radius = controls.slider('Radius', { min: 0.1, max: 3, value: 1, step: 0.1 });
@@ -14,7 +14,6 @@ const snippet: Snippet = {
     let g = grid();
     const c = circle({ radius: radius.value, style: { fill: fillColor.value } });
     add(c);
-    render();
 
     controls.onUpdate(() => {
         c.radius = radius.value;

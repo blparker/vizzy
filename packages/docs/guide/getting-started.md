@@ -37,17 +37,16 @@ Works with any package manager: `pnpm add`, `yarn add`, etc.
 
 ## Your First Scene
 
-Vizzy renders to an HTML `<canvas>`. Use `createScene()` to set up the scene, then `add()` shapes and call `render()`:
+Vizzy renders to an HTML `<canvas>`. Use `createScene()` to set up the scene, then `add()` shapes:
 
 ```typescript
 import { circle, sky } from '@vizzyjs/core';
 import { createScene } from '@vizzyjs/renderer-canvas';
 
 const canvas = document.querySelector('canvas');
-const { add, render } = createScene(canvas);
+const { add } = createScene(canvas);
 
 add(circle({ color: sky }));
-render();
 ```
 
 <ClientOnly>
@@ -58,8 +57,7 @@ render();
 
 | Property | Purpose |
 |----------|---------|
-| `add(shape)` | Add a shape to the scene |
-| `render()` | Draw the current frame |
+| `add(shape)` | Add a shape to the scene (auto-renders) |
 | `grid()` | Add a coordinate grid |
 | `play(animation)` | Run an animation (returns a Promise) |
 | `wait(seconds)` | Pause between animations |

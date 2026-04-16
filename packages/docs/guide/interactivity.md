@@ -1,19 +1,18 @@
 <script setup>
-const sliderExample = `export default function({ add, controls, grid, render }) {
+const sliderExample = `export default function({ add, controls, grid }) {
     controls.panel();
     grid();
 
     const radius = controls.slider('Radius', { min: 0.2, max: 3, value: 1, step: 0.1 });
     const c = circle({ color: sky });
     add(c);
-    render();
 
     controls.onUpdate(() => {
         c.radius = radius.value;
     });
 }`
 
-const multipleControls = `export default function({ add, controls, grid, render }) {
+const multipleControls = `export default function({ add, controls, grid }) {
     controls.panel();
 
     const showGrid = controls.checkbox('Show Grid', { value: true });
@@ -23,7 +22,6 @@ const multipleControls = `export default function({ add, controls, grid, render 
     let g = grid();
     const p = regularPolygon({ sides: sides.value, radius: 1.5, style: { fill: fillColor.value } });
     add(p);
-    render();
 
     controls.onUpdate(() => {
         p.points = regularPolygonPoints([0, 0], 1.5, sides.value);
@@ -32,7 +30,7 @@ const multipleControls = `export default function({ add, controls, grid, render 
     });
 }`
 
-const draggableExample = `export default function({ add, interact, grid, render }) {
+const draggableExample = `export default function({ add, interact, grid }) {
     grid();
 
     const dot = circle({ radius: 0.2, style: { fill: sky, stroke: null } });
@@ -50,11 +48,9 @@ const draggableExample = `export default function({ add, interact, grid, render 
             lbl.content = '(' + pos[0].toFixed(1) + ', ' + pos[1].toFixed(1) + ')';
         },
     });
-
-    render();
 }`
 
-const hoverClickExample = `export default function({ add, interact, grid, render }) {
+const hoverClickExample = `export default function({ add, interact, grid }) {
     grid();
 
     const r = rect({ width: 2, height: 1.5, color: emerald }).shift(-3, 0);
@@ -81,11 +77,9 @@ const hoverClickExample = `export default function({ add, interact, grid, render
             btnLabel.content = filled ? 'clicked!' : 'click me';
         },
     });
-
-    render();
 }`
 
-const constrainedDrag = `export default function({ add, interact, grid, render }) {
+const constrainedDrag = `export default function({ add, interact, grid }) {
     grid();
 
     const track = line([-4, 0], [4, 0], { color: neutral[600] });
@@ -106,8 +100,6 @@ const constrainedDrag = `export default function({ add, interact, grid, render }
         constrainX: [-4, 4],
         constrainY: [0, 0],
     });
-
-    render();
 }`
 </script>
 
@@ -123,8 +115,7 @@ Controls are HTML inputs — sliders, checkboxes, color pickers — that float o
 
 1. Call `controls.panel()` to create the overlay panel
 2. Create controls — each returns a handle with a `.value` property
-3. Call `render()` to draw the initial frame
-4. Use `controls.onUpdate()` to react when any control changes
+3. Use `controls.onUpdate()` to react when any control changes
 
 <ClientOnly>
   <VizzyExample :code="sliderExample" />

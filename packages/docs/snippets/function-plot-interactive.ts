@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Function Plot (Interactive)',
     description: 'Switch between functions with sliders for frequency and amplitude.',
     category: 'Math',
-    code: `export default function({ add, controls, render }) {
+    code: `export default function({ add, controls }) {
     controls.panel();
 
     const freq = controls.slider('Frequency', { min: 0.1, max: 5, value: 1, step: 0.1 });
@@ -37,7 +37,6 @@ const snippet: Snippet = {
         style: { stroke: sky, strokeWidth: 0.05 },
     });
     add(graph);
-    render();
 
     controls.onUpdate(() => {
         graph.setFunction((x) => amp.value * fns[fnType.value](freq.value * x));

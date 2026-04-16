@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Draggable',
     description: 'Drag a point and see its coordinates update live.',
     category: 'Interactivity',
-    code: `export default function({ add, interact, grid, render }) {
+    code: `export default function({ add, interact, grid }) {
     grid();
 
     const dot = circle({ radius: 0.2, style: { fill: sky, stroke: null } });
@@ -22,8 +22,6 @@ const snippet: Snippet = {
             label.content = '(' + pos[0].toFixed(1) + ', ' + pos[1].toFixed(1) + ')';
         },
     });
-
-    render();
 }`,
 };
 

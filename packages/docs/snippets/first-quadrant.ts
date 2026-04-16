@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'First Quadrant',
     description: 'Custom axis ranges with labeled points and dashed lines.',
     category: 'Math',
-    code: `export default function({ add, render }) {
+    code: `export default function({ add }) {
     const ax = axes({
         xRange: [0, 10, 1],
         yRange: [0, 6, 1],
@@ -30,8 +30,6 @@ const snippet: Snippet = {
         end: ax.c2p([9, 5.5]),
         style: { stroke: orange, strokeWidth: 0.03 },
     }));
-
-    render();
 }`,
 };
 

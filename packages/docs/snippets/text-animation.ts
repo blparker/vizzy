@@ -4,7 +4,7 @@ const snippet: Snippet = {
     title: 'Text + Animation',
     description: 'Coordinate labels that update live during animation.',
     category: 'Basics',
-    code: `export default async function({ add, play, wait, grid, render }) {
+    code: `export default async function({ add, play, wait, grid }) {
     grid();
 
     const dot = circle({ radius: 0.15, style: { fill: sky, stroke: null } });
@@ -14,7 +14,6 @@ const snippet: Snippet = {
         style: { fill: white, fontSize: 0.25 },
     });
 
-    render();
     await wait(0.5);
     await play(fadeIn(dot), fadeIn(label));
 

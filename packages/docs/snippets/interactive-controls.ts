@@ -5,7 +5,7 @@ const snippet: Snippet = {
     description: 'Sliders, checkboxes, color pickers, and select dropdowns.',
     category: 'Interactivity',
     playgroundOnly: true,
-    code: `export default function({ add, controls, grid, render }) {
+    code: `export default function({ add, controls, grid }) {
     controls.panel();
 
     const radius = controls.slider('Radius', { min: 0.1, max: 3, value: 1, step: 0.1 });
@@ -22,7 +22,6 @@ const snippet: Snippet = {
     const c = circle({ radius: radius.value, style: { fill: fillColor.value, stroke: strokeColor.value } });
     const p = regularPolygon({ sides: sides.value || 6, radius: 2, style: { stroke: emerald } }).shift(3.5, 0);
     add(c, p);
-    render();
 
     controls.onUpdate(() => {
         c.radius = radius.value;

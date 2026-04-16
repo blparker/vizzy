@@ -4,8 +4,11 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "next dev",
-        "build": "pnpm --filter=@vizzyjs/core --filter=@vizzyjs/renderer-canvas --filter=@vizzyjs/react run build && node scripts/build-runtime.mjs && next build",
+        "dev": "pnpm build:deps && pnpm build:runtime && pnpm build:types && next dev",
+        "build:deps": "pnpm --filter=@vizzyjs/core --filter=@vizzyjs/renderer-canvas --filter=@vizzyjs/react run build",
+        "build:runtime": "node scripts/build-runtime.mjs",
+        "build:types": "node scripts/build-types.mjs",
+        "build": "pnpm build:deps && pnpm build:runtime && pnpm build:types && next build",
         "start": "next start",
         "lint": "next lint",
         "db:generate": "drizzle-kit generate",

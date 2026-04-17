@@ -10,8 +10,12 @@ export function ThemeToggle() {
     const [mounted, setMounted] = useState(false);
     useEffect(() => setMounted(true), []);
 
-    const isDark = resolvedTheme === 'dark';
-    const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    const isDark = mounted && resolvedTheme === 'dark';
+    const label = mounted
+        ? isDark
+            ? 'Switch to light mode'
+            : 'Switch to dark mode'
+        : 'Toggle theme';
 
     return (
         <Button
@@ -20,6 +24,7 @@ export function ThemeToggle() {
             onClick={() => setTheme(isDark ? 'light' : 'dark')}
             aria-label={label}
             title={label}
+            suppressHydrationWarning
         >
             {mounted ? (
                 isDark ? (

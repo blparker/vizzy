@@ -101,4 +101,12 @@ export class AnimationPlayer {
             this.rafId = null;
         }
     }
+
+    dispose(): void {
+        this.stopLoop();
+        if (this.active) {
+            this.active.resolve();
+            this.active = null;
+        }
+    }
 }

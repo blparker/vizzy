@@ -118,6 +118,15 @@ export class CanvasRenderer implements Renderer {
         canvas.style.height = `${displayHeight}px`;
     }
 
+    resize(displayWidth: number, displayHeight: number): void {
+        this.dpr = window.devicePixelRatio || 1;
+        const canvas = this.ctx.canvas;
+        canvas.width = displayWidth * this.dpr;
+        canvas.height = displayHeight * this.dpr;
+        canvas.style.width = `${displayWidth}px`;
+        canvas.style.height = `${displayHeight}px`;
+    }
+
     beginFrame(scene: Scene): void {
         const ctx = this.ctx;
         const canvas = ctx.canvas;

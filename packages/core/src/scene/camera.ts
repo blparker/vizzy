@@ -25,6 +25,11 @@ export class Camera {
         this.center = opts.center ?? [0, 0];
     }
 
+    setPixelSize(width: number, height: number): void {
+        this.pixelWidth = width;
+        this.pixelHeight = height;
+    }
+
     getWorldToPixel(): Mat3 {
         // Fit the entire world inside the canvas — uniform scale, no clipping
         const sx = this.pixelWidth / this.worldWidth;

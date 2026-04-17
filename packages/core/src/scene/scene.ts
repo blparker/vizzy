@@ -50,6 +50,10 @@ export class Scene {
         return this;
     }
 
+    resize(pixelWidth: number, pixelHeight: number): void {
+        this.camera.setPixelSize(pixelWidth, pixelHeight);
+    }
+
     remove(shape: Shape): this {
         this.root.remove(shape);
         return this;

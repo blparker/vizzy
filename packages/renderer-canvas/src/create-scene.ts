@@ -14,6 +14,27 @@ import { AnimationPlayer } from './animation-player';
 import { createControlsManager, type ControlsManager } from './controls';
 import { createInteractionManager, type InteractionManager } from './interaction';
 
+export interface AutoResizeConfig {
+    /**
+     * Element whose size the canvas should track. Defaults to the canvas's parent.
+     */
+    container?: HTMLElement;
+    /**
+     * Override aspect ratio (width / height). Defaults to the scene's world aspect ratio.
+     */
+    aspectRatio?: number;
+}
+
+export type AutoResizeOption = boolean | AutoResizeConfig;
+
+export interface CreateSceneOptions extends Omit<SceneOptions, 'pixelWidth' | 'pixelHeight'> {
+    /**
+     * When set, the canvas is resized to fit its container whenever the container changes size.
+     * Aspect ratio defaults to the scene's world aspect ratio (letterbox).
+     */
+    autoResize?: AutoResizeOption;
+}
+
 export interface BoundScene {
     scene: Scene;
     add: {
@@ -37,28 +58,31 @@ export interface BoundScene {
     grid: (props?: Omit<GridProps, 'camera'>) => Group;
     play: (...args: (Animation | AnimationOptions)[]) => Promise<void>;
     wait: (seconds: number) => Promise<void>;
+    resize: (displayWidth: number, displayHeight: number) => void;
+    destroy: () => void;
     controls: ControlsManager;
     interact: InteractionManager;
 }
 
 export function createScene(
     canvas: HTMLCanvasElement,
-    opts: Omit<SceneOptions, 'pixelWidth' | 'pixelHeight'> = {}
+    opts: CreateSceneOptions = {}
 ): BoundScene {
-    // Read the intended display size before the renderer modifies canvas.width/height for DPR
-    const displayWidth = canvas.width;
-    const displayHeight = canvas.height;
+    const { autoResize, ...sceneOpts } = opts;
+
+    // Read the intended display size before the renderer modifies canvas.width/height for DPR.
+    // If the canvas hasn't been sized (0x0), autoResize will fill in real dimensions shortly.
+    const displayWidth = canvas.width || 1;
+    const displayHeight = canvas.height || 1;
 
     const renderer = new CanvasRenderer(canvas);
 
     const scene = new Scene({
-        ...opts,
+        ...sceneOpts,
         pixelWidth: displayWidth,
         pixelHeight: displayHeight,
     });
 
-    // Auto-render via microtask batching: multiple add/remove/grid calls
-    // in the same synchronous block produce only one render.
     let renderQueued = false;
     function queueRender() {
         if (!renderQueued) {
@@ -80,6 +104,9 @@ export function createScene(
         queueRender();
         return shapes.length === 1 ? shapes[0]! : shapes;
     }
+
+    let destroyed = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     const bound: BoundScene = {
         scene,
@@ -108,7 +135,6 @@ export function createScene(
         },
 
         play(...args: (Animation | AnimationOptions)[]) {
-            // Last arg may be options
             let options: AnimationOptions | undefined;
             let animations: Animation[];
 
@@ -120,7 +146,6 @@ export function createScene(
                 animations = args as Animation[];
             }
 
-            // Apply options overrides to each animation
             if (options) {
                 animations = animations.map((anim) => ({
                     ...anim,
@@ -129,7 +154,6 @@ export function createScene(
                 }));
             }
 
-            // Auto-add shapes not yet in the scene
             for (const anim of animations) {
                 for (const target of anim.targets) {
                     if (!target.parent) {
@@ -145,6 +169,22 @@ export function createScene(
             return player.wait(seconds);
         },
 
+        resize(displayWidth: number, displayHeight: number) {
+            renderer.resize(displayWidth, displayHeight);
+            scene.resize(displayWidth, displayHeight);
+            queueRender();
+        },
+
+        destroy() {
+            if (destroyed) return;
+            destroyed = true;
+            resizeObserver?.disconnect();
+            resizeObserver = null;
+            player.dispose();
+            bound.controls.dispose();
+            bound.interact.dispose();
+        },
+
         controls: null as unknown as ControlsManager,
         interact: null as unknown as InteractionManager,
     };
@@ -154,8 +194,30 @@ export function createScene(
     bound.controls = createControlsManager(canvas, themeStr, () => bound.render());
     bound.interact = createInteractionManager(canvas, scene, () => bound.render());
 
-    // Auto re-render when TeX images finish loading
     renderer.onTexReady = () => bound.render();
+
+    if (autoResize) {
+        const config: AutoResizeConfig = typeof autoResize === 'object' ? autoResize : {};
+        const container = config.container ?? canvas.parentElement;
+        if (container && typeof ResizeObserver !== 'undefined') {
+            const fit = () => {
+                if (destroyed) return;
+                const rect = container.getBoundingClientRect();
+                const cw = rect.width;
+                const ch = rect.height;
+                if (cw <= 0 || ch <= 0) return;
+                const aspect =
+                    config.aspectRatio ?? scene.camera.worldWidth / scene.camera.worldHeight;
+                const containerAspect = cw / ch;
+                const [w, h] =
+                    containerAspect > aspect ? [ch * aspect, ch] : [cw, cw / aspect];
+                bound.resize(Math.round(w), Math.round(h));
+            };
+            resizeObserver = new ResizeObserver(fit);
+            resizeObserver.observe(container);
+            fit();
+        }
+    }
 
     return bound;
 }
@@ -166,13 +228,13 @@ function isAnimation(obj: unknown): obj is Animation {
 
 export function renderScene(
     canvas: HTMLCanvasElement,
-    opts: Omit<SceneOptions, 'pixelWidth' | 'pixelHeight'>,
+    opts: CreateSceneOptions,
     build: (bound: BoundScene) => void
 ): BoundScene;
 export function renderScene(canvas: HTMLCanvasElement, build: (bound: BoundScene) => void): BoundScene;
 export function renderScene(
     canvas: HTMLCanvasElement,
-    optsOrBuild: Omit<SceneOptions, 'pixelWidth' | 'pixelHeight'> | ((bound: BoundScene) => void),
+    optsOrBuild: CreateSceneOptions | ((bound: BoundScene) => void),
     maybeBuild?: (bound: BoundScene) => void
 ): BoundScene {
     const opts = typeof optsOrBuild === 'function' ? {} : optsOrBuild;

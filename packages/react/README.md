@@ -2,7 +2,10 @@
 
 React bindings for [vizzy](https://github.com/blparker/vizzy) — a TypeScript math visualization library inspired by manim.
 
-This package provides a `useScene` hook that wires a vizzy scene to a React-mounted `<canvas>` element, handling the ref + lifecycle boilerplate for you. The imperative `createScene` API from `@vizzyjs/renderer-canvas` remains the source of truth — this package is a thin ergonomic wrapper.
+A `useScene` hook that wires a vizzy scene to a React-mounted `<canvas>`, handling the ref and lifecycle for you. The imperative `createScene` API from `@vizzyjs/renderer-canvas` remains the source of truth — this is a thin ergonomic wrapper.
+
+- **Docs:** https://bryan.blog/vizzy/
+- **Repo:** https://github.com/blparker/vizzy
 
 ## Install
 
@@ -16,7 +19,7 @@ npm install @vizzyjs/core @vizzyjs/renderer-canvas @vizzyjs/react
 import { useScene } from '@vizzyjs/react';
 import { circle, fadeIn, sky } from '@vizzyjs/core';
 
-function MyViz() {
+export function MyViz() {
     const ref = useScene(({ add, play, grid }) => {
         grid();
         const c = circle({ radius: 1, color: sky });
@@ -33,6 +36,9 @@ function MyViz() {
 Pass a dependency array to re-run setup when inputs change:
 
 ```tsx
+import { useScene } from '@vizzyjs/react';
+import { circle, sky } from '@vizzyjs/core';
+
 function ReactiveViz({ radius }: { radius: number }) {
     const ref = useScene(
         ({ add }) => {
@@ -57,6 +63,10 @@ useScene(({ controls }) => {
 });
 ```
 
+### Next.js / SSR
+
+Vizzy renders to a real `<canvas>` and uses browser APIs (`ResizeObserver`, `requestAnimationFrame`). Mount any component that calls `useScene` on the client only — with Next.js App Router, use `'use client'` at the top of the file, or lazy-load with `next/dynamic({ ssr: false })` for Pages Router.
+
 ## API
 
 ```ts
@@ -68,14 +78,18 @@ function useScene(
 ```
 
 - **`setup`** — runs once the canvas mounts. Receives the same `BoundScene` that `createScene` returns.
-- **`options`** — forwarded to `createScene` (e.g., `theme`). `pixelWidth`/`pixelHeight` come from the canvas element's `width`/`height` attributes.
+- **`options`** — forwarded to `createScene` (e.g., `theme`, `autoResize`). `pixelWidth` / `pixelHeight` are managed by the canvas's size; disable `autoResize` to use fixed dimensions from the canvas `width` / `height` attributes.
 - **`deps`** — React-style dependency array. Defaults to `[]` (run once).
 
-## Known limitation: React strict mode
+### Responsive canvas
 
-In dev, React strict mode runs effects twice. Each run creates a new scene and attaches canvas event listeners. The first scene's listeners aren't removed today, so interactions may double-fire in dev. Production is unaffected. A proper fix requires a `destroy()` hook on `BoundScene` in `@vizzyjs/renderer-canvas`.
+`useScene` defaults `autoResize` to `true`. The canvas tracks its parent element's size (via `ResizeObserver`) while preserving the world aspect ratio. Pass `autoResize: false` for a fixed size, or `{ container, aspectRatio }` to override.
 
-## Peer Dependencies
+### Unmount behavior
+
+On unmount (or when `deps` change), the hook calls `bound.destroy()` — disconnects the resize observer, disposes controls and interactions, and stops any in-flight animations. React strict mode double-invocation does not leak listeners.
+
+## Peer dependencies
 
 - `react >= 19`
 - `@vizzyjs/core`

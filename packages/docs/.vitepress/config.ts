@@ -9,8 +9,8 @@ export default defineConfig({
         nav: [
             { text: 'Guide', link: '/guide/getting-started' },
             { text: 'Examples', link: '/examples/' },
-            { text: 'Playground', link: '/playground/' },
             { text: 'API', link: '/api/' },
+            { text: 'Hub', link: 'https://hub.vizzyjs.dev' },
         ],
         sidebar: {
             '/guide/': [

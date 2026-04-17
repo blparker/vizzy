@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, computed } from 'vue';
-import { withBase } from 'vitepress';
 import { codeToHtml } from 'shiki';
 import { runCode } from '../run-code';
+
+const HUB_URL = 'https://hub.vizzyjs.dev';
 
 const props = defineProps<{
     code: string;
@@ -16,9 +17,9 @@ const canvasWidth = Math.round(canvasHeight * (14 / 8));
 const showCode = ref(true);
 const highlightedCode = ref('');
 
-const playgroundUrl = computed(() => {
+const hubUrl = computed(() => {
     const encoded = btoa(encodeURIComponent(props.code));
-    return withBase(`/playground/#code=${encoded}`);
+    return `${HUB_URL}/?code=${encoded}`;
 });
 
 async function highlight() {
@@ -74,8 +75,8 @@ onMounted(async () => {
             <button class="vizzy-example__btn" @click="showCode = !showCode">
                 {{ showCode ? 'Hide Code' : 'Show Code' }}
             </button>
-            <a class="vizzy-example__btn vizzy-example__btn--playground" :href="playgroundUrl" target="_blank">
-                Open in Playground &nearr;
+            <a class="vizzy-example__btn vizzy-example__btn--playground" :href="hubUrl" target="_blank" rel="noopener">
+                Open in Hub &nearr;
             </a>
         </div>
         <div v-if="showCode" class="vizzy-example__code" v-html="highlightedCode" />

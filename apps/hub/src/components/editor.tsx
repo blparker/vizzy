@@ -11,9 +11,8 @@ export interface EditorProps {
     onChange: (value: string) => void;
 }
 
-// Module-scoped so we only register extra libs once per page load,
-// even if the editor remounts (e.g. via React strict mode).
 let libsRegistered = false;
+let themesRegistered = false;
 
 function configureTs(monaco: Parameters<BeforeMount>[0]) {
     const ts = monaco.languages.typescript;
@@ -32,12 +31,23 @@ function configureTs(monaco: Parameters<BeforeMount>[0]) {
     ts.typescriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: false,
         noSyntaxValidation: false,
-        // Silence "top-level await" warnings — the runtime wraps user code
-        // in an async IIFE, so top-level await is always legal here.
-        //   1375: 'await' at the top level only allowed when file is a module
-        //   1378: Top-level 'await' expressions require module esnext/es2022/...
         diagnosticCodesToIgnore: [1375, 1378],
     });
+}
+
+async function registerGithubThemes(monaco: Parameters<OnMount>[1]) {
+    if (themesRegistered) return;
+    themesRegistered = true;
+    try {
+        const [dark, light] = await Promise.all([
+            fetch('/monaco-themes/github-dark.json').then((r) => r.json()),
+            fetch('/monaco-themes/github-light.json').then((r) => r.json()),
+        ]);
+        monaco.editor.defineTheme('github-dark', dark);
+        monaco.editor.defineTheme('github-light', light);
+    } catch {
+        // fall back silently to default themes
+    }
 }
 
 async function registerVizzyTypes(monaco: Parameters<OnMount>[1]) {
@@ -59,10 +69,12 @@ async function registerVizzyTypes(monaco: Parameters<OnMount>[1]) {
 
 export function Editor({ value, onChange }: EditorProps) {
     const { resolvedTheme } = useTheme();
-    const monacoTheme = resolvedTheme === 'light' ? 'vs' : 'vs-dark';
+    const monacoTheme = resolvedTheme === 'light' ? 'github-light' : 'github-dark';
 
     const beforeMount: BeforeMount = (monaco) => configureTs(monaco);
-    const onMount: OnMount = (_editor, monaco) => {
+    const onMount: OnMount = async (_editor, monaco) => {
+        await registerGithubThemes(monaco);
+        monaco.editor.setTheme(monacoTheme);
         void registerVizzyTypes(monaco);
     };
 
@@ -82,6 +94,7 @@ export function Editor({ value, onChange }: EditorProps) {
                 fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
                 scrollBeyondLastLine: false,
                 tabSize: 4,
+                padding: { top: 12 },
             }}
         />
     );

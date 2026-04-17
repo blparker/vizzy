@@ -2,7 +2,7 @@
 
 Math visualization for TypeScript. Inspired by [manim](https://www.manim.community/), built for the browser.
 
-[Documentation](https://bryan.blog/vizzy/) · [Examples](https://bryan.blog/vizzy/examples/) · [Playground](https://bryan.blog/vizzy/playground/)
+[Documentation](https://vizzyjs.dev) · [Examples](https://vizzyjs.dev/examples/) · [Hub](https://hub.vizzyjs.dev)
 
 > **Status:** pre-1.0 (`0.1.x`). The API is stabilizing but may still change between minor versions.
 

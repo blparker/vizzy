@@ -4,8 +4,8 @@ Canvas2D renderer for [vizzy](https://github.com/blparker/vizzy) — a TypeScrip
 
 This package renders vizzy scenes to an HTML `<canvas>`, with an animation player, interactive controls, and mouse interaction. It's the default renderer — `createScene()` is the one-call entry point most users will want.
 
-- **Docs:** https://bryan.blog/vizzy/
-- **Examples:** https://bryan.blog/vizzy/examples/
+- **Docs:** https://vizzyjs.dev
+- **Examples:** https://vizzyjs.dev/examples/
 - **Repo:** https://github.com/blparker/vizzy
 
 ## Install
@@ -29,7 +29,7 @@ add(c);
 await play(fadeIn(c));
 ```
 
-See the [getting started guide](https://bryan.blog/vizzy/guide/getting-started) for a full walkthrough.
+See the [getting started guide](https://vizzyjs.dev/guide/getting-started) for a full walkthrough.
 
 ## What `createScene()` gives you
 

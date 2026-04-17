@@ -18,7 +18,8 @@ const showCode = ref(true);
 const highlightedCode = ref('');
 
 const hubUrl = computed(() => {
-    const encoded = btoa(encodeURIComponent(props.code));
+    // URL-encode the base64 output — raw '+' in a query string decodes to space on the server.
+    const encoded = encodeURIComponent(btoa(encodeURIComponent(props.code)));
     return `${HUB_URL}/?code=${encoded}`;
 });
 

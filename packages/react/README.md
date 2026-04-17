@@ -4,7 +4,7 @@ React bindings for [vizzy](https://github.com/blparker/vizzy) — a TypeScript m
 
 A `useScene` hook that wires a vizzy scene to a React-mounted `<canvas>`, handling the ref and lifecycle for you. The imperative `createScene` API from `@vizzyjs/renderer-canvas` remains the source of truth — this is a thin ergonomic wrapper.
 
-- **Docs:** https://bryan.blog/vizzy/
+- **Docs:** https://vizzyjs.dev
 - **Repo:** https://github.com/blparker/vizzy
 
 ## Install

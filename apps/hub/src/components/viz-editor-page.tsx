@@ -46,7 +46,7 @@ export function VizEditorPage({
     const hydratedRef = useRef(false);
 
     useEffect(() => {
-        if (initialId || hydratedRef.current) return;
+        if (initialId || initialCode || hydratedRef.current) return;
         hydratedRef.current = true;
         try {
             const raw = localStorage.getItem(DRAFT_KEY);
@@ -57,7 +57,7 @@ export function VizEditorPage({
         } catch {
             // ignore
         }
-    }, [initialId]);
+    }, [initialId, initialCode]);
 
     useEffect(() => {
         if (initialId) return;

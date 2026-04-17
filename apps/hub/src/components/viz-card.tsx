@@ -58,7 +58,7 @@ export function VizCard({ id, title, updatedAt }: VizCardProps) {
         <>
             <article className="group relative overflow-hidden rounded-lg border bg-card transition hover:border-foreground/30">
                 <Link href={`/v/${id}/edit`} className="block">
-                    <div className="pointer-events-none relative aspect-[4/3] w-full overflow-hidden bg-muted/30">
+                    <div className="pointer-events-none relative aspect-[800/457] w-full overflow-hidden bg-muted/30">
                         <iframe
                             src={`/embed/${id}`}
                             className="pointer-events-none h-full w-full border-0"

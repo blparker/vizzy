@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
     title: 'Vizzy',
     description: 'A TypeScript math visualization library inspired by manim',
-    base: '/vizzy/',
+    base: '/',
     themeConfig: {
         nav: [
             { text: 'Guide', link: '/guide/getting-started' },

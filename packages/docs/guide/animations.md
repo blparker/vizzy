@@ -80,7 +80,7 @@ const optionsExample = `const c = circle({ color: sky });
 await play(fadeIn(c));
 
 await play(animateShift(c, [3, 0]), { duration: 2 });
-await play(animateShift(c, [-3, 0]), { duration: 0.5, easing: easeInOut });
+await play(animateShift(c, [-3, 0]), { duration: 0.5, easing: easeInOutCubic });
 await wait(0.5);`
 </script>
 
@@ -180,9 +180,11 @@ Pass an options object as the last argument to `play()`:
 
 ::: details Available easing functions
 - `linear`: constant speed
-- `easeIn`: starts slow, accelerates
-- `easeOut`: starts fast, decelerates
-- `easeInOut`: slow at both ends
+- `easeInQuad`, `easeInCubic`, `easeInSine`: starts slow, accelerates
+- `easeOutQuad`, `easeOutCubic`, `easeOutSine`: starts fast, decelerates
+- `easeInOutQuad`, `easeInOutCubic`, `easeInOutSine`: slow at both ends
 - `smooth`: Hermite smoothstep (default)
 - `smoother`: Ken Perlin's smootherstep
+
+Quad is the mildest (`t²`), cubic is stronger (`t³`), sine is the most gradual.
 :::

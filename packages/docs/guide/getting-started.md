@@ -1,7 +1,8 @@
 <script setup>
 const firstScene = `add(circle({ color: sky }));`
 
-const shapesIntro = `grid();
+const shapesIntro = `// draw a coordinate grid (optional, handy for seeing where shapes land)
+grid();
 
 const c = circle({ color: sky });
 const r = rect({ color: emerald }).shift(3, 0);

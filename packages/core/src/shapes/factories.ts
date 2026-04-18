@@ -37,12 +37,16 @@ export function rect(props?: RectProps & { color?: ColorLike }): RectShape {
     return new RectShape(rest);
 }
 
-export function line(start: Vec2, end: Vec2, props?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike }): LineShape;
+export function line(
+    start: Vec2,
+    end: Vec2,
+    props?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike }
+): LineShape;
 export function line(props?: LineProps & { color?: ColorLike }): LineShape;
 export function line(
     startOrProps?: Vec2 | (LineProps & { color?: ColorLike }),
     endOrNothing?: Vec2,
-    extraProps?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike },
+    extraProps?: Omit<LineProps, 'start' | 'end'> & { color?: ColorLike }
 ): LineShape {
     if (Array.isArray(startOrProps) && Array.isArray(endOrNothing)) {
         const { color, ...rest } = extraProps ?? {};
@@ -101,8 +105,8 @@ export function arcBetweenPoints(props: ArcBetweenPointsProps): ArcShape {
     // Center of the arc circle: offset from midpoint perpendicular to the chord
     const perpDist = radius * Math.cos(Math.abs(bendAngle) / 2);
     const sign = bendAngle > 0 ? 1 : -1;
-    const nx = -dy / dist * sign;
-    const ny = dx / dist * sign;
+    const nx = (-dy / dist) * sign;
+    const ny = (dx / dist) * sign;
     const cx = mx + nx * perpDist;
     const cy = my + ny * perpDist;
 
@@ -117,9 +121,7 @@ export function arcBetweenPoints(props: ArcBetweenPointsProps): ArcShape {
         while (endAngle > startAngle) endAngle -= Math.PI * 2;
     }
 
-    const style = props.color
-        ? { ...colorToStyle(props.color), ...props.style }
-        : props.style;
+    const style = props.color ? { ...colorToStyle(props.color), ...props.style } : props.style;
 
     const a = new ArcShape({
         center: [cx, cy],
@@ -136,12 +138,16 @@ export function text(props?: TextProps): TextShape {
     return new TextShape(props);
 }
 
-export function arrow(start: Vec2, end: Vec2, props?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike }): ArrowShape;
+export function arrow(
+    start: Vec2,
+    end: Vec2,
+    props?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike }
+): ArrowShape;
 export function arrow(props?: ArrowProps & { color?: ColorLike }): ArrowShape;
 export function arrow(
     startOrProps?: Vec2 | (ArrowProps & { color?: ColorLike }),
     endOrNothing?: Vec2,
-    extraProps?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike },
+    extraProps?: Omit<ArrowProps, 'start' | 'end'> & { color?: ColorLike }
 ): ArrowShape {
     if (Array.isArray(startOrProps) && Array.isArray(endOrNothing)) {
         const { color, ...rest } = extraProps ?? {};
@@ -174,14 +180,14 @@ export function brace(props?: BraceProps): BraceShape {
     return new BraceShape(props);
 }
 
-export interface DotProps {
+export interface PointProps {
     position?: Vec2;
     radius?: number;
     color?: Color | string;
     style?: Style;
 }
 
-export function point(props: DotProps = {}): CircleShape {
+export function point(props: PointProps = {}): CircleShape {
     const color = props.color ?? { r: 1, g: 1, b: 1, a: 1 };
     const c = new CircleShape({
         radius: props.radius ?? 0.08,
@@ -543,7 +549,12 @@ export interface LabelProps {
     style?: Style;
 }
 
-export function label(shape: Shape, content: string, direction?: Direction, opts?: { offset?: number; style?: Style }): TextShape {
+export function label(
+    shape: Shape,
+    content: string,
+    direction?: Direction,
+    opts?: { offset?: number; style?: Style }
+): TextShape {
     const dir = direction ?? [0, 1]; // default: above
     const offset = opts?.offset ?? 0.25;
 
@@ -561,10 +572,7 @@ export function label(shape: Shape, content: string, direction?: Direction, opts
         anchor = shape.center;
     }
 
-    const position: Vec2 = [
-        anchor[0] + dir[0] * offset,
-        anchor[1] + dir[1] * offset,
-    ];
+    const position: Vec2 = [anchor[0] + dir[0] * offset, anchor[1] + dir[1] * offset];
 
     let textAlign: 'left' | 'center' | 'right' = 'center';
     if (dir[0] > 0.5) textAlign = 'left';

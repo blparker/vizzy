@@ -16,10 +16,15 @@ export async function runCode(
 
         const prepared = code.replace(/^\s*import\s+.*from\s+['"].*['"];?\s*$/gm, '');
 
+        // User code runs in a nested block so their top-level `const` / `let` declarations
+        // can safely shadow module exports with the same name (e.g. `const dot = ...`,
+        // which would otherwise collide with core's `dot` vector helper).
         const wrappedCode = `
             const __bound__ = createScene(canvas, { theme: __theme__ });
             const { add, remove, play, wait, grid, render, controls, interact } = __bound__;
-            ${prepared}
+            {
+                ${prepared}
+            }
             __bound__.render();
             return __bound__;
         `;

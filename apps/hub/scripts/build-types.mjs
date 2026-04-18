@@ -51,8 +51,14 @@ for (const pkg of packages) {
 const coreMod = await import('@vizzyjs/core');
 const rendererMod = await import('@vizzyjs/renderer-canvas');
 
-const coreNames = Object.keys(coreMod).filter((n) => n !== 'default');
-const rendererNames = Object.keys(rendererMod).filter((n) => n !== 'default' && !coreNames.includes(n));
+// Scene methods are declared separately with BoundScene types — skip any core/renderer
+// export that shares a name so we don't emit duplicate `const X` declarations.
+const sceneMethods = new Set(['add', 'remove', 'play', 'wait', 'grid', 'render', 'controls', 'interact', 'scene', 'canvas']);
+
+const coreNames = Object.keys(coreMod).filter((n) => n !== 'default' && !sceneMethods.has(n));
+const rendererNames = Object.keys(rendererMod).filter(
+    (n) => n !== 'default' && !sceneMethods.has(n) && !coreNames.includes(n),
+);
 
 const coreDecls = coreNames
     .map((n) => `    const ${n}: typeof import('@vizzyjs/core').${n};`)

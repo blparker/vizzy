@@ -8,6 +8,9 @@ export async function runCode(
         const renderer = await import('@vizzyjs/renderer-canvas');
 
         const modules: Record<string, unknown> = { ...core, ...renderer };
+        // Scene methods win — remove any core export that shares a name with a scene method.
+        const SCENE_METHODS = ['add', 'remove', 'play', 'wait', 'grid', 'render', 'controls', 'interact', 'scene', 'canvas'];
+        for (const name of SCENE_METHODS) delete modules[name];
         const moduleNames = Object.keys(modules);
         const moduleValues = Object.values(modules);
 

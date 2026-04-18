@@ -200,12 +200,19 @@ export function createScene(
         const config: AutoResizeConfig = typeof autoResize === 'object' ? autoResize : {};
         const container = config.container ?? canvas.parentElement;
         if (container && typeof ResizeObserver !== 'undefined') {
-            const fit = () => {
-                if (destroyed) return;
+            const measure = (entry?: ResizeObserverEntry): [number, number] => {
+                if (entry) {
+                    const r = entry.contentRect;
+                    return [r.width, r.height];
+                }
                 const rect = container.getBoundingClientRect();
-                const cw = rect.width;
-                const ch = rect.height;
-                if (cw <= 0 || ch <= 0) return;
+                const cs = typeof window !== 'undefined' ? window.getComputedStyle(container) : null;
+                const padH = cs ? parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) : 0;
+                const padV = cs ? parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) : 0;
+                return [rect.width - padH, rect.height - padV];
+            };
+            const apply = (cw: number, ch: number) => {
+                if (destroyed || cw <= 0 || ch <= 0) return;
                 const aspect =
                     config.aspectRatio ?? scene.camera.worldWidth / scene.camera.worldHeight;
                 const containerAspect = cw / ch;
@@ -213,9 +220,18 @@ export function createScene(
                     containerAspect > aspect ? [ch * aspect, ch] : [cw, cw / aspect];
                 bound.resize(Math.round(w), Math.round(h));
             };
-            resizeObserver = new ResizeObserver(fit);
+            resizeObserver = new ResizeObserver((entries) => {
+                const [cw, ch] = measure(entries[0]);
+                apply(cw, ch);
+            });
             resizeObserver.observe(container);
-            fit();
+            // Defer initial fallback fit so browser has a chance to apply layout
+            // before we measure — the observer callback will fire on its own too.
+            requestAnimationFrame(() => {
+                if (destroyed) return;
+                const [cw, ch] = measure();
+                apply(cw, ch);
+            });
         }
     }
 

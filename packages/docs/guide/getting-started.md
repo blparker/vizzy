@@ -1,26 +1,20 @@
 <script setup>
-const firstScene = `export default function({ add }) {
-    add(circle({ color: sky }));
-}`
+const firstScene = `add(circle({ color: sky }));`
 
-const shapesIntro = `export default function({ add, grid }) {
-    grid();
-    add(
-        circle({ radius: 0.8, style: { stroke: sky } }).shift(-3, 1),
-        rect({ width: 2, height: 1.2, style: { stroke: emerald } }).shift(0, 1),
-        triangle({ radius: 0.9, style: { stroke: red } }).shift(3, 1),
-        arrow([-3, -1.5], [3, -1.5], { color: orange }),
-    );
-}`
+const shapesIntro = `grid();
+add(
+    circle({ radius: 0.8, style: { stroke: sky } }).shift(-3, 1),
+    rect({ width: 2, height: 1.2, style: { stroke: emerald } }).shift(0, 1),
+    triangle({ radius: 0.9, style: { stroke: red } }).shift(3, 1),
+    arrow([-3, -1.5], [3, -1.5], { color: orange }),
+);`
 
-const animationIntro = `export default async function({ add, play, grid }) {
-    const c = circle({ color: sky });
-    const r = rect({ width: 1.5, height: 1.5, color: emerald }).shift(3, 0);
+const animationIntro = `const c = circle({ color: sky });
+const r = rect({ width: 1.5, height: 1.5, color: emerald }).shift(3, 0);
 
-    await play(fadeIn(c), fadeIn(r));
-    await play(animateShift(c, [-3, 0]));
-    await play(animateColor(c, { stroke: red }), animateRotate(r, Math.PI / 4));
-}`
+await play(fadeIn(c), fadeIn(r));
+await play(animateShift(c, [-3, 0]));
+await play(animateColor(c, { stroke: red }), animateRotate(r, Math.PI / 4));`
 </script>
 
 # Getting Started
@@ -63,6 +57,10 @@ add(circle({ color: sky }));
 | `wait(seconds)` | Pause between animations |
 | `controls` | Create HTML controls (sliders, etc.) |
 | `interact` | Add drag/hover/click to shapes |
+
+::: tip Sandbox vs real code
+The live examples below are sandboxes where `add`, `play`, `grid`, and every `@vizzyjs/core` export (`circle`, `sky`, `fadeIn`, ...) are injected as globals. In your own project, you'd get them via `import` + `createScene()` as shown above — the rest of the code is identical.
+:::
 
 ## Shapes
 

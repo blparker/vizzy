@@ -11,22 +11,14 @@ export async function runCode(
         const moduleNames = Object.keys(modules);
         const moduleValues = Object.values(modules);
 
-        let prepared = code.replace(/^\s*import\s+.*from\s+['"].*['"];?\s*$/gm, '');
-        prepared = prepared.replace(/export\s+default\s+(async\s+)?function\s*\(/, '__fn__ = $1function(');
-        prepared = prepared.replace(/export\s+default\s+(async\s+)?function\s+(\w+)\s*\(/, '__fn__ = $1function $2(');
+        const prepared = code.replace(/^\s*import\s+.*from\s+['"].*['"];?\s*$/gm, '');
 
         const wrappedCode = `
-            let __fn__ = null;
+            const __bound__ = createScene(canvas, { theme: __theme__ });
+            const { add, remove, play, wait, grid, render, controls, interact } = __bound__;
             ${prepared}
-            if (__fn__) {
-                const __bound__ = createScene(canvas, { theme: __theme__ });
-                const __result__ = __fn__(__bound__);
-                if (__result__ && typeof __result__.then === 'function') {
-                    return __result__;
-                }
-                __bound__.render();
-                return __bound__;
-            }
+            __bound__.render();
+            return __bound__;
         `;
 
         const hasAwait = /\bawait\b/.test(prepared);

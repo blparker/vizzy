@@ -5,10 +5,9 @@ const snippet: Snippet = {
     description: 'Empty starter template.',
     category: 'Basics',
     playgroundOnly: true,
-    code: `export default function({ add, grid }) {
-    grid();
-    // Your code here!
-}`,
+    code: `grid();
+// Your code here!
+`,
 };
 
 export default snippet;

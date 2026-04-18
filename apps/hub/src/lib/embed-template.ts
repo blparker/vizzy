@@ -44,8 +44,8 @@ html, body { margin: 0; padding: 0; height: 100%; background: ${bg}; overflow: h
 import * as vizzy from ${JSON.stringify(runtimeUrl)};
 const canvas = document.getElementById('c');
 const scene = vizzy.createScene(canvas, { theme: ${JSON.stringify(theme)}, autoResize: true });
-Object.assign(globalThis, { vizzy, scene });
-const { add, play, wait, grid, render } = scene;
+const { add, remove, play, wait, grid, render, controls, interact } = scene;
+Object.assign(globalThis, vizzy, { scene, add, remove, play, wait, grid, render, controls, interact });
 (async () => {
 try {
 ${compiledJs}

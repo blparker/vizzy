@@ -46,18 +46,36 @@ for (const pkg of packages) {
     });
 }
 
-// Ambient globals — registered at a neutral path so Monaco picks it up for every model.
+// Programmatically discover every runtime export from core + renderer-canvas.
+// The hub sandbox spreads these onto globalThis, so Monaco should see each as a global.
+const coreMod = await import('@vizzyjs/core');
+const rendererMod = await import('@vizzyjs/renderer-canvas');
+
+const coreNames = Object.keys(coreMod).filter((n) => n !== 'default');
+const rendererNames = Object.keys(rendererMod).filter((n) => n !== 'default' && !coreNames.includes(n));
+
+const coreDecls = coreNames
+    .map((n) => `    const ${n}: typeof import('@vizzyjs/core').${n};`)
+    .join('\n');
+const rendererDecls = rendererNames
+    .map((n) => `    const ${n}: typeof import('@vizzyjs/renderer-canvas').${n};`)
+    .join('\n');
+
 files['/vizzy-globals.d.ts'] = `
 import type { BoundScene } from '@vizzyjs/renderer-canvas';
 
 declare global {
-    const vizzy: typeof import('@vizzyjs/core') & typeof import('@vizzyjs/renderer-canvas');
+${coreDecls}
+${rendererDecls}
     const scene: BoundScene;
     const add: BoundScene['add'];
+    const remove: BoundScene['remove'];
     const play: BoundScene['play'];
     const wait: BoundScene['wait'];
     const grid: BoundScene['grid'];
     const render: BoundScene['render'];
+    const controls: BoundScene['controls'];
+    const interact: BoundScene['interact'];
 }
 
 export {};

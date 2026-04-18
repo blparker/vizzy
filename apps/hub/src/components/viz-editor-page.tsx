@@ -11,7 +11,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Editor } from './editor';
 import { VizPreview } from './viz-preview';
 
-const DRAFT_KEY = 'vizzy-hub:draft';
+const DRAFT_KEY = 'vizzy-hub:draft:v2';
 
 export interface VizEditorPageProps {
     isAuthed: boolean;
@@ -21,14 +21,15 @@ export interface VizEditorPageProps {
 }
 
 const DEFAULT_CODE = `// Welcome to vizzy hub. Write a scene and see it render on the right.
-// \`scene\` (add/play/wait/grid/render) and \`vizzy\` (all of @vizzyjs/core) are injected.
+// All @vizzyjs/core exports (shapes, colors, animations) are available as globals,
+// along with \`add\`, \`play\`, \`wait\`, \`grid\`, \`controls\`, and \`interact\`.
 
 grid();
 
-const c = vizzy.circle({ radius: 1, color: vizzy.sky });
+const c = circle({ radius: 1, color: sky });
 add(c);
 
-await play(vizzy.fadeIn(c));
+await play(fadeIn(c));
 `;
 
 export function VizEditorPage({

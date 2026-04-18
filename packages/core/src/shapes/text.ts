@@ -48,7 +48,7 @@ export class TextShape extends Shape {
         const descent = metrics.actualBoundingBoxDescent ?? fontSize * 0.2;
         const h = ascent + descent;
 
-        // Adjust for textAlign — default is center
+        // Adjust for textAlign: default is center
         const align = this.style.textAlign ?? 'center';
         let xOffset = 0;
         if (align === 'center') xOffset = -w / 2;

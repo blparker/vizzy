@@ -13,7 +13,7 @@ const moduleValues = Object.values(modules);
 function prepareCode(code: string): string {
     // Strip import lines
     let prepared = code.replace(/^\s*import\s+.*from\s+['"].*['"];?\s*$/gm, '');
-    // Strip export default — convert to assignment (handles async too)
+    // Strip export default; convert to assignment (handles async too)
     prepared = prepared.replace(/export\s+default\s+(async\s+)?function\s*\(/, '__fn__ = $1function(');
     prepared = prepared.replace(/export\s+default\s+(async\s+)?function\s+(\w+)\s*\(/, '__fn__ = $1function $2(');
     return prepared;
@@ -24,8 +24,8 @@ export async function runCode(canvas: HTMLCanvasElement, code: string, theme: 'd
 
     // The user's code gets `canvas` and all vizzy exports in scope.
     // Two modes:
-    //   1. export default function({ add, grid }) { ... }  — auto-wrapped in renderScene
-    //   2. Direct: createScene / renderScene call           — full control (supports async)
+    //   1. export default function({ add, grid }) { ... }  (auto-wrapped in renderScene)
+    //   2. Direct: createScene / renderScene call           (full control, supports async)
     const wrappedCode = `
         let __fn__ = null;
         ${prepared}

@@ -17,7 +17,7 @@ import controls from './controls';
 import logo from './logo';
 import type { Snippet } from './types';
 
-/** All snippets — used by the playground */
+/** All snippets, used by the playground. */
 export const allSnippets = [
     blank,
     shapes,

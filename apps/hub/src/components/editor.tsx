@@ -63,7 +63,7 @@ async function registerVizzyTypes(monaco: Parameters<OnMount>[1]) {
             ts.typescriptDefaults.addExtraLib(content, `file://${path}`);
         }
     } catch {
-        // Types unavailable — editor still works, just without autocomplete.
+        // Types unavailable; editor still works, just without autocomplete.
     }
 }
 

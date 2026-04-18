@@ -80,7 +80,7 @@ export class FunctionGraph extends Group {
             let hitBreak = false;
             for (const bx of breakPoints) {
                 if (Math.abs(x - bx) < step * 0.5) {
-                    // We're at a discontinuity — flush current segment and skip this sample
+                    // We're at a discontinuity: flush current segment and skip this sample
                     if (currentSegment.length >= 2) {
                         this.addSegment(currentSegment);
                     }
@@ -128,7 +128,7 @@ export class FunctionGraph extends Group {
             const markerRadius = 0.08;
             const strokeColor = this._style.stroke ?? { r: 0.33, g: 0.63, b: 0.96, a: 1 };
 
-            // Open circle (hollow) — where the function is NOT defined
+            // Open circle (hollow): where the function is NOT defined
             if (disc.openAt !== undefined) {
                 const pos = this._axes.coordToPoint([disc.x, disc.openAt]);
                 const open = new CircleShape({
@@ -143,7 +143,7 @@ export class FunctionGraph extends Group {
                 super.add(open);
             }
 
-            // Closed circle (filled) — where the function IS defined
+            // Closed circle (filled): where the function IS defined
             if (disc.closedAt !== undefined) {
                 const pos = this._axes.coordToPoint([disc.x, disc.closedAt]);
                 const closed = new CircleShape({

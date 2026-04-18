@@ -1,8 +1,8 @@
 # @vizzyjs/core
 
-Render-agnostic core for [vizzy](https://github.com/blparker/vizzy) — a TypeScript math visualization library inspired by manim.
+Render-agnostic core for [vizzy](https://github.com/blparker/vizzy), a TypeScript math visualization library inspired by manim.
 
-This package holds the scene graph, shape factories, animation system, math utilities, and styling. It does not draw pixels. Pair it with a renderer — today that means [`@vizzyjs/renderer-canvas`](https://www.npmjs.com/package/@vizzyjs/renderer-canvas) for Canvas2D.
+This package holds the scene graph, shape factories, animation system, math utilities, and styling. It does not draw pixels. Pair it with a renderer. Today that means [`@vizzyjs/renderer-canvas`](https://www.npmjs.com/package/@vizzyjs/renderer-canvas) for Canvas2D.
 
 - **Docs:** https://vizzyjs.dev
 - **Repo:** https://github.com/blparker/vizzy
@@ -29,12 +29,12 @@ await play(fadeIn(c));
 
 ## What's inside
 
-- **Shapes** — `circle()`, `rect()`, `line()`, `polygon()`, `arc()`, `arrow()`, `text()`, `tex()`, `axes()`, `functionGraph()`, `brace()`, `angleShape()`, and more
-- **Scene graph** — retained tree with groups, affine transforms, and z-ordering
-- **Animations** — `fadeIn`, `fadeOut`, `create`, `animateShift`, `animateRotate`, `animateScale`, `animateColor`, `during`
-- **Math** — `Vec2`, `Mat3`, `Color`, `BoundingBox`, easing functions, `lerp`
-- **Palette** — full Tailwind CSS color system (22 scales × 11 shades)
-- **Hit testing** — point-in-shape queries for interaction
+- **Shapes:** `circle()`, `rect()`, `line()`, `polygon()`, `arc()`, `arrow()`, `text()`, `tex()`, `axes()`, `functionGraph()`, `brace()`, `angleShape()`, and more
+- **Scene graph:** retained tree with groups, affine transforms, and z-ordering
+- **Animations:** `fadeIn`, `fadeOut`, `create`, `animateShift`, `animateRotate`, `animateScale`, `animateColor`, `during`
+- **Math:** `Vec2`, `Mat3`, `Color`, `BoundingBox`, easing functions, `lerp`
+- **Palette:** full Tailwind CSS color system (22 scales × 11 shades)
+- **Hit testing:** point-in-shape queries for interaction
 
 ## Writing a custom renderer
 

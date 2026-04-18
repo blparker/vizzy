@@ -2,7 +2,7 @@ import type { Snippet } from './types';
 
 const snippet: Snippet = {
     title: 'Secant to Tangent',
-    description: 'Animated limit — Q approaches P to reveal the derivative.',
+    description: 'Animated limit: Q approaches P to reveal the derivative.',
     category: 'Math',
     code: `const ax = axes({
     xRange: [-1, 5, 1],

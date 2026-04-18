@@ -134,7 +134,7 @@ Polygons, stars, ellipses, and squares:
 
 ## Lines and Arrows
 
-`line()` and `arrow()` support a positional shorthand — pass start and end points directly instead of a props object:
+`line()` and `arrow()` support a positional shorthand: pass start and end points directly instead of a props object.
 
 <ClientOnly>
   <VizzyExample :code="linesAndArrows" />
@@ -144,9 +144,9 @@ Polygons, stars, ellipses, and squares:
 
 Shapes start at the origin. Three ways to position them:
 
-- **`shift(x, y)`** — move by a relative offset (chainable)
-- **`moveTo([x, y])`** — move to an absolute position
-- **`nextTo(shape, direction)`** — place adjacent to another shape
+- **`shift(x, y)`**: move by a relative offset (chainable)
+- **`moveTo([x, y])`**: move to an absolute position
+- **`nextTo(shape, direction)`**: place adjacent to another shape
 
 <ClientOnly>
   <VizzyExample :code="positioning" />

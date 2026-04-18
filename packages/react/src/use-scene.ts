@@ -16,7 +16,7 @@ export function useScene(
         const canvas = ref.current;
         if (!canvas) return;
 
-        // Default autoResize to true for React consumers — they typically render
+        // Default autoResize to true for React consumers: they typically render
         // into responsive layouts and expect the canvas to follow.
         const resolvedOptions: UseSceneOptions = {
             autoResize: true,

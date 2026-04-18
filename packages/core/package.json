@@ -1,7 +1,7 @@
 {
     "name": "@vizzyjs/core",
     "version": "0.1.0",
-    "description": "Render-agnostic core for vizzy — a TypeScript math visualization library inspired by manim",
+    "description": "Render-agnostic core for vizzy: a TypeScript math visualization library inspired by manim",
     "type": "module",
     "license": "MIT",
     "author": "Bryan Parker",

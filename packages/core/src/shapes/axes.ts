@@ -62,7 +62,7 @@ export class Axes extends Group {
         const includeNumbers = props.includeNumbers ?? false;
         const includeTip = props.includeTip ?? false;
 
-        // X axis — horizontal, shifted so that coordinate 0 is at local x=0
+        // X axis: horizontal, shifted so that coordinate 0 is at local x=0
         this.xAxis = new NumberLine({
             range: xRange,
             length: this._xLength,
@@ -78,7 +78,7 @@ export class Axes extends Group {
         this.xAxis.shift(this._xOriginOffset, 0);
         const xOriginOffset = this._xOriginOffset;
 
-        // Y axis — vertical (rotated 90 degrees CCW), shifted so that coordinate 0 is at local y=0
+        // Y axis: vertical (rotated 90 degrees CCW), shifted so that coordinate 0 is at local y=0
         this.yAxis = new NumberLine({
             range: yRange,
             length: this._yLength,

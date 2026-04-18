@@ -104,12 +104,12 @@ All three forms produce the same scene:
 | `interact`        | Add drag/hover/click to shapes          |
 
 ::: tip Sandbox vs real code
-The live examples below are sandboxes where `add`, `play`, `grid`, and every `@vizzyjs/core` export (`circle`, `sky`, `fadeIn`, ...) are injected as globals. In your own project, you'd get them via `import` + `createScene()` as shown above. The rest of the code is identical.
+The live examples below are sandboxes where `add`, `play`, `grid`, and every `@vizzyjs/core` export (`circle`, `sky`, `fadeIn`, ...) are injected as globals. In your own project, you'd get them via `import` + `createScene()`/`renderScene()` as shown above. The rest of the code is identical.
 :::
 
 ## Shapes
 
-Vizzy has 30+ shape factory functions. Every shape starts at the origin — use `shift(x, y)` to position it.
+Vizzy has 30+ shape factory functions. Every shape starts at the origin. Use `shift(x, y)` to position it.
 
 <ClientOnly>
   <VizzyExample :code="shapesIntro" />
@@ -129,7 +129,7 @@ See [Animations](/guide/animations) for all animation types and options.
 
 ## Coordinate System
 
-Vizzy uses a 14x8 world-unit coordinate system with the origin at center and Y pointing up. You never deal with pixels — shapes are positioned in world units, and the renderer handles DPR scaling.
+Vizzy uses a 14x8 world-unit coordinate system with the origin at center and Y pointing up. You never deal with pixels directly. Shapes are positioned in world units, and the renderer handles DPR scaling.
 
 ```
          (0, 4)
@@ -141,7 +141,7 @@ Vizzy uses a 14x8 world-unit coordinate system with the origin at center and Y p
 
 ## What's Next
 
--   [Shapes](/guide/shapes) — All shape factories, positioning, colors, groups, and text
--   [Animations](/guide/animations) — The animation system in depth
--   [Interactivity](/guide/interactivity) — Controls and mouse interaction
--   [Examples](/examples/) — Gallery of interactive examples
+-   [Shapes](/guide/shapes): all shape factories, positioning, colors, groups, and text
+-   [Animations](/guide/animations): the animation system in depth
+-   [Interactivity](/guide/interactivity): controls and mouse interaction
+-   [Examples](/examples/): gallery of interactive examples

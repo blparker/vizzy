@@ -86,10 +86,10 @@ await wait(0.5);`
 
 # Animations
 
-Vizzy's animation system uses `async/await`. Call `play()` to run animations and `await` the result. This gives you sequential flow with native JavaScript — no queues or schedulers.
+Vizzy's animation system uses `async/await`. Call `play()` to run animations and `await` the result. This gives you sequential flow with native JavaScript, no queues or schedulers.
 
 ::: tip Key concept
-Shapes added with `add()` are visible immediately. If you want them to appear with an animation, skip the `add()` — `play(fadeIn(shape))` will add the shape to the scene automatically.
+Shapes added with `add()` are visible immediately. If you want them to appear with an animation, skip the `add()`. Calling `play(fadeIn(shape))` adds the shape to the scene automatically.
 :::
 
 ## Fade In / Fade Out
@@ -112,8 +112,8 @@ The simplest way to make shapes appear and disappear:
 
 Two ways to animate position:
 
-- **`animateShift(shape, [dx, dy])`** — relative offset from current position
-- **`animateMoveTo(shape, [x, y])`** — absolute destination
+- **`animateShift(shape, [dx, dy])`**: relative offset from current position
+- **`animateMoveTo(shape, [x, y])`**: absolute destination
 
 <ClientOnly>
   <VizzyExample :code="movementExample" />
@@ -121,8 +121,8 @@ Two ways to animate position:
 
 ## Rotation and Scale
 
-- **`animateRotate(shape, angle)`** — rotate by angle in radians
-- **`animateScale(shape, factor)`** — scale uniformly (1 = no change)
+- **`animateRotate(shape, angle)`**: rotate by angle in radians
+- **`animateScale(shape, factor)`**: scale uniformly (1 = no change)
 
 <ClientOnly>
   <VizzyExample :code="transformExample" />
@@ -130,8 +130,8 @@ Two ways to animate position:
 
 ## Color and Opacity
 
-- **`animateColor(shape, { stroke?, fill? })`** — smooth color transition
-- **`animateOpacity(shape, target)`** — fade to a specific opacity (0-1)
+- **`animateColor(shape, { stroke?, fill? })`**: smooth color transition
+- **`animateOpacity(shape, target)`**: fade to a specific opacity (0-1)
 
 <ClientOnly>
   <VizzyExample :code="colorExample" />
@@ -179,10 +179,10 @@ Pass an options object as the last argument to `play()`:
 </ClientOnly>
 
 ::: details Available easing functions
-- `linear` — constant speed
-- `easeIn` — starts slow, accelerates
-- `easeOut` — starts fast, decelerates
-- `easeInOut` — slow at both ends
-- `smooth` — Hermite smoothstep (default)
-- `smoother` — Ken Perlin's smootherstep
+- `linear`: constant speed
+- `easeIn`: starts slow, accelerates
+- `easeOut`: starts fast, decelerates
+- `easeInOut`: slow at both ends
+- `smooth`: Hermite smoothstep (default)
+- `smoother`: Ken Perlin's smootherstep
 :::

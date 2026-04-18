@@ -3,7 +3,7 @@ layout: home
 hero:
   name: Vizzy
   text: Math visualization for TypeScript
-  tagline: Create beautiful math visualizations with animations and interactivity — inspired by manim, built for the web.
+  tagline: Create beautiful math visualizations with animations and interactivity, inspired by manim, built for the web.
   actions:
     - theme: brand
       text: Get Started
@@ -18,7 +18,7 @@ features:
   - title: Declarative API
     details: Factory functions like circle(), rect(), and axes() with sensible defaults. Destructure what you need from createScene().
   - title: Animations
-    details: Async/await animation system — fadeIn, shift, rotate, scale, color transitions. Sequential or simultaneous, no queues.
+    details: Async/await animation system with fadeIn, shift, rotate, scale, and color transitions. Sequential or simultaneous, no queues.
   - title: Interactive
     details: Draggable shapes, hover effects, click handlers, and HTML controls (sliders, checkboxes) that auto-render on change.
   - title: Calculus-Ready

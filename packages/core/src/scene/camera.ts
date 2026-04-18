@@ -31,7 +31,7 @@ export class Camera {
     }
 
     getWorldToPixel(): Mat3 {
-        // Fit the entire world inside the canvas — uniform scale, no clipping
+        // Fit the entire world inside the canvas: uniform scale, no clipping
         const sx = this.pixelWidth / this.worldWidth;
         const sy = this.pixelHeight / this.worldHeight;
         const s = Math.min(sx, sy);

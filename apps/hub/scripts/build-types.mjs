@@ -51,7 +51,7 @@ for (const pkg of packages) {
 const coreMod = await import('@vizzyjs/core');
 const rendererMod = await import('@vizzyjs/renderer-canvas');
 
-// Scene methods are declared separately with BoundScene types — skip any core/renderer
+// Scene methods are declared separately with BoundScene types, so skip any core/renderer
 // export that shares a name so we don't emit duplicate `const X` declarations.
 const sceneMethods = new Set(['add', 'remove', 'play', 'wait', 'grid', 'render', 'controls', 'interact', 'scene', 'canvas']);
 

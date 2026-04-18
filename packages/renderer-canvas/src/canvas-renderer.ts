@@ -38,7 +38,7 @@ async function collectCssWithInlinedFonts(): Promise<string> {
                 cssText += rule.cssText + '\n';
             }
         } catch (_e) {
-            // Cross-origin — skip
+            // Cross-origin, skip
         }
     }
 
@@ -71,7 +71,7 @@ async function collectCssWithInlinedFonts(): Promise<string> {
             });
             fontUrls.set(original, dataUri);
         } catch (_e) {
-            // Failed to fetch — leave original URL
+            // Failed to fetch, leave original URL
         }
     }));
 

@@ -25,7 +25,7 @@ const runBtn = document.getElementById('run') as HTMLButtonElement;
 const errorEl = document.getElementById('error') as HTMLDivElement;
 const themeBtn = document.getElementById('theme-toggle') as HTMLButtonElement;
 
-// Disable TypeScript diagnostics — our code runs via new Function() with injected globals
+// Disable TypeScript diagnostics: our code runs via new Function() with injected globals
 monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
     noSemanticValidation: true,
     noSyntaxValidation: false,

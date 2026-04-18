@@ -21,7 +21,7 @@ export interface GridProps {
 export function grid(props: GridProps = {}): Group {
     const step = props.step ?? 1;
 
-    // Viewport edges (continuous) — lines extend to these bounds
+    // Viewport edges (continuous): lines extend to these bounds
     // Use visibleWidth/visibleHeight to cover the full canvas including letterbox
     let edgeX: number, edgeY: number;
     if (props.camera) {

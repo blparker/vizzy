@@ -1,7 +1,7 @@
 {
     "name": "@vizzyjs/renderer-canvas",
     "version": "0.1.0",
-    "description": "Canvas2D renderer for vizzy — animations, controls, and interaction on HTML canvas",
+    "description": "Canvas2D renderer for vizzy: animations, controls, and interaction on HTML canvas",
     "type": "module",
     "license": "MIT",
     "author": "Bryan Parker",

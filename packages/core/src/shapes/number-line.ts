@@ -82,7 +82,7 @@ export class NumberLine extends Group {
         });
         super.add(mainLine);
 
-        // Arrow tips — offset past the last tick so they don't overlap
+        // Arrow tips: offset past the last tick so they don't overlap
         if (props.includeTip) {
             const tipSize = props.tipSize ?? 0.15;
             const tipHW = tipSize * 0.4;

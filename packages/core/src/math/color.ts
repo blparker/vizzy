@@ -54,6 +54,6 @@ export function colorToCss(c: Color | string): string {
     return toCssRgba(c);
 }
 
-// Simple named constants — prefer the palette (math/palette.ts) for richer usage
+// Simple named constants. Prefer the palette (math/palette.ts) for richer usage.
 export const WHITE: Color = { r: 1, g: 1, b: 1, a: 1 };
 export const BLACK: Color = { r: 0, g: 0, b: 0, a: 1 };

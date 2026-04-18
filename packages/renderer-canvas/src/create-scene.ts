@@ -226,7 +226,7 @@ export function createScene(
             });
             resizeObserver.observe(container);
             // Defer initial fallback fit so browser has a chance to apply layout
-            // before we measure — the observer callback will fire on its own too.
+            // before we measure. The observer callback will fire on its own too.
             requestAnimationFrame(() => {
                 if (destroyed) return;
                 const [cw, ch] = measure();

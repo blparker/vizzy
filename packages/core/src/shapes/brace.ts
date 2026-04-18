@@ -73,7 +73,7 @@ function buildBraceCommands(
     // Key points in local space (before direction flip):
     // Left end:  (-halfLen, 0)
     // Right end: (+halfLen, 0)
-    // Tip:       (0, braceWidth)  — the pointy part, extends away from shape
+    // Tip:       (0, braceWidth)  (the pointy part, extends away from shape)
 
     const tipPt = transform(0, braceWidth);
     const leftPt = transform(-halfLen, 0);

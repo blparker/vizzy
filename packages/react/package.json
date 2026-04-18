@@ -1,7 +1,7 @@
 {
     "name": "@vizzyjs/react",
     "version": "0.1.0",
-    "description": "React bindings for vizzy — a useScene hook for rendering vizzy scenes in React components",
+    "description": "React bindings for vizzy: a useScene hook for rendering vizzy scenes in React components",
     "type": "module",
     "license": "MIT",
     "author": "Bryan Parker",

@@ -99,12 +99,12 @@ Vizzy provides two systems for making scenes interactive: **controls** (HTML wid
 
 ## Controls
 
-Controls are HTML inputs — sliders, checkboxes, color pickers — that float over the canvas in a collapsible panel. When a control changes, the scene re-renders automatically.
+Controls are HTML inputs (sliders, checkboxes, color pickers) that float over the canvas in a collapsible panel. When a control changes, the scene re-renders automatically.
 
 ### The Pattern
 
 1. Call `controls.panel()` to create the overlay panel
-2. Create controls — each returns a handle with a `.value` property
+2. Create controls, each of which returns a handle with a `.value` property
 3. Use `controls.onUpdate()` to react when any control changes
 
 <ClientOnly>
@@ -133,7 +133,7 @@ Each handle has `.value` (current value), `.set(v)` (update programmatically), a
 
 ## Mouse Interaction
 
-The `interact` API lets you make shapes draggable, hoverable, and clickable. Hit testing works through the scene graph — clicking on text above a shape correctly targets the shape underneath if only the shape is interactive.
+The `interact` API lets you make shapes draggable, hoverable, and clickable. Hit testing works through the scene graph, so clicking on text above a shape correctly targets the shape underneath if only the shape is interactive.
 
 ### Draggable
 
@@ -149,8 +149,8 @@ The cursor automatically changes to `grab`/`grabbing` for draggable shapes, `poi
 
 ### Hover and Click
 
-- **`interact.hoverable(shape, { onEnter, onLeave })`** — mouse enter/leave
-- **`interact.clickable(shape, { onClick })`** — click handler
+- **`interact.hoverable(shape, { onEnter, onLeave })`**: mouse enter/leave
+- **`interact.clickable(shape, { onClick })`**: click handler
 
 <ClientOnly>
   <VizzyExample :code="hoverClickExample" />

@@ -121,22 +121,28 @@ export function VizEditorPage({
                 {isAuthed ? (
                     <>
                         <Button onClick={onSave} disabled={saving}>
-                            {saving ? 'Saving…' : initialId ? 'Save' : 'Create'}
+                            {saving ? 'Saving…' : 'Save'}
                         </Button>
-                        {initialId && (
+                        <div className="flex items-center gap-0">
+                            {initialId && (
+                                <Button asChild variant="ghost">
+                                    <a
+                                        href={`/v/${initialId}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        View
+                                    </a>
+                                </Button>
+                            )}
                             <Button asChild variant="ghost">
-                                <a href={`/v/${initialId}`} target="_blank" rel="noreferrer">
-                                    View
-                                </a>
+                                <Link href="/dashboard">My vizzes</Link>
                             </Button>
-                        )}
-                        <Button asChild variant="ghost">
-                            <Link href="/dashboard">My vizzes</Link>
-                        </Button>
-                        <ThemeToggle />
-                        <SignedIn>
-                            <UserButton afterSignOutUrl="/" />
-                        </SignedIn>
+                            <ThemeToggle />
+                            <SignedIn>
+                                <UserButton afterSignOutUrl="/" />
+                            </SignedIn>
+                        </div>
                     </>
                 ) : (
                     <SignedOut>

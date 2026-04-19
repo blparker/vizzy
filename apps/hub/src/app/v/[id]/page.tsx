@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { auth } from '@clerk/nextjs/server';
 import { ArrowLeft } from 'lucide-react';
 import { db, schema } from '@/db/client';
+import { CodeBlock } from '@/components/code-block';
 import { EmbedSnippet } from '@/components/embed-snippet';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,7 @@ export default async function VizPreviewPage({ params }: Props) {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <header className="flex items-center gap-3 border-b px-5 py-3">
-                <Button asChild variant="ghost" size="sm">
+                <Button asChild variant="ghost">
                     <Link href="/">
                         <ArrowLeft className="size-4" />
                         vizzy hub
@@ -61,9 +62,7 @@ export default async function VizPreviewPage({ params }: Props) {
 
                 <section>
                     <h2 className="mb-2 text-sm font-medium text-muted-foreground">Source</h2>
-                    <pre className="overflow-x-auto rounded-lg border bg-card p-4 font-mono text-xs">
-                        <code>{viz.codeTs}</code>
-                    </pre>
+                    <CodeBlock code={viz.codeTs} lang="typescript" />
                 </section>
             </main>
         </div>

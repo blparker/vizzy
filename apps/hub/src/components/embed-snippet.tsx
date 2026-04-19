@@ -1,11 +1,15 @@
-'use client';
+import { headers } from 'next/headers';
+import { CodeBlock } from '@/components/code-block';
 
-import { useEffect, useState } from 'react';
+async function getOrigin(): Promise<string> {
+    const h = await headers();
+    const host = h.get('host') ?? 'hub.vizzyjs.dev';
+    const proto = h.get('x-forwarded-proto') ?? (host.startsWith('localhost') ? 'http' : 'https');
+    return `${proto}://${host}`;
+}
 
-export function EmbedSnippet({ id }: { id: string }) {
-    const [origin, setOrigin] = useState('');
-    useEffect(() => setOrigin(window.location.origin), []);
-
+export async function EmbedSnippet({ id }: { id: string }) {
+    const origin = await getOrigin();
     const url = `${origin}/embed/${id}`;
     const iframe = `<iframe src="${url}" width="800" height="600" frameborder="0"></iframe>`;
 
@@ -16,15 +20,11 @@ export function EmbedSnippet({ id }: { id: string }) {
                 <div className="mb-1 text-xs text-muted-foreground">
                     URL (paste into Notion Embed block)
                 </div>
-                <pre className="overflow-x-auto rounded-lg border bg-card p-3 font-mono text-xs">
-                    {url || `…/embed/${id}`}
-                </pre>
+                <CodeBlock code={url} lang="text" />
             </div>
             <div>
                 <div className="mb-1 text-xs text-muted-foreground">HTML iframe</div>
-                <pre className="overflow-x-auto rounded-lg border bg-card p-3 font-mono text-xs">
-                    {iframe}
-                </pre>
+                <CodeBlock code={iframe} lang="html" />
             </div>
         </section>
     );

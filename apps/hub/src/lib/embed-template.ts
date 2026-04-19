@@ -41,7 +41,7 @@ html, body { margin: 0; padding: 0; height: 100%; background: ${bg}; overflow: h
 <body>
 <div id="wrap"><canvas id="c" width="1400" height="800"></canvas></div>
 <script type="module">
-import * as vizzy from ${JSON.stringify(runtimeUrl)};
+import * as vizzy from ${JSON.stringify(runtimeUrl + '?v=' + Date.now())};
 const canvas = document.getElementById('c');
 const scene = vizzy.createScene(canvas, { theme: ${JSON.stringify(theme)}, autoResize: true });
 const { add, remove, play, wait, grid, render, controls, interact } = scene;
@@ -54,12 +54,6 @@ console.error('[vizzy] user code error:', err);
 }
 })();
 scene.render();
-// Safety net: force a resize after window load in case the initial ResizeObserver
-// callback fired before the iframe had final layout dimensions.
-window.addEventListener('load', () => {
-    const r = canvas.parentElement.getBoundingClientRect();
-    if (r.width > 0 && r.height > 0) scene.resize(Math.round(r.width - 32), Math.round((r.width - 32) / (14/8)));
-});
 </script>
 </body>
 </html>`;

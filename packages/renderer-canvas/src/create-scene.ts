@@ -211,10 +211,12 @@ export function createScene(
                 const padV = cs ? parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) : 0;
                 return [rect.width - padH, rect.height - padV];
             };
+            // Snapshot the aspect once at setup so scene mutations (e.g. axes auto-framing
+            // the camera) don't subsequently resize the canvas underneath the user.
+            const aspect =
+                config.aspectRatio ?? scene.camera.worldWidth / scene.camera.worldHeight;
             const apply = (cw: number, ch: number) => {
                 if (destroyed || cw <= 0 || ch <= 0) return;
-                const aspect =
-                    config.aspectRatio ?? scene.camera.worldWidth / scene.camera.worldHeight;
                 const containerAspect = cw / ch;
                 const [w, h] =
                     containerAspect > aspect ? [ch * aspect, ch] : [cw, cw / aspect];
@@ -225,13 +227,19 @@ export function createScene(
                 apply(cw, ch);
             });
             resizeObserver.observe(container);
-            // Defer initial fallback fit so browser has a chance to apply layout
-            // before we measure. The observer callback will fire on its own too.
-            requestAnimationFrame(() => {
-                if (destroyed) return;
-                const [cw, ch] = measure();
+            // Synchronous initial fit so the first render happens at container size,
+            // not at the canvas's HTML-attribute default. Fall back to rAF if layout
+            // hasn't produced usable dimensions yet.
+            const [cw, ch] = measure();
+            if (cw > 0 && ch > 0) {
                 apply(cw, ch);
-            });
+            } else {
+                requestAnimationFrame(() => {
+                    if (destroyed) return;
+                    const [cw2, ch2] = measure();
+                    apply(cw2, ch2);
+                });
+            }
         }
     }
 

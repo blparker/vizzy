@@ -19,6 +19,13 @@ export interface FunctionGraphProps {
     discontinuityThreshold?: number;
     discontinuities?: Discontinuity[];
     style?: Style;
+    /**
+     * Clip the plotted curve to the axes' y-range. When true (default), samples
+     * outside `[axes.yMin, axes.yMax]` are dropped and segment endpoints are
+     * linearly interpolated to the boundary so the curve ends exactly on the axis.
+     * Set false to allow the curve to extend past the axes.
+     */
+    clip?: boolean;
 }
 
 export class FunctionGraph extends Group {
@@ -29,6 +36,7 @@ export class FunctionGraph extends Group {
     private _discontinuityThreshold: number;
     private _discontinuities: Discontinuity[];
     private _style: Style;
+    private _clip: boolean;
 
     constructor(props: FunctionGraphProps) {
         super();
@@ -40,6 +48,7 @@ export class FunctionGraph extends Group {
         this._step = props.step ?? 0.05;
         this._discontinuityThreshold = props.discontinuityThreshold ?? 100;
         this._discontinuities = props.discontinuities ?? [];
+        this._clip = props.clip ?? true;
         this._style = {
             stroke: { r: 0.33, g: 0.63, b: 0.96, a: 1 },
             strokeWidth: 0.04,
@@ -66,6 +75,9 @@ export class FunctionGraph extends Group {
         const [xMin, xMax] = this._xRange;
         const step = this._step;
         const threshold = this._discontinuityThreshold;
+        const clip = this._clip;
+        const yMin = this._axes.yMin;
+        const yMax = this._axes.yMax;
 
         // Build a set of x-values where we should break segments
         const breakPoints = new Set<number>();
@@ -74,17 +86,24 @@ export class FunctionGraph extends Group {
         }
 
         let currentSegment: Vec2[] = [];
+        let prevCoord: [number, number] | null = null;
+
+        const flush = () => {
+            if (currentSegment.length >= 2) {
+                this.addSegment(currentSegment);
+            }
+            currentSegment = [];
+        };
+
+        const isInside = (y: number) => !clip || (y >= yMin && y <= yMax);
 
         for (let x = xMin; x <= xMax; x += step) {
-            // Check if we're at or crossing a break point
+            // Check if we're at or crossing a declared discontinuity
             let hitBreak = false;
             for (const bx of breakPoints) {
                 if (Math.abs(x - bx) < step * 0.5) {
-                    // We're at a discontinuity: flush current segment and skip this sample
-                    if (currentSegment.length >= 2) {
-                        this.addSegment(currentSegment);
-                    }
-                    currentSegment = [];
+                    flush();
+                    prevCoord = null;
                     hitBreak = true;
                     break;
                 }
@@ -94,34 +113,47 @@ export class FunctionGraph extends Group {
             const y = this._fn(x);
 
             if (!isFinite(y)) {
-                if (currentSegment.length >= 2) {
-                    this.addSegment(currentSegment);
-                }
-                currentSegment = [];
+                flush();
+                prevCoord = null;
                 continue;
             }
 
-            const pt = this._axes.coordToPoint([x, y]);
+            const currInside = isInside(y);
+            const prevInside = prevCoord !== null && isInside(prevCoord[1]);
 
-            if (currentSegment.length > 0) {
-                const prev = currentSegment[currentSegment.length - 1]!;
-                const dy = Math.abs(pt[1] - prev[1]);
-                if (dy > threshold) {
-                    if (currentSegment.length >= 2) {
-                        this.addSegment(currentSegment);
-                    }
-                    currentSegment = [];
-                    continue;
-                }
+            if (prevInside && !currInside && prevCoord) {
+                // Exiting the visible y-range: interpolate the crossing point and close the segment.
+                const [px, py] = prevCoord;
+                const bound = y > yMax ? yMax : yMin;
+                const t = (bound - py) / (y - py);
+                const cx = px + t * (x - px);
+                currentSegment.push(this._axes.coordToPoint([cx, bound]));
+                flush();
+            } else if (!prevInside && currInside && prevCoord) {
+                // Re-entering the visible y-range: interpolate the crossing point and start a new segment.
+                const [px, py] = prevCoord;
+                const bound = py > yMax ? yMax : yMin;
+                const t = (bound - py) / (y - py);
+                const cx = px + t * (x - px);
+                currentSegment.push(this._axes.coordToPoint([cx, bound]));
             }
 
-            currentSegment.push(pt);
+            if (currInside) {
+                const pt = this._axes.coordToPoint([x, y]);
+                if (currentSegment.length > 0) {
+                    const prevPt = currentSegment[currentSegment.length - 1]!;
+                    const dy = Math.abs(pt[1] - prevPt[1]);
+                    if (dy > threshold) {
+                        flush();
+                    }
+                }
+                currentSegment.push(pt);
+            }
+
+            prevCoord = [x, y];
         }
 
-        // Flush final segment
-        if (currentSegment.length >= 2) {
-            this.addSegment(currentSegment);
-        }
+        flush();
 
         // Add discontinuity markers
         for (const disc of this._discontinuities) {

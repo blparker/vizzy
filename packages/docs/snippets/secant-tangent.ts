@@ -18,7 +18,7 @@ add(functionGraph({ fn, axes: ax, style: { stroke: sky, strokeWidth: 0.04 } }));
 
 const px = 1;
 const py = fn(px);
-let qx = 4;
+let qx = 3.5;
 let qy = fn(qx);
 let secant = lineThrough({
     p1: ax.c2p([px, py]),
@@ -39,7 +39,7 @@ await wait(1);
 
 await play(
     during((t) => {
-        qx = 4 - t * 3;
+        qx = 3.5 - t * 2.5;
         if (Math.abs(qx - px) < 0.001) qx = px + 0.001;
         qy = fn(qx);
         const qPos = ax.c2p([qx, qy]);

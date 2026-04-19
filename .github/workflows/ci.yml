@@ -37,5 +37,8 @@ jobs:
       - name: Test
         run: pnpm test -- --run
 
-      - name: Build
-        run: pnpm build
+      - name: Build packages
+        run: pnpm --filter "@vizzyjs/core" --filter "@vizzyjs/renderer-canvas" --filter "@vizzyjs/react" build
+
+      - name: Build docs
+        run: pnpm --filter "@vizzyjs/docs" build

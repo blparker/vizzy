@@ -1,0 +1,46 @@
+name: Feature request
+description: Suggest a new shape, animation, API, or capability.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas welcome. If you have a rough API sketch or example code in mind, include it below.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: The use case or friction you hit. Helps us understand the "why" before discussing the "what".
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should the API look like? A code sketch is often the clearest form.
+      render: typescript
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you thought about, and why they fall short.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package would this live in?
+      options:
+        - "@vizzyjs/core"
+        - "@vizzyjs/renderer-canvas"
+        - "@vizzyjs/react"
+        - a new package
+        - unsure
+    validations:
+      required: false

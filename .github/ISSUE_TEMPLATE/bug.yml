@@ -1,0 +1,66 @@
+name: Bug report
+description: Something in vizzy is broken or behaving unexpectedly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in what you can, and include a minimal reproduction if possible.
+
+  - type: input
+    id: version
+    attributes:
+      label: Vizzy version
+      description: Output of `npm ls @vizzyjs/core` (or equivalent).
+      placeholder: e.g. 0.1.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected package
+      multiple: true
+      options:
+        - "@vizzyjs/core"
+        - "@vizzyjs/renderer-canvas"
+        - "@vizzyjs/react"
+        - docs site (vizzyjs.dev)
+        - hub (hub.vizzyjs.dev)
+        - unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: A short code snippet, hub share link, or link to a repo that reproduces the issue.
+      render: typescript
+    validations:
+      required: false
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, Node version if relevant.
+      placeholder: e.g. Chrome 132 on macOS 14.5
+    validations:
+      required: false
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, console errors, related issues.
+    validations:
+      required: false

@@ -1,6 +1,6 @@
 # vizzy
 
-Math visualization for TypeScript. Inspired by [manim](https://www.manim.community/), built for the browser.
+Interactive math visualization for TypeScript, built for the browser.
 
 [Documentation](https://vizzyjs.dev) · [Examples](https://vizzyjs.dev/examples/) · [Hub](https://hub.vizzyjs.dev)
 
@@ -13,9 +13,9 @@ Math visualization for TypeScript. Inspired by [manim](https://www.manim.communi
 
 ## Why vizzy?
 
-Manim produces beautiful math videos, but it's Python, offline, and video-only. Observable and D3 are great for data, but awkward for the math-teaching idiom (tangent lines, limits, annotated diagrams). Vizzy borrows manim's vocabulary (`scene.play(fadeIn(c))`, `axes.plot(...)`) and makes it interactive, embeddable, and written in TypeScript.
+Vizzy is aimed at the math-teaching idiom: function graphs, tangent lines, annotated diagrams, limits, animated transformations. It runs in TypeScript, draws to Canvas2D, and is interactive by default, so you can drop a draggable derivative into a blog post, embed a classroom demo in a textbook, or prototype a visual proof directly in the browser.
 
-If you're building an interactive textbook, a blog post with a draggable derivative, or a classroom demo, vizzy is aimed at you.
+If you've used [manim](https://www.manim.community/), you'll recognize a few ideas. Vizzy is its own project, shaped around the browser, async/await, and live interaction rather than offline video rendering.
 
 ## Quick start
 

@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
     title: 'Vizzy',
-    description: 'A TypeScript math visualization library inspired by manim',
+    description: 'A TypeScript library for building interactive math visualizations in the browser',
     base: '/',
     themeConfig: {
         nav: [

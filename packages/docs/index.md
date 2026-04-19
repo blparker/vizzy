@@ -3,7 +3,10 @@ layout: home
 hero:
   name: Vizzy
   text: Math visualization for TypeScript
-  tagline: Create beautiful math visualizations with animations and interactivity, inspired by manim, built for the web.
+  tagline: Create beautiful math visualizations with animations and interactivity, built for the web.
+  image:
+    src: /hero.gif
+    alt: vizzy demo
   actions:
     - theme: brand
       text: Get Started

@@ -1,8 +1,6 @@
 # @vizzyjs/renderer-canvas
 
-Canvas2D renderer for [vizzy](https://github.com/blparker/vizzy), a TypeScript math visualization library inspired by manim.
-
-This package renders vizzy scenes to an HTML `<canvas>`, with an animation player, interactive controls, and mouse interaction. It's the default renderer; `createScene()` is the one-call entry point most users will want.
+Canvas2D renderer for [vizzy](https://github.com/blparker/vizzy). Renders vizzy scenes to an HTML `<canvas>`, with an animation player, interactive controls, and mouse interaction. It's the default renderer; `createScene()` is the one-call entry point most users will want.
 
 - **Docs:** https://vizzyjs.dev
 - **Examples:** https://vizzyjs.dev/examples/

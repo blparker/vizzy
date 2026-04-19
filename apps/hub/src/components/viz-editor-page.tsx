@@ -32,12 +32,7 @@ add(c);
 await play(fadeIn(c));
 `;
 
-export function VizEditorPage({
-    isAuthed,
-    initialId,
-    initialTitle,
-    initialCode,
-}: VizEditorPageProps) {
+export function VizEditorPage({ isAuthed, initialId, initialTitle, initialCode }: VizEditorPageProps) {
     const router = useRouter();
     const { resolvedTheme } = useTheme();
     const [title, setTitle] = useState(initialTitle);
@@ -102,10 +97,7 @@ export function VizEditorPage({
     return (
         <div className="flex h-screen flex-col bg-background text-foreground">
             <header className="flex items-center gap-3 border-b px-5 py-3">
-                <Link
-                    href="/"
-                    className="text-base font-semibold tracking-tight hover:text-foreground/80"
-                >
+                <Link href="/" className="text-base font-semibold tracking-tight hover:text-foreground/80">
                     vizzy hub
                 </Link>
                 <span className="text-muted-foreground/50">/</span>
@@ -119,38 +111,31 @@ export function VizEditorPage({
                 {saveError && <span className="text-xs text-destructive">{saveError}</span>}
 
                 {isAuthed ? (
-                    <>
-                        <Button onClick={onSave} disabled={saving}>
-                            {saving ? 'Saving…' : 'Save'}
+                    <div className="flex items-center gap-2">
+                        <Button onClick={onSave} disabled={saving} className="mr-2">
+                            {saving ? 'Saving...' : 'Save'}
                         </Button>
-                        <div className="flex items-center gap-0">
-                            {initialId && (
-                                <Button asChild variant="ghost">
-                                    <a
-                                        href={`/v/${initialId}`}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        View
-                                    </a>
-                                </Button>
-                            )}
+
+                        {initialId && (
                             <Button asChild variant="ghost">
-                                <Link href="/dashboard">My vizzes</Link>
+                                <a href={`/v/${initialId}`} target="_blank" rel="noreferrer">
+                                    View
+                                </a>
                             </Button>
-                            <ThemeToggle />
-                            <SignedIn>
-                                <UserButton afterSignOutUrl="/" />
-                            </SignedIn>
-                        </div>
-                    </>
+                        )}
+                        <Button asChild variant="ghost">
+                            <Link href="/dashboard">My vizzes</Link>
+                        </Button>
+
+                        <ThemeToggle />
+
+                        <SignedIn>
+                            <UserButton afterSignOutUrl="/" />
+                        </SignedIn>
+                    </div>
                 ) : (
                     <SignedOut>
-                        <SignUpButton
-                            mode="modal"
-                            forceRedirectUrl="/"
-                            signInForceRedirectUrl="/"
-                        >
+                        <SignUpButton mode="modal" forceRedirectUrl="/" signInForceRedirectUrl="/">
                             <Button>Sign up to save</Button>
                         </SignUpButton>
                         <SignInButton mode="modal" forceRedirectUrl="/">

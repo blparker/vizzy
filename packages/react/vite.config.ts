@@ -7,8 +7,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
-            formats: ['es'],
-            fileName: 'index',
+            formats: ['es', 'cjs'],
+            fileName: (format) => (format === 'cjs' ? 'index.cjs' : 'index.js'),
         },
         rollupOptions: {
             external: ['react', '@vizzyjs/core', '@vizzyjs/renderer-canvas'],

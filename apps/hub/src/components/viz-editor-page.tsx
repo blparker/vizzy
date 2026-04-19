@@ -64,6 +64,21 @@ export function VizEditorPage({ isAuthed, initialId, initialTitle, initialCode }
         }
     }, [title, code, initialId]);
 
+    const onNew = () => {
+        try {
+            localStorage.removeItem(DRAFT_KEY);
+        } catch {
+            // ignore
+        }
+        if (initialId || window.location.search) {
+            router.push('/');
+            return;
+        }
+        setTitle('');
+        setCode(DEFAULT_CODE);
+        setSaveError(null);
+    };
+
     const onSave = () => {
         setSaveError(null);
         startSaving(async () => {
@@ -116,6 +131,9 @@ export function VizEditorPage({ isAuthed, initialId, initialTitle, initialCode }
                             {saving ? 'Saving...' : 'Save'}
                         </Button>
 
+                        <Button variant="ghost" onClick={onNew}>
+                            New
+                        </Button>
                         {initialId && (
                             <Button asChild variant="ghost">
                                 <a href={`/v/${initialId}`} target="_blank" rel="noreferrer">

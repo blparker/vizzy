@@ -62,7 +62,7 @@ export function VizCard({ id, title, updatedAt }: VizCardProps) {
                         <iframe
                             src={`/embed/${id}`}
                             className="pointer-events-none h-full w-full border-0"
-                            sandbox="allow-scripts"
+                            sandbox="allow-scripts allow-popups"
                             loading="lazy"
                             title={title}
                             tabIndex={-1}

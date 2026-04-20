@@ -53,7 +53,7 @@ export default async function VizPreviewPage({ params }: Props) {
                     <iframe
                         src={`/embed/${viz.id}`}
                         className="aspect-[800/457] w-full border-0"
-                        sandbox="allow-scripts"
+                        sandbox="allow-scripts allow-popups"
                         title={viz.title}
                     />
                 </div>

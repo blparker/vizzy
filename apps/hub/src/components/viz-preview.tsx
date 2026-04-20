@@ -58,7 +58,7 @@ export function VizPreview({ code, title, debounceMs = 400 }: VizPreviewProps) {
             <iframe
                 srcDoc={srcDoc}
                 className="h-full w-full flex-1 border-0"
-                sandbox="allow-scripts allow-same-origin"
+                sandbox="allow-scripts allow-same-origin allow-popups"
                 title="viz preview"
             />
             {loading && (

@@ -1,4 +1,4 @@
-# vizzy
+# Vizzy
 
 [![npm](https://img.shields.io/npm/v/@vizzyjs/core.svg?color=%230ea5e9&label=%40vizzyjs%2Fcore)](https://www.npmjs.com/package/@vizzyjs/core)
 [![CI](https://github.com/blparker/vizzy/actions/workflows/ci.yml/badge.svg)](https://github.com/blparker/vizzy/actions/workflows/ci.yml)
@@ -6,7 +6,7 @@
 [![types](https://img.shields.io/npm/types/@vizzyjs/core)](https://www.npmjs.com/package/@vizzyjs/core)
 [![license](https://img.shields.io/npm/l/@vizzyjs/core)](./LICENSE)
 
-Interactive math visualization for TypeScript, built for the browser.
+Interactive visualization for TypeScript, built for the browser.
 
 [Documentation](https://vizzyjs.dev) · [Examples](https://vizzyjs.dev/examples/) · [Hub](https://hub.vizzyjs.dev)
 
@@ -16,9 +16,9 @@ Interactive math visualization for TypeScript, built for the browser.
   <img src="./.github/media/animated-banner.gif" alt="vizzy — interactive math visualization in TypeScript" width="800" />
 </p>
 
-## Why vizzy?
+## Why Vizzy?
 
-Vizzy is aimed at the math-teaching idiom: function graphs, tangent lines, annotated diagrams, limits, animated transformations. It runs in TypeScript, draws to Canvas2D, and is interactive by default, so you can drop a draggable derivative into a blog post, embed a classroom demo in a textbook, or prototype a visual proof directly in the browser.
+Vizzy is for interactive visuals you can drop into a page. Function graphs, geometric diagrams, algorithm walkthroughs, explorable explainers - anywhere a moving, touchable picture beats prose. It runs in TypeScript, renders in the browser, and is interactive by default, so you can drop a draggable derivative into a blog post, visualize a sorting algorithm in your docs, embed a classroom demo in a textbook, or prototype an explorable explanation directly in the page.
 
 If you've used [manim](https://www.manim.community/), you'll recognize a few ideas. Vizzy is its own project, shaped around the browser, async/await, and live interaction rather than offline video rendering.
 

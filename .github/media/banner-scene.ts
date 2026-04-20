@@ -80,9 +80,9 @@ add(cursor);
 
 // Top-right: never overlaps the dot, which sweeps through the middle and
 // spends its extremes at (-2, 0.8) and (2, -0.8).
-const label = tex({
+const label = text({
     content: "f'(x) = " + s.m.toFixed(2),
-    position: [1.5, 1.6],
+    position: [1.75, 1.6],
     style: { fill: white, fontSize: 0.4 },
 });
 add(label);
@@ -106,7 +106,11 @@ await play(
         tangent.end = s.p2;
         dot.moveTo(s.pos);
         cursor.points = cursorPoints(s.pos[0] + 0.06, s.pos[1] - 0.03);
-        label.content = "f'(x) = " + s.m.toFixed(2);
+        if (s.m > 0) {
+            label.content = "f'(x) = +" + s.m.toFixed(2);
+        } else {
+            label.content = "f'(x) = " + s.m.toFixed(2);
+        }
     }),
-    { duration: 4 }
+    { duration: 5 }
 );

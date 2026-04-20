@@ -13,7 +13,7 @@ Interactive visualization for TypeScript, built for the browser.
 > **Status:** pre-1.0 (`0.1.x`). The API is stabilizing but may still change between minor versions.
 
 <p align="center">
-  <img src="./.github/media/animated-banner.gif" alt="vizzy — interactive math visualization in TypeScript" width="800" />
+  <img src="./.github/media/animated-banner.gif" alt="Vizzy: interactive visualization in TypeScript" width="800" />
 </p>
 
 ## Why Vizzy?
@@ -21,6 +21,8 @@ Interactive visualization for TypeScript, built for the browser.
 Vizzy is for interactive visuals you can drop into a page. It's for people writing technical content (blog posts, docs, tutorials, explorable essays) who've hit the wall where static charts aren't enough but a whole JavaScript framework feels like overkill just to make a diagram move. Function graphs, geometric diagrams, algorithm walkthroughs: anywhere a moving, touchable picture beats prose.
 
 It runs in TypeScript, renders in the browser, and is interactive by default, so you can drop a draggable derivative into a blog post, visualize a sorting algorithm in your docs, embed a classroom demo in a textbook, or prototype a visual proof directly in the page.
+
+Vizzy isn't a charting library, a research notebook, or a Python-to-video pipeline. It's for interactive pictures that live inside your prose: ones the reader can drag, slide, and explore.
 
 If you've used [manim](https://www.manim.community/), you'll recognize a few ideas. Vizzy is its own project, shaped around the browser, async/await, and live interaction rather than offline video rendering.
 
@@ -131,6 +133,26 @@ pnpm typecheck
 ```
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to actually ship a contribution: workflow, code conventions, and tips on adding new shapes or animations.
+
+## Roadmap
+
+Vizzy is pre-1.0. The API is stabilizing but will still move between minor versions.
+
+Landing next:
+
+-   **SVG renderer.** The `Renderer` interface is already backend-agnostic; SVG is the next implementation, useful for print, export, and accessibility trees.
+-   **Richer interaction primitives.** Constrained dragging, keyboard handlers, animated drag paths.
+-   **Community shape registry.** A shadcn-style catalog where contributors publish shapes (diagrams, domain-specific helpers, custom visuals) and you copy them into your project instead of adding a dep. Keeps the core small; keeps ownership with you.
+-   **1.0 API freeze.** Once the surface settles, committing to a `1.0`.
+-   **Scene export.** Record a scene to GIF or MP4 from code, without the screen-capture dance.
+
+Explicitly not on the roadmap (for 1.0):
+
+-   **3D rendering.** Out of scope; browser-native 3D is a different product.
+-   **A chart DSL.** `@vizzyjs/core` is primitive-level by design.
+-   **Svelte / Vue bindings.** Welcome as community packages once the core API freezes.
+
+Ideas, bug reports, and use cases are welcome in [Discussions](https://github.com/blparker/vizzy/discussions) and [Issues](https://github.com/blparker/vizzy/issues).
 
 ## License
 

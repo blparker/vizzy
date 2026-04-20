@@ -118,7 +118,7 @@ interact.draggable(dot, {
 -   **Animate with `await`.** `await play(fadeIn(c))` does the obvious thing. Sequence with `await`, parallelize with `play(a, b, c)`. No animation scheduler to learn.
 -   **Interaction isn't an afterthought.** Shapes can be dragged, hovered, and clicked. Sliders, checkboxes, and color pickers re-render the scene on change. No event wiring required.
 -   **Think in math, not pixels.** 14×8 world units, Y-up, origin at center. `radius: 1` is a unit circle, not a 100-pixel blob. DPR and canvas resize handled for you.
--   **Made for calculus.** Function graphs handle discontinuities without drawing phantom vertical lines. One-call helpers for tangents, secants, KaTeX labels, braces, and annotations.
+-   **Function graphs that don't lie.** Discontinuities are handled without phantom vertical lines. One-call helpers for tangents, secants, KaTeX labels, braces, and annotations.
 -   **Colors you won't have to google.** The full Tailwind palette (22 scales × 11 shades) baked in. Reach for `sky[400]` instead of memorizing `#0ea5e9`.
 
 ## Development

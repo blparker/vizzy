@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
+import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -147,12 +147,12 @@ export function VizEditorPage({ isAuthed, initialId, initialTitle, initialCode }
 
                         <ThemeToggle />
 
-                        <SignedIn>
-                            <UserButton afterSignOutUrl="/" />
-                        </SignedIn>
+                        <Show when="signed-in">
+                            <UserButton />
+                        </Show>
                     </div>
                 ) : (
-                    <SignedOut>
+                    <Show when="signed-out">
                         <SignUpButton mode="modal" forceRedirectUrl="/" signInForceRedirectUrl="/">
                             <Button>Sign up to save</Button>
                         </SignUpButton>
@@ -160,7 +160,7 @@ export function VizEditorPage({ isAuthed, initialId, initialTitle, initialCode }
                             <Button variant="ghost">Sign in</Button>
                         </SignInButton>
                         <ThemeToggle />
-                    </SignedOut>
+                    </Show>
                 )}
             </header>
             <div className="grid flex-1 grid-cols-2 overflow-hidden">

@@ -29,7 +29,7 @@ export default async function DashboardPage() {
                 </Button>
                 <div className="flex-1" />
                 <ThemeToggle />
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
             </header>
 
             <main className="mx-auto max-w-5xl px-5 py-10">

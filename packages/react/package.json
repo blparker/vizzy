@@ -51,10 +51,10 @@
         "dev": "vite build --watch"
     },
     "devDependencies": {
-        "@types/react": "^19.0.0",
+        "@types/react": "^19.2.14",
         "@vizzyjs/core": "workspace:*",
         "@vizzyjs/renderer-canvas": "workspace:*",
-        "react": "^19.0.0"
+        "react": "^19.2.5"
     },
     "peerDependencies": {
         "@vizzyjs/core": "^0.1.0",

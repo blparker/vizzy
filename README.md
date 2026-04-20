@@ -18,7 +18,9 @@ Interactive visualization for TypeScript, built for the browser.
 
 ## Why Vizzy?
 
-Vizzy is for interactive visuals you can drop into a page. Function graphs, geometric diagrams, algorithm walkthroughs, explorable explainers - anywhere a moving, touchable picture beats prose. It runs in TypeScript, renders in the browser, and is interactive by default, so you can drop a draggable derivative into a blog post, visualize a sorting algorithm in your docs, embed a classroom demo in a textbook, or prototype an explorable explanation directly in the page.
+Vizzy is for interactive visuals you can drop into a page. It's for people writing technical content (blog posts, docs, tutorials, explorable essays) who've hit the wall where static charts aren't enough but a whole JavaScript framework feels like overkill just to make a diagram move. Function graphs, geometric diagrams, algorithm walkthroughs: anywhere a moving, touchable picture beats prose.
+
+It runs in TypeScript, renders in the browser, and is interactive by default, so you can drop a draggable derivative into a blog post, visualize a sorting algorithm in your docs, embed a classroom demo in a textbook, or prototype a visual proof directly in the page.
 
 If you've used [manim](https://www.manim.community/), you'll recognize a few ideas. Vizzy is its own project, shaped around the browser, async/await, and live interaction rather than offline video rendering.
 
@@ -110,12 +112,12 @@ interact.draggable(dot, {
 
 ## Highlights
 
--   **30+ shape factories:** `circle()`, `rect()`, `line()`, `arrow()`, `axes()`, `functionGraph()`, `tex()`, `brace()`, `angleShape()`, and more
--   **Async/await animations:** `await play(fadeIn(c))`. No queues, no schedulers, just native promises.
--   **Interactive out of the box:** draggable shapes, hover/click handlers, HTML controls (sliders, checkboxes, color pickers) that auto-render on change
--   **World coordinates, not pixels:** 14×8 world units with Y-up, origin at center. DPR scaling is automatic.
--   **Calculus-ready:** discontinuity handling, tangent/secant helpers, annotations, TeX rendering via KaTeX
--   **Full Tailwind palette:** `sky`, `emerald`, `violet`, 22 scales × 11 shades
+-   **Shapes, not draw calls.** 30+ factories (circles, axes, function graphs, TeX, arrows, braces, angles) with defaults that don't make you fight them.
+-   **Animate with `await`.** `await play(fadeIn(c))` does the obvious thing. Sequence with `await`, parallelize with `play(a, b, c)`. No animation scheduler to learn.
+-   **Interaction isn't an afterthought.** Shapes can be dragged, hovered, and clicked. Sliders, checkboxes, and color pickers re-render the scene on change. No event wiring required.
+-   **Think in math, not pixels.** 14×8 world units, Y-up, origin at center. `radius: 1` is a unit circle, not a 100-pixel blob. DPR and canvas resize handled for you.
+-   **Made for calculus.** Function graphs handle discontinuities without drawing phantom vertical lines. One-call helpers for tangents, secants, KaTeX labels, braces, and annotations.
+-   **Colors you won't have to google.** The full Tailwind palette (22 scales × 11 shades) baked in. Reach for `sky[400]` instead of memorizing `#0ea5e9`.
 
 ## Development
 
@@ -127,6 +129,8 @@ pnpm playground   # local dev sandbox with Monaco editor + live preview
 pnpm test
 pnpm typecheck
 ```
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to actually ship a contribution: workflow, code conventions, and tips on adding new shapes or animations.
 
 ## License
 

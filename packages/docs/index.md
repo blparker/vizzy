@@ -5,8 +5,8 @@ hero:
   text: Math visualization for TypeScript
   tagline: Create beautiful math visualizations with animations and interactivity, built for the web.
   image:
-    src: /hero.gif
-    alt: vizzy demo
+    src: /animated-banner.gif
+    alt: vizzy — interactive math visualization in TypeScript
   actions:
     - theme: brand
       text: Get Started

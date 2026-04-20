@@ -13,7 +13,7 @@ Interactive math visualization for TypeScript, built for the browser.
 > **Status:** pre-1.0 (`0.1.x`). The API is stabilizing but may still change between minor versions.
 
 <p align="center">
-  <img src="./.github/media/hero.gif" alt="vizzy hero demo" width="640" />
+  <img src="./.github/media/animated-banner.gif" alt="vizzy — interactive math visualization in TypeScript" width="800" />
 </p>
 
 ## Why vizzy?

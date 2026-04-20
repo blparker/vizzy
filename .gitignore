@@ -4,3 +4,4 @@ dist/
 .vite/
 **/.vitepress/cache/
 .claude
+.DS_Store

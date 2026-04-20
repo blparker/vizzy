@@ -16,6 +16,7 @@ export interface AxesProps {
     color?: Color | string;
     style?: Style;
     includeNumbers?: boolean;
+    includeTicks?: boolean;
     includeTip?: boolean;
     xLabel?: string;
     yLabel?: string;
@@ -60,6 +61,7 @@ export class Axes extends Group {
         const color = props.color;
         const style = props.style;
         const includeNumbers = props.includeNumbers ?? false;
+        const includeTicks = props.includeTicks ?? true;
         const includeTip = props.includeTip ?? false;
 
         // X axis: horizontal, shifted so that coordinate 0 is at local x=0
@@ -67,6 +69,7 @@ export class Axes extends Group {
             range: xRange,
             length: this._xLength,
             includeNumbers,
+            includeTicks,
             includeTip,
             ...(color !== undefined ? { color } : {}),
             ...(style !== undefined ? { style } : {}),
@@ -83,6 +86,7 @@ export class Axes extends Group {
             range: yRange,
             length: this._yLength,
             includeNumbers,
+            includeTicks,
             includeTip,
             ...(color !== undefined ? { color } : {}),
             ...(style !== undefined ? { style } : {}),

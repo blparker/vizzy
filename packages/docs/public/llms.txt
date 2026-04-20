@@ -1,0 +1,29 @@
+# Vizzy
+
+> Vizzy is a TypeScript library for interactive visuals that live inside a webpage: function graphs, geometric diagrams, algorithm walkthroughs, explorable essays. Browser-native, declarative, interaction-first. Not a charting library, not a research notebook, not a Python-to-video pipeline.
+
+Key ideas:
+- **Packages.** `@vizzyjs/core` (render-agnostic shapes, scene graph, animations, math), `@vizzyjs/renderer-canvas` (Canvas2D renderer with controls and interaction), `@vizzyjs/react` (`useScene` hook).
+- **World coordinates.** 14x8 units, origin at center, Y up. `radius: 1` is a unit circle, not a 100-pixel blob.
+- **Animations via `async/await`.** `play(...animations)` returns a Promise. Sequence with `await`; parallelize by passing multiple animations to one `play()` call.
+- **Interaction-first.** Shapes can be dragged, hovered, clicked. `controls.panel()` overlays HTML widgets (sliders, checkboxes, color pickers) that re-render the scene on change.
+- **Status.** Pre-1.0 (`0.1.x`). API stabilizing but may move between minor versions.
+
+## Docs
+
+- [Getting Started](https://vizzyjs.dev/guide/getting-started): install, first scene, coordinate system, the destructured `createScene` pattern
+- [Shapes](https://vizzyjs.dev/guide/shapes): 30+ factory functions, positioning, colors, groups, text, axes, function graphs
+- [Animations](https://vizzyjs.dev/guide/animations): fade, create, shift, rotate, scale, color, opacity, `during()` per-frame, simultaneous vs sequential, easing
+- [Interactivity](https://vizzyjs.dev/guide/interactivity): controls panel, draggable, hoverable, clickable, constrained dragging
+- [Examples](https://vizzyjs.dev/examples/): gallery of runnable examples
+
+## Source
+
+- [README](https://github.com/blparker/vizzy/blob/main/README.md): project pitch, quick start, highlights, roadmap
+- [AGENTS.md](https://github.com/blparker/vizzy/blob/main/AGENTS.md): conventions, architecture, common recipes for AI agents
+- [CONTRIBUTING](https://github.com/blparker/vizzy/blob/main/CONTRIBUTING.md): local dev, PR workflow, adding shapes and animations
+
+## Tools
+
+- [Hub](https://hub.vizzyjs.dev): in-browser playground, publish and share vizzes, embed iframes
+- [llms-full.txt](https://vizzyjs.dev/llms-full.txt): all of the above inlined into a single file

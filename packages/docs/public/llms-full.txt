@@ -1,0 +1,336 @@
+# Vizzy
+
+> Vizzy is a TypeScript library for interactive visuals that live inside a webpage: function graphs, geometric diagrams, algorithm walkthroughs, explorable essays. Browser-native, declarative, interaction-first. Not a charting library, not a research notebook, not a Python-to-video pipeline.
+
+This file bundles the full public docs, README highlights, and common recipes into a single document for LLM ingestion. Canonical sources live at https://vizzyjs.dev and https://github.com/blparker/vizzy.
+
+- npm: `@vizzyjs/core`, `@vizzyjs/renderer-canvas`, `@vizzyjs/react`
+- Status: pre-1.0 (`0.1.x`); API stabilizing, may move between minor versions.
+- License: MIT.
+
+---
+
+## Install
+
+```bash
+npm install @vizzyjs/core @vizzyjs/renderer-canvas
+# or: pnpm add / yarn add
+```
+
+React users also install `@vizzyjs/react`. KaTeX is an optional peer dep of `@vizzyjs/renderer-canvas`; install it if you use `tex()`.
+
+---
+
+## The shortest runnable example
+
+```typescript
+import { circle, fadeIn, sky } from '@vizzyjs/core';
+import { createScene } from '@vizzyjs/renderer-canvas';
+
+const canvas = document.querySelector<HTMLCanvasElement>('canvas')!;
+const { add, play, grid } = createScene(canvas);
+
+grid();
+const c = circle({ radius: 1, color: sky });
+add(c);
+await play(fadeIn(c));
+```
+
+---
+
+## Scene setup
+
+`createScene(canvas)` returns a `BoundScene` you destructure. Commonly used properties:
+
+| Property | Purpose |
+| --- | --- |
+| `add(shape)` | Add a shape to the scene (auto-renders) |
+| `grid()` | Add a coordinate grid |
+| `play(animation, ...)` | Run animations (returns Promise) |
+| `wait(seconds)` | Pause |
+| `controls` | HTML controls (sliders, checkboxes, color pickers, selects, text) |
+| `interact` | Draggable / hoverable / clickable on shapes |
+
+Callback form:
+
+```typescript
+import { renderScene } from '@vizzyjs/renderer-canvas';
+
+renderScene(canvas, ({ add }) => {
+    add(circle({ color: sky }));
+});
+```
+
+React:
+
+```tsx
+import { useScene } from '@vizzyjs/react';
+import { circle, fadeIn, sky } from '@vizzyjs/core';
+
+export function Demo() {
+    const ref = useScene(({ add, play, grid }) => {
+        grid();
+        const c = circle({ color: sky });
+        add(c);
+        play(fadeIn(c));
+    });
+    return <canvas ref={ref} width={800} height={457} />;
+}
+```
+
+`useScene` defaults `autoResize: true`.
+
+---
+
+## Coordinate system
+
+14x8 world units. Origin at center. Y points up.
+
+```
+         (0, 4)
+           |
+(-7, 0) ---+--- (7, 0)
+           |
+         (0, -4)
+```
+
+You never deal with pixels. DPR scaling and canvas resize are handled for you.
+
+---
+
+## Shapes
+
+Factory functions. Every shape starts at the origin. Use `.shift(dx, dy)`, `.moveTo([x, y])`, or `.nextTo(shape, direction)` to position.
+
+### Basic shapes
+
+```typescript
+grid();
+add(
+    circle({ color: sky }),
+    rect({ width: 2, height: 1.2, color: emerald }).shift(3, 0),
+    triangle({ color: red }).shift(-3, 0),
+);
+```
+
+### Full list of factories
+
+`circle`, `rect`, `line`, `arrow`, `polygon`, `regularPolygon`, `triangle`, `square`, `ellipse`, `arc`, `star`, `point`, `text`, `tex`, `dashedLine`, `vector`, `doubleArrow`, `curvedArrow`, `arcBetweenPoints`, `rightAngle`, `surroundingRectangle`, `numberLine`, `axes`, `functionGraph`, `brace`, `braceOver`, `braceBetween`, `angleShape`, `edgeLabel`, `lineLabel`, `label`, `group`.
+
+### Direction constants
+
+`UP`, `DOWN`, `LEFT`, `RIGHT`, `UP_LEFT`, `UP_RIGHT`, `DOWN_LEFT`, `DOWN_RIGHT`, `ORIGIN`.
+
+### Colors
+
+Full Tailwind palette: `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `fuchsia`, `pink`, `rose`, `slate`, `gray`, `zinc`, `neutral`, `stone`, plus `white` and `black`. Each color has shades `[50]` through `[950]` and an `.alpha(n)` method.
+
+```typescript
+add(
+    circle({ color: sky }),                                          // shorthand
+    circle({ style: { stroke: sky, fill: sky[900] } }),              // full style
+    circle({ style: { stroke: violet, fill: violet.alpha(0.3) } }),  // alpha
+    circle({ style: { fill: orange, stroke: null } }),               // no stroke
+);
+```
+
+### Groups
+
+`group(...shapes)` composes shapes into a unit. `arrange(direction, spacing)` auto-layouts children.
+
+```typescript
+const row = group(
+    circle({ radius: 0.4, color: violet }),
+    circle({ radius: 0.4, color: pink }),
+    circle({ radius: 0.4, color: orange }),
+);
+row.arrange(RIGHT, 0.5);
+row.shift(-3, 0);
+add(row);
+```
+
+`moveToFront(shape)` and `moveToBack(shape)` set z-ordering within a group.
+
+### Text and TeX
+
+`text({ content, position, style })` renders plain text. `label(shape, content, direction)` positions text near a shape. `tex({ content, ... })` renders LaTeX via KaTeX (peer dep).
+
+### Axes and function graphs
+
+```typescript
+const ax = axes({
+    xRange: [-5, 5, 1],
+    yRange: [-3, 3, 1],
+    includeNumbers: true,
+    color: neutral[400],
+});
+add(ax);
+
+add(functionGraph({
+    fn: (x) => Math.sin(x),
+    axes: ax,
+    style: { stroke: sky, strokeWidth: 0.05 },
+}));
+```
+
+Shorthand: `ax.plot(fn, opts)` creates and adds in one call. `c2p([x, y])` and `p2c([x, y])` convert between axis coords and world coords. Function graphs handle discontinuities without phantom vertical lines.
+
+---
+
+## Animations
+
+Async/await, no schedulers.
+
+```typescript
+await play(fadeIn(c));                // one at a time
+await play(fadeIn(a), fadeIn(b));     // simultaneous
+await wait(0.5);
+```
+
+A shape passed to `fadeIn` / `create` is auto-added to the scene. Don't call `add()` first if you want the animation to introduce it.
+
+### Built-in animations
+
+- `fadeIn(shape)`, `fadeOut(shape)`
+- `create(shape)`: progressively draw the stroke
+- `animateShift(shape, [dx, dy])`, `animateMoveTo(shape, [x, y])`
+- `animateRotate(shape, radians)`, `animateScale(shape, factor)`
+- `animateColor(shape, { stroke?, fill? })`, `animateOpacity(shape, target)`
+- `during(callback)`: runs every frame while other animations play; receives eased `t` from 0 to 1. Useful for dynamic labels and computed positions.
+
+### Options
+
+```typescript
+await play(animateShift(c, [3, 0]), { duration: 2 });
+await play(animateShift(c, [-3, 0]), { duration: 0.5, easing: easeInOutCubic });
+```
+
+Easings: `linear`, `easeInQuad`/`Cubic`/`Sine`, `easeOutQuad`/`Cubic`/`Sine`, `easeInOutQuad`/`Cubic`/`Sine`, `smooth` (default, Hermite smoothstep), `smoother` (Perlin smootherstep).
+
+---
+
+## Interactivity
+
+### Controls (HTML overlay)
+
+```typescript
+controls.panel();
+const radius = controls.slider('Radius', { min: 0.2, max: 3, value: 1, step: 0.1 });
+const c = circle({ color: sky });
+add(c);
+controls.onUpdate(() => { c.radius = radius.value; });
+```
+
+| Control | Signature | Returns |
+| --- | --- | --- |
+| Slider | `controls.slider(label, { min, max, value, step })` | `ControlHandle<number>` |
+| Checkbox | `controls.checkbox(label, { value })` | `ControlHandle<boolean>` |
+| Color | `controls.color(label, { value })` | `ControlHandle<string>` |
+| Select | `controls.select(label, { options, value })` | `ControlHandle<string>` |
+| Text | `controls.text(label, { value, placeholder })` | `ControlHandle<string>` |
+
+Each handle: `.value`, `.set(v)`, `.onChange(fn)`.
+
+### Mouse interaction on shapes
+
+```typescript
+interact.draggable(dot, {
+    onDrag(pos) {
+        dot.moveTo(pos);
+    },
+    constrainX: [-4, 4],
+    constrainY: [0, 0],
+});
+
+interact.hoverable(r, {
+    onEnter() { r.setStyle({ fill: emerald[900] }); },
+    onLeave() { r.setStyle({ fill: null }); },
+});
+
+interact.clickable(btn, { onClick() { /* ... */ } });
+```
+
+Each returns an unsubscribe function: `const unsub = interact.draggable(shape, opts); unsub();`. Cursors are set automatically (`grab`/`grabbing` for draggable, `pointer` for hoverable and clickable).
+
+---
+
+## Architecture (for contributors)
+
+- **Retained scene graph.** `add(shape)` stages the shape; the scene re-renders on next frame.
+- **Visitor pattern.** `Renderer` in `@vizzyjs/core` is backend-agnostic. `@vizzyjs/renderer-canvas` implements Canvas2D. SVG is next.
+- **Shallow hierarchy.** Most shapes extend `Shape` or `PathShape`. Composites extend `Group`.
+- **Factories, not classes.** Public API is factory functions; classes are internal.
+
+### Repository layout
+
+- `packages/core` — shapes, scene graph, animations, math, style
+- `packages/renderer-canvas` — Canvas2D renderer, `createScene`, controls, interaction
+- `packages/react` — `useScene` hook
+- `packages/docs` — VitePress docs (vizzyjs.dev)
+- `packages/playground` — local sandbox with Monaco editor
+- `apps/hub` — Next.js app for hub.vizzyjs.dev
+
+### Commands
+
+Node 22+, pnpm 10+.
+
+- `pnpm install`
+- `pnpm build`
+- `pnpm test` (vitest)
+- `pnpm typecheck`
+- `pnpm lint`
+- `pnpm docs` / `pnpm playground` / `pnpm hub`
+
+### Conventions
+
+- 4-space indentation, single quotes, TypeScript strict mode.
+- ESM bundler resolution, no `.js` extensions on local imports.
+- Factories are public; classes are internal.
+- No em-dashes in prose (commits, docs, comments).
+- Default to no comments; only when WHY is non-obvious.
+
+### Adding a shape
+
+New file in `packages/core/src/shapes/`. Add a factory in `factories.ts`. Export both from `packages/core/src/shapes/index.ts`. If it benefits from a docs snippet, add it under `packages/docs/snippets/`.
+
+### Adding an animation
+
+New file in `packages/core/src/animation/`. Follow `fade.ts` or `transform.ts`. Use `makeAnimation()` to cut boilerplate. Return an `Animation` with `begin`, `update`, `finish` hooks.
+
+---
+
+## Gotchas
+
+- Shapes added with `add()` are visible immediately. For entrance animations, skip `add()` and let `play(fadeIn(shape))` add the shape for you.
+- Use world units, not pixels. `radius: 1` is a unit circle.
+- Don't import from package internals. Only the top-level entry is public.
+- Don't instantiate shape classes directly. Use factories: `circle(...)`, not `new Circle(...)`.
+- Vizzy is its own library, shaped around the browser, async/await, and live interaction. It is not a manim port and should not be positioned as one.
+
+---
+
+## Roadmap
+
+- SVG renderer (`Renderer` interface is already backend-agnostic).
+- Richer interaction primitives (constrained dragging, keyboard handlers, animated drag paths).
+- Community shape registry (shadcn-style: copy shapes into your project).
+- 1.0 API freeze.
+- Scene export to GIF / MP4 from code.
+
+Not on the roadmap for 1.0: 3D rendering, a chart DSL, Svelte / Vue bindings (welcome as community packages after 1.0).
+
+---
+
+## Hub (hub.vizzyjs.dev)
+
+In-browser playground. Publish and share vizzes. Every published viz gets a `/v/[id]` viewer page, a `/v/[id]/edit` editor, and an embeddable `/embed/[id]` iframe suitable for blog posts and docs.
+
+---
+
+## Links
+
+- Docs: https://vizzyjs.dev
+- GitHub: https://github.com/blparker/vizzy
+- Hub: https://hub.vizzyjs.dev
+- Issues: https://github.com/blparker/vizzy/issues
+- Discussions: https://github.com/blparker/vizzy/discussions

@@ -263,12 +263,12 @@ Each returns an unsubscribe function: `const unsub = interact.draggable(shape, o
 
 ### Repository layout
 
-- `packages/core` — shapes, scene graph, animations, math, style
-- `packages/renderer-canvas` — Canvas2D renderer, `createScene`, controls, interaction
-- `packages/react` — `useScene` hook
-- `packages/docs` — VitePress docs (vizzyjs.dev)
-- `packages/playground` — local sandbox with Monaco editor
-- `apps/hub` — Next.js app for hub.vizzyjs.dev
+- `packages/core` - shapes, scene graph, animations, math, style
+- `packages/renderer-canvas` - Canvas2D renderer, `createScene`, controls, interaction
+- `packages/react` - `useScene` hook
+- `packages/docs` - VitePress docs (vizzyjs.dev)
+- `packages/playground` - local sandbox with Monaco editor
+- `apps/hub` - Next.js app for hub.vizzyjs.dev
 
 ### Commands
 

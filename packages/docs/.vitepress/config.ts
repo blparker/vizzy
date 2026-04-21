@@ -43,6 +43,16 @@ export default defineConfig({
                     ],
                 },
             ],
+            '/api/': [
+                {
+                    text: 'API Reference',
+                    items: [
+                        { text: 'Overview', link: '/api/' },
+                        { text: 'Shapes', link: '/api/shapes' },
+                        { text: 'Animations', link: '/api/animations' },
+                    ],
+                },
+            ],
         },
         socialLinks: [
             { icon: 'github', link: 'https://github.com/blparker/vizzy' },

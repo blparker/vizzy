@@ -1,5 +1,4 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { KATEX_CSS } from './katex-css.generated';
 
 function escapeHtml(s: string): string {
     return s
@@ -8,22 +7,6 @@ function escapeHtml(s: string): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-}
-
-// KaTeX CSS inlined into the iframe so its rules are same-origin (readable by
-// the renderer's CSS collector) and font URLs point at the jsDelivr CDN so
-// they load cross-origin with CORS enabled for the rasterizer's font fetch.
-const KATEX_VERSION = '0.16.45';
-const KATEX_FONT_BASE = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist/fonts/`;
-
-let cachedKatexCss: string | null = null;
-function getKatexCss(): string {
-    if (cachedKatexCss) return cachedKatexCss;
-    const cssPath = join(process.cwd(), 'node_modules/katex/dist/katex.min.css');
-    let css = readFileSync(cssPath, 'utf8');
-    css = css.replace(/url\(fonts\/([^)]+)\)/g, `url(${KATEX_FONT_BASE}$1)`);
-    cachedKatexCss = css;
-    return css;
 }
 
 export type EmbedTheme = 'light' | 'dark';
@@ -214,7 +197,7 @@ ${compiledJs}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${escapeHtml(title)} · vizzy</title>
-        <style>${getKatexCss()}</style>
+        <style>${KATEX_CSS}</style>
         <style>${styles}
         </style>
     </head>

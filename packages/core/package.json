@@ -1,6 +1,6 @@
 {
     "name": "@vizzyjs/core",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Render-agnostic core for vizzy: shapes, scene graph, animations, and math utilities for interactive math visualization",
     "type": "module",
     "license": "MIT",

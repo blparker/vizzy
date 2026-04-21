@@ -1,6 +1,6 @@
 {
     "name": "@vizzyjs/renderer-canvas",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Canvas2D renderer for vizzy: animations, controls, and interaction on HTML canvas",
     "type": "module",
     "license": "MIT",
@@ -54,7 +54,7 @@
         "katex": "^0.16.45"
     },
     "peerDependencies": {
-        "@vizzyjs/core": "^0.1.1",
+        "@vizzyjs/core": "^0.1.2",
         "katex": "^0.16.0"
     },
     "peerDependenciesMeta": {

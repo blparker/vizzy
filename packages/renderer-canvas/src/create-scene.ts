@@ -58,6 +58,9 @@ export interface BoundScene {
     grid: (props?: Omit<GridProps, 'camera'>) => Group;
     play: (...args: (Animation | AnimationOptions)[]) => Promise<void>;
     wait: (seconds: number) => Promise<void>;
+    pause: () => void;
+    resume: () => void;
+    readonly isPaused: boolean;
     resize: (displayWidth: number, displayHeight: number) => void;
     destroy: () => void;
     controls: ControlsManager;
@@ -167,6 +170,18 @@ export function createScene(
 
         wait(seconds: number) {
             return player.wait(seconds);
+        },
+
+        pause() {
+            player.pause();
+        },
+
+        resume() {
+            player.resume();
+        },
+
+        get isPaused() {
+            return player.isPaused;
         },
 
         resize(displayWidth: number, displayHeight: number) {

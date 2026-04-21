@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 function escapeHtml(s: string): string {
     return s
         .replace(/&/g, '&amp;')
@@ -5,6 +8,22 @@ function escapeHtml(s: string): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+}
+
+// KaTeX CSS inlined into the iframe so its rules are same-origin (readable by
+// the renderer's CSS collector) and font URLs point at the jsDelivr CDN so
+// they load cross-origin with CORS enabled for the rasterizer's font fetch.
+const KATEX_VERSION = '0.16.45';
+const KATEX_FONT_BASE = `https://cdn.jsdelivr.net/npm/katex@${KATEX_VERSION}/dist/fonts/`;
+
+let cachedKatexCss: string | null = null;
+function getKatexCss(): string {
+    if (cachedKatexCss) return cachedKatexCss;
+    const cssPath = join(process.cwd(), 'node_modules/katex/dist/katex.min.css');
+    let css = readFileSync(cssPath, 'utf8');
+    css = css.replace(/url\(fonts\/([^)]+)\)/g, `url(${KATEX_FONT_BASE}$1)`);
+    cachedKatexCss = css;
+    return css;
 }
 
 export type EmbedTheme = 'light' | 'dark';
@@ -74,6 +93,35 @@ export function renderEmbed({
         }
         #vizzy-attr:hover {
             color: ${attrHover};
+        }
+        #vizzy-replay {
+            position: absolute;
+            right: 8px;
+            bottom: 6px;
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: ${attrColor};
+            cursor: pointer;
+            border-radius: 4px;
+            transition: color 120ms ease, background 120ms ease;
+        }
+        #vizzy-replay:hover:not([disabled]) {
+            color: ${attrHover};
+        }
+        #vizzy-replay[disabled] {
+            cursor: default;
+            opacity: 0.5;
+        }
+        #vizzy-replay svg {
+            width: 14px;
+            height: 14px;
         }`;
 
     const bootScript = `
@@ -81,26 +129,84 @@ export function renderEmbed({
 
         const canvas = document.getElementById('c');
         const wrap = document.getElementById('wrap');
+        const btn = document.getElementById('vizzy-replay');
 
-        const scene = vizzy.createScene(canvas, {
-            theme: ${themeLiteral},
-            autoResize: { container: wrap },
-        });
+        const ICONS = {
+            pause: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3" width="3" height="10" rx="0.5"/><rect x="9" y="3" width="3" height="10" rx="0.5"/></svg>',
+            resume: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9a0.5 0.5 0 0 0 0.77 0.42l7-4.5a0.5 0.5 0 0 0 0-0.84l-7-4.5A0.5 0.5 0 0 0 5 3.5z"/></svg>',
+            replay: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 8a5.5 5.5 0 1 1-1.61-3.89"/><path d="M13.5 3v3h-3"/></svg>',
+        };
+        const LABELS = { pause: 'Pause animation', resume: 'Resume animation', replay: 'Replay animation' };
 
-        const { add, remove, play, wait, grid, render, controls, interact } = scene;
-        Object.assign(globalThis, vizzy, {
-            scene, add, remove, play, wait, grid, render, controls, interact,
-        });
+        let scene;
+        let hasAnimation = false;
+        let state = 'hidden';
 
-        (async () => {
+        function setState(next) {
+            state = next;
+            if (next === 'hidden') {
+                btn.style.display = 'none';
+                return;
+            }
+            btn.style.display = 'flex';
+            btn.innerHTML = ICONS[next];
+            btn.setAttribute('aria-label', LABELS[next]);
+            btn.title = LABELS[next];
+        }
+
+        function mountScene() {
+            scene = vizzy.createScene(canvas, {
+                theme: ${themeLiteral},
+                autoResize: { container: wrap },
+            });
+
+            const { add, remove, play, wait, grid, render, controls, interact } = scene;
+            const wrappedPlay = (...args) => {
+                hasAnimation = true;
+                if (state === 'hidden') setState('pause');
+                return play(...args);
+            };
+            const wrappedWait = (...args) => {
+                hasAnimation = true;
+                if (state === 'hidden') setState('pause');
+                return wait(...args);
+            };
+            Object.assign(globalThis, vizzy, {
+                scene, add, remove, play: wrappedPlay, wait: wrappedWait, grid, render, controls, interact,
+            });
+        }
+
+        async function runUserCode() {
             try {
 ${compiledJs}
             } catch (err) {
                 console.error('[vizzy] user code error:', err);
             }
-        })();
+        }
 
-        scene.render();`;
+        async function runOnce() {
+            hasAnimation = false;
+            setState('hidden');
+            mountScene();
+            await runUserCode();
+            scene.render();
+            setState(hasAnimation ? 'replay' : 'hidden');
+        }
+
+        btn.addEventListener('click', () => {
+            if (state === 'pause') {
+                scene.pause();
+                setState('resume');
+            } else if (state === 'resume') {
+                scene.resume();
+                setState('pause');
+            } else if (state === 'replay') {
+                scene.destroy();
+                runOnce();
+            }
+        });
+
+        runOnce();`;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -108,6 +214,7 @@ ${compiledJs}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${escapeHtml(title)} · vizzy</title>
+        <style>${getKatexCss()}</style>
         <style>${styles}
         </style>
     </head>
@@ -116,6 +223,7 @@ ${compiledJs}
             <div id="stage">
                 <canvas id="c" width="1400" height="800"></canvas>
                 <a id="vizzy-attr" href="https://vizzyjs.dev?ref=hub-embed" target="_blank" rel="noopener">Made with Vizzy</a>
+                <button id="vizzy-replay" type="button"></button>
             </div>
         </div>
         <script type="module">${bootScript}

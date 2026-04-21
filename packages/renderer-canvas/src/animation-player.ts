@@ -16,6 +16,8 @@ export class AnimationPlayer {
     private active: ActiveGroup | null = null;
     private rafId: number | null = null;
     private renderFn: () => void;
+    private paused = false;
+    private pausedAt = 0;
 
     constructor(renderFn: () => void) {
         this.renderFn = renderFn;
@@ -33,8 +35,28 @@ export class AnimationPlayer {
                 resolve,
             };
 
-            this.startLoop();
+            if (!this.paused) this.startLoop();
         });
+    }
+
+    pause(): void {
+        if (this.paused) return;
+        this.paused = true;
+        this.pausedAt = performance.now();
+        this.stopLoop();
+    }
+
+    resume(): void {
+        if (!this.paused) return;
+        this.paused = false;
+        if (this.active && this.active.startTime >= 0) {
+            this.active.startTime += performance.now() - this.pausedAt;
+        }
+        if (this.active) this.startLoop();
+    }
+
+    get isPaused(): boolean {
+        return this.paused;
     }
 
     wait(seconds: number): Promise<void> {

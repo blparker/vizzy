@@ -62,6 +62,9 @@ importers:
       esbuild:
         specifier: ^0.28.0
         version: 0.28.0
+      katex:
+        specifier: ^0.16.45
+        version: 0.16.45
       lucide-react:
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.5)

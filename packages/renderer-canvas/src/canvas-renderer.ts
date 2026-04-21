@@ -360,7 +360,10 @@ export class CanvasRenderer implements Renderer {
 
         const wrapper = document.createElementNS(xhtmlNs, 'div');
         const styleEl = document.createElementNS(xhtmlNs, 'style');
-        styleEl.textContent = cssText;
+        // The position:absolute + clip trick KaTeX uses to hide .katex-mathml
+        // does not survive SVG foreignObject rasterization, so the MathML text
+        // renders alongside the visual output. Force it hidden.
+        styleEl.textContent = cssText + '\n.katex-mathml{display:none!important;}';
         wrapper.appendChild(styleEl);
 
         const contentDiv = document.createElementNS(xhtmlNs, 'div');

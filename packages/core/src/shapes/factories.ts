@@ -207,6 +207,8 @@ export interface DashedLineProps extends LineProps {
     dashPattern?: number[];
 }
 
+export const DEFAULT_DASH_PATTERN = [0.1, 0.05];
+
 export function dashedLine(props: DashedLineProps = {}): LineShape {
     return new LineShape({
         ...props,

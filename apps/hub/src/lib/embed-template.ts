@@ -1,5 +1,3 @@
-import { KATEX_CSS } from './katex-css.generated';
-
 function escapeHtml(s: string): string {
     return s
         .replace(/&/g, '&amp;')
@@ -196,7 +194,6 @@ ${compiledJs}
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${escapeHtml(title)} · vizzy</title>
-        <style>${KATEX_CSS}</style>
         <style>${styles}
         </style>
     </head>

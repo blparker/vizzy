@@ -46,8 +46,9 @@
         "access": "public"
     },
     "scripts": {
-        "build": "vite build",
-        "dev": "vite build --watch"
+        "build:katex": "node scripts/build-katex-css.mjs",
+        "build": "pnpm build:katex && vite build",
+        "dev": "pnpm build:katex && vite build --watch"
     },
     "devDependencies": {
         "@vizzyjs/core": "workspace:*",

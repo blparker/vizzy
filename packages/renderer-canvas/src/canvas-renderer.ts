@@ -15,6 +15,7 @@ import type {
 } from '@vizzyjs/core';
 import { Mat3, colorToCss } from '@vizzyjs/core';
 import katex from 'katex';
+import { KATEX_CSS } from './katex-css.generated';
 
 type Mat3Type = ReturnType<typeof Mat3.identity>;
 
@@ -22,76 +23,6 @@ interface TexCacheEntry {
     canvas: HTMLCanvasElement;
     width: number;
     height: number;
-}
-
-// Collects all page CSS and inlines font URLs as base64 data URIs
-// so that SVG foreignObject rendering has access to KaTeX fonts.
-let resolvedCssPromise: Promise<string> | null = null;
-
-async function collectCssWithInlinedFonts(): Promise<string> {
-    let cssText = '';
-    const fontUrls = new Map<string, string>();
-
-    for (const sheet of document.styleSheets) {
-        try {
-            for (const rule of sheet.cssRules) {
-                cssText += rule.cssText + '\n';
-            }
-        } catch (_e) {
-            // Cross-origin, skip
-        }
-    }
-
-    // Find ALL url() references (fonts, images, etc.)
-    // Browser cssText typically uses url("...") but handle all variants
-    const urlPattern = /url\(["']?([^"')]+)["']?\)/g;
-    let match;
-    while ((match = urlPattern.exec(cssText)) !== null) {
-        const url = match[1]!;
-        // Only inline font files
-        if (/\.(woff2?|ttf|otf|eot)(\?.*)?$/i.test(url)) {
-            if (!fontUrls.has(url)) {
-                // Resolve relative URLs against page origin
-                const resolved = new URL(url, window.location.href).href;
-                fontUrls.set(url, resolved);
-            }
-        }
-    }
-
-    // Fetch each font and convert to base64 data URI
-    await Promise.all(Array.from(fontUrls.entries()).map(async ([original, resolved]) => {
-        try {
-            const resp = await fetch(resolved);
-            if (!resp.ok) return;
-            const blob = await resp.blob();
-            const dataUri = await new Promise<string>((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.readAsDataURL(blob);
-            });
-            fontUrls.set(original, dataUri);
-        } catch (_e) {
-            // Failed to fetch, leave original URL
-        }
-    }));
-
-    // Replace all font URLs with data URIs in all quoting styles
-    for (const [originalUrl, dataUri] of fontUrls) {
-        if (dataUri.startsWith('data:')) {
-            cssText = cssText.split(`url("${originalUrl}")`).join(`url("${dataUri}")`);
-            cssText = cssText.split(`url('${originalUrl}')`).join(`url('${dataUri}')`);
-            cssText = cssText.split(`url(${originalUrl})`).join(`url(${dataUri})`);
-        }
-    }
-
-    return cssText;
-}
-
-function getInlinedCss(): Promise<string> {
-    if (!resolvedCssPromise) {
-        resolvedCssPromise = collectCssWithInlinedFonts();
-    }
-    return resolvedCssPromise;
 }
 
 export class CanvasRenderer implements Renderer {
@@ -314,8 +245,10 @@ export class CanvasRenderer implements Renderer {
             displayMode: true,
         });
 
-        // Get CSS with KaTeX fonts inlined as base64 data URIs
-        const cssText = await getInlinedCss();
+        // Self-contained KaTeX CSS (fonts pre-inlined as base64 data URIs at
+        // build time), so we don't need to scrape document.styleSheets or
+        // fetch fonts at runtime.
+        const cssText = KATEX_CSS;
 
         // Measure with a hidden DOM element
         const measure = document.createElement('div');

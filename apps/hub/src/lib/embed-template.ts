@@ -54,7 +54,6 @@ export function renderEmbed({
         #stage {
             position: relative;
             display: inline-block;
-            line-height: 0;
         }
         #c {
             display: block;

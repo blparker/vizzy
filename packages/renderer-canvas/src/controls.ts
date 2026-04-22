@@ -70,6 +70,7 @@ function injectStyles() {
             border-radius: 6px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 12px;
+            line-height: normal;
             z-index: 10;
             max-height: calc(100% - 16px);
             overflow: hidden;

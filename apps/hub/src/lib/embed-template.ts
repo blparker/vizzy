@@ -46,7 +46,7 @@ export function renderEmbed({
         #wrap {
             width: 100%;
             height: 100%;
-            padding: 16px;
+            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;

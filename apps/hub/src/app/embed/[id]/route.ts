@@ -17,6 +17,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const theme: EmbedTheme =
         override === 'light' || override === 'dark' ? override : viz.theme;
 
+    // ETag ties the cache entry to the viz's updatedAt + effective theme so any
+    // save (or ?theme= override) invalidates. Pairs with Cache-Control: no-cache
+    // to force revalidation on every request; unchanged vizzes return a tiny 304.
+    const etag = `"${viz.id}-${viz.updatedAt.getTime()}-${theme}"`;
+    const baseHeaders = {
+        'Cache-Control': 'public, no-cache',
+        ETag: etag,
+        'Content-Security-Policy': 'frame-ancestors *',
+    };
+
+    if (req.headers.get('if-none-match') === etag) {
+        return new NextResponse(null, { status: 304, headers: baseHeaders });
+    }
+
     const html = renderEmbed({
         title: viz.title,
         compiledJs: viz.codeJs,
@@ -26,9 +40,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     return new NextResponse(html, {
         status: 200,
         headers: {
+            ...baseHeaders,
             'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=3600',
-            'Content-Security-Policy': 'frame-ancestors *',
         },
     });
 }

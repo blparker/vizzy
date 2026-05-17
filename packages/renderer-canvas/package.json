@@ -52,7 +52,7 @@
     },
     "devDependencies": {
         "@vizzyjs/core": "workspace:*",
-        "katex": "^0.16.45"
+        "katex": "^0.16.47"
     },
     "peerDependencies": {
         "@vizzyjs/core": "^0.1.2",

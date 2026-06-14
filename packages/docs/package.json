@@ -12,7 +12,7 @@
         "@vizzyjs/core": "workspace:*",
         "@vizzyjs/renderer-canvas": "workspace:*",
         "monaco-editor": "^0.55.1",
-        "shiki": "^4.0.2"
+        "shiki": "^4.2.0"
     },
     "devDependencies": {
         "katex": "^0.16.45",
